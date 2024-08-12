@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="memberMapper">
+
+	<resultMap id="memberResult" type="MemberDto">
+    <id column="USER_NO" property="userNo"/>
+    <result column="USER_ID" property="userId"/>
+    <result column="USER_PWD" property="userPwd"/>
+    <result column="USER_NAME" property="userName"/>
+    <result column="BIRTH_DATE" property="birthDate"/>
+    <result column="NICKNAME" property="nickName"/>
+    <result column="PHONE" property="phone"/>
+    <result column="EMAIL" property="email"/>
+    <result column="ADDRESS" property="address"/>
+    <result column="ADDRESS_DETAIL" property="addressDatail"/>
+    <result column="ENROLL_DATE" property="enrollDate"/>
+    <result column="MODIFY_DATE" property="modifyDate"/>
+    <result column="USER_TYPE" property="userType"/>
+    <result column="USER_STATUS" property="userStatus"/>
+    <result column="USER_PATH" property="userPath"/>
+    <result column="STREET_ADDRESS" property="streetAddress"/>
+    <result column="OTHER_ADDERSS" property="otherAddress"/>
+  </resultMap>
+  
+
+	<!-- 로그인용 -->
+	<select id="selectMember" resultMap="memberResult">
+		<!-- * 암호화 적용전 -->
+		<!--  
+		select
+			 	   user_no, user_id, user_pwd
+			 	 , user_name, email, gender
+			 	 , phone, address, profile_url
+			 	 , signup_date, modify_date
+			from member
+		 where status in ('Y', 'A')
+		   and user_id = #{userId}
+		   and user_pwd = #{userPwd}
+		-->
+		
+		<!-- * 암호화 적용후 -->
+		SELECT
+				  USER_NO
+				,	USER_ID
+				,	USER_PWD
+				,	USER_NAME
+				,	BIRTH_DATE
+				,	NICKNAME
+				,	EMAIL
+				,	ADDRESS
+				,	ADDRESS_DETAIL
+				, STREET_ADDRESS
+			  , OTHER_ADDERSS
+			  , PHONE
+		FROM TB_MEMBER
+	 WHERE USER_STATUS = 'N'
+	   AND USER_TYPE IN ('M', 'E')
+	   AND USER_ID = #{userId}
+	</select>
+	
+	
+	
+	
+	<!-- 프로필이미지만 따로 변경용 -->
+	<update id="updateProfileImg">
+		update
+					 member
+			 set profile_url = #{profileURL}
+			   , modify_date = sysdate
+		 where user_id = #{userId}
+	</update>
+	
+	<!-- 회원정보수정용 -->
+	<update id="updateMember">
+		update
+					 member
+			 set user_name = #{userName}
+			   , email = #{email}
+			   , phone = #{phone}
+			   , address = #{address}
+			   , gender = #{gender}
+			   , modify_date = sysdate
+		 where user_id = #{userId}
+	</update>
+	
+	<!-- 회원탈퇴용 -->
+	<update id="deleteMember">
+		update
+					 member
+			 set status = 'N'
+		 where user_id = #{userId}
+	</update>
+
+	<!-- 닉네임 중복 체크용 -->
+  <select id="selectNickNamecount" resultType="_int">
+  	SELECT COUNT(*)
+  	  FROM TB_MEMBER
+  	 WHERE NICKNAME = #{checkNickName}
+  </select>
+  
+  <!-- 아이디 중복 체크용 -->
+  <select id="selectUserIdCount" resultType="_int">
+  	SELECT COUNT(*)
+  	  FROM TB_MEMBER
+  	 WHERE USER_ID = #{checkId}
+  </select>
+  <!-- 회원가입용 -->
+  <insert id="insertMember">
+  	INSERT
+  		INTO
+  			TB_MEMBER
+  			(
+  			USER_NO
+			,	USER_ID
+			,	USER_PWD
+			,	USER_NAME
+			,	PHONE
+			,	BIRTH_DATE
+			,	NICKNAME
+			,	EMAIL
+			,	ADDRESS
+			,	ADDRESS_DETAIL
+			, STREET_ADDRESS
+			, OTHER_ADDERSS
+  			)
+  			VALUES
+  			(
+  			SEQ_MNO.NEXTVAL
+  		, #{userId}
+  		, #{userPwd}
+  		, #{userName}
+  		, #{phone}
+  		, #{birthDate}
+  		, #{nickName}
+  		, #{email}
+  		, #{address}
+  		, #{addressDatail}
+  		, #{streetAddress}
+  		, #{otherAddress}
+  			)
+  </insert>
+  
+  
+  
+
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="payMapper">
+
+	<resultMap id="orderResult" type="OrderDto">
+		<id column="ORDER_NO" property="orderNo" />
+		<result column="ORDER_NO" property="memberNo"/>	
+		<result column="ORDER_MEMBER_NO" property="orderName"/>	
+		<result column="ORDER_NAME" property="orerPhone"/>	
+		<result column="ORDER_PHONE" property="orderEmail"/>	
+		<result column="ORDER_EMAIL" property="orderDetail"/>	
+		<result column="ORDER_DETAIL" property="orderRequest"/>	
+		<result column="ORDER_REQUEST" property="paymentMethod"/>	
+		<result column="PAYMENT_METHOD" property="orderTotalPrice"/>	
+		<result column="ORDER_TOTAL_PRICE" property="orderDate"/>	
+		<result column="ORDER_DATE" property="paymentDate"/>	
+		<result column="PAYMENT_DATE" property="paymentStatus"/>	
+		<result column="PRODUCT_NO" property="productNo"/>	
+		<result column="PRODUCT_AMOUNT" property="productAmount"/>	
+	</resultMap>
+
+</mapper>

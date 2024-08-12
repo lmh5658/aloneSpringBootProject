@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="productMapper">
+
+  
+  <resultMap id="productResult" type="ProductDto">
+    <id column="PRODUCT_NO" property="productNo"/>
+    <result column="CATEGORY_TYPE" property="categoryType"/>
+    <result column="PRODUCT_NAME" property="proName"/>
+    <result column="PRODUCT_PRICE" property="productPrice"/>
+    <result column="PRO_STATUS" property="proStatus"/>
+    <result column="PRO_AMOUNT" property="proAmount"/>
+    <result column="RPO_SALE_STATUS" property="pSaleStatus"/>
+    <result column="PRO_SALE_PRICE" property="pSalePrice"/>
+    <result column="PRO_THUMBNAIL_PATH" property="productThumbnailPath"/>
+    <result column="PRO_DETAIL_PATH" property="pDatailPath"/>
+    <result column="ORDER_CHECK" property="orderCheck"/>
+    <result column="REVIEW_CHECK" property="reviewCheck"/>
+    <result column="COUNT" property="count"/>
+  </resultMap>
+  
+
+  
+  
+  <!-- 상품리스트 -->
+  <select id="selectProductListCount" resultType="_int">
+    SELECT COUNT(*)
+      FROM TB_PRODUCT
+     WHERE CATEGORY_TYPE = #{type}
+       AND PRO_STATUS = 'Y'
+      
+  </select>
+  
+  <select id="selectProductList" resultMap="productResult">
+    SELECT 
+           PRODUCT_NO
+         , CATEGORY_TYPE
+         , PRODUCT_NAME
+         , PRODUCT_PRICE
+         , PRO_STATUS
+         , PRO_AMOUNT
+         , RPO_SALE_STATUS
+         , PRO_SALE_PRICE
+         , PRO_THUMBNAIL_PATH
+         , PRO_DETAIL_PATH
+      FROM TB_PRODUCT
+     WHERE CATEGORY_TYPE = #{type}
+       AND PRO_STATUS = 'Y'
+     ORDER
+     	  BY PRODUCT_NO DESC
+  </select>
+  <!-- 상품리스트 -->
+  
+  <!-- 상품 상세 -->
+  <select id="selectProduct" resultMap="productResult">
+  	 SELECT 
+           PRODUCT_NO
+         , CATEGORY_TYPE
+         , PRODUCT_NAME
+         , PRODUCT_PRICE
+         , PRO_STATUS
+         , PRO_AMOUNT
+         , RPO_SALE_STATUS
+         , PRO_SALE_PRICE
+         , PRO_THUMBNAIL_PATH
+         , PRO_DETAIL_PATH
+         , (SELECT COUNT(*)
+              FROM TB_ORDER
+             WHERE PAYMENT_NO = PRODUCT_NO
+               AND ORDER_MEMBER_NO = 1) ORDER_CHECK
+         , (SELECT COUNT(*)
+              FROM TB_REVIEW
+             WHERE PRODUCT_NO = PRODUCT_NO
+               AND MEMBER_NO = 1
+               AND REVIEW_POST_DATE IN NULL) REVIEW_CHECK
+      FROM TB_PRODUCT P
+     WHERE PRODUCT_NO = #{no}
+  </select>
+  <!-- 상품 상세 -->
+  
+  <!-- 장바구니 확인 조회용 -->
+	<select id="selectCart" resultType="int">
+	    SELECT COUNT(*)
+	    FROM TB_CART
+	    WHERE USER_NO = #{userNo}
+	    <if test="productNo != null or !productNo.equals('')">
+	        AND PRODUCT_NO = #{productNo}
+	    </if>
+	</select>
+  
+  <update id="updateCart">
+  	UPDATE TB_CART
+  	   SET COUNT = COUNT + 1
+		 WHERE USER_NO = #{userNo}
+			 AND PRODUCT_NO = #{productNo}
+  </update>
+  
+  <insert id="insertCart">
+  	INSERT
+  		INTO
+  		 TB_CART
+  		 (
+  		  USER_NO
+			,	PRODUCT_NO
+			,	COUNT
+  		 )
+  		 VALUES
+  		 (
+  		   #{userNo}
+  		 , #{productNo}
+  		 , 1
+  		 )
+  </insert>
+  
+  <!-- 장바구니 리스트 -->
+  <select id="selectCartList" resultMap="productResult">
+		SELECT
+		      PRODUCT_NO
+		    , PRODUCT_NAME
+		    , PRODUCT_PRICE
+		    , PRO_AMOUNT
+		    , PRO_SALE_PRICE
+		    , PRO_THUMBNAIL_PATH
+		    , (SELECT DISTINCT C.COUNT 
+		         FROM TB_CART C
+		        WHERE P.PRODUCT_NO = C.PRODUCT_NO
+		          AND USER_NO = #{userNo}
+		       ) COUNT
+		FROM TB_PRODUCT P
+		WHERE PRODUCT_NO IN (SELECT PRODUCT_NO
+		                       FROM TB_CART
+                    			 WHERE USER_NO = #{userNo})
+  
+  </select>
+  
+  <!-- 장바구니 상품 삭제 -->
+  <delete id="deleteCart">
+  	DELETE TB_CART
+  	 WHERE PRODUCT_NO = #{productNo} 
+  	   AND USER_NO = #{userNo} 
+  </delete>
+  
+  <!-- 장바구니 상품 수량변경 업데이트 -->
+  <update id="cartCountUpdate">
+  	UPDATE TB_CART
+  	 <choose>
+  	 <when test="division != null and division.equals('minus')">
+  	 	 SET COUNT = COUNT - 1
+  	 </when>
+  	 <when test="division != null and division.equals('plus')">
+  	 	 SET COUNT = COUNT + 1
+  	 </when>
+  	 </choose>
+  	 WHERE PRODUCT_NO = ${productNo}
+  	   AND USER_NO = ${userNo}
+  </update>
+  
+  
+  <!-- 
+  <insert id="insertNotice">
+    insert
+      into notice
+      (
+        notice_no
+      , notice_title
+      , notice_content
+      , notice_writer
+      )
+      values
+      (
+        seq_nno.nextval
+      , #{noticeTitle}
+      , #{noticeContent}
+      , #{noticeWriter}
+      )
+  </insert>
+  
+  <insert id="insertAttach">
+    insert
+      into attachment
+      (
+        file_no
+      , file_path
+      , filesystem_name
+      , original_name
+      , ref_type
+      , ref_no
+      )
+      values
+      (
+        seq_ano.nextval
+      , #{filePath}
+      , #{filesystemName}
+      , #{originalName}
+      , #{refType}
+      , seq_nno.currval
+      )
+  </insert>
+  
+  <select id="selectNotice" resultMap="noticeResult">
+    select
+           notice_no
+         , notice_title
+         , notice_content
+         , user_id
+         , to_char(regist_date, 'YYYY-MM-DD') regist_date
+         , file_path
+         , filesystem_name
+         , original_name
+      from notice
+      join member on(notice_Writer = user_no)
+      left join attachment on (ref_type='N' and ref_no = notice_no)
+     where notice_no = #{noticeNo}
+  </select>
+  -->
+  
+
+	
+</mapper>
