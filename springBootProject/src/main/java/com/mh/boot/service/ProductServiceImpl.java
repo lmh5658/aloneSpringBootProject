@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.mh.boot.dao.ProductDao;
 import com.mh.boot.dto.PageInfoDto;
 import com.mh.boot.dto.ProductDto;
+import com.mh.boot.dto.ReviewDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,8 +29,8 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public ProductDto selectProduct(int no) {
-		return productDao.selectProduct(no);
+	public ProductDto selectProduct(Map<String, Object> map) {
+		return productDao.selectProduct(map);
 	}
 
 	@Override
@@ -66,6 +67,27 @@ public class ProductServiceImpl implements ProductService {
 	public int cartCountUpdate(Map<String, Object> map) {
 		return productDao.cartCountUpdate(map);
 	}
+
+	@Override
+	public int writeReview(ReviewDto review) {
+		return productDao.writeReview(review);
+	}
+
+	@Override
+	public List<ReviewDto> reviewSelect(int productNo, PageInfoDto pi) {
+		return productDao.reviewSelect(productNo, pi);
+	}
+
+	@Override
+	public int reviewListCount(int productNo) {
+		return productDao.reviewListCount(productNo);
+	}
+
+	
+
+
+	
+	
 
 	
 

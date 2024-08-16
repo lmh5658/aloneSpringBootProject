@@ -4,19 +4,105 @@
 
 	<resultMap id="orderResult" type="OrderDto">
 		<id column="ORDER_NO" property="orderNo" />
-		<result column="ORDER_NO" property="memberNo"/>	
-		<result column="ORDER_MEMBER_NO" property="orderName"/>	
-		<result column="ORDER_NAME" property="orerPhone"/>	
-		<result column="ORDER_PHONE" property="orderEmail"/>	
-		<result column="ORDER_EMAIL" property="orderDetail"/>	
-		<result column="ORDER_DETAIL" property="orderRequest"/>	
-		<result column="ORDER_REQUEST" property="paymentMethod"/>	
-		<result column="PAYMENT_METHOD" property="orderTotalPrice"/>	
-		<result column="ORDER_TOTAL_PRICE" property="orderDate"/>	
-		<result column="ORDER_DATE" property="paymentDate"/>	
-		<result column="PAYMENT_DATE" property="paymentStatus"/>	
-		<result column="PRODUCT_NO" property="productNo"/>	
-		<result column="PRODUCT_AMOUNT" property="productAmount"/>	
+		<result column="ORDER_MEMBER_NO" property="memberNo"/>	
+		<result column="ORDER_NAME" property="orderName"/>	
+		<result column="ORDER_PHONE" property="orerPhone"/>	
+		<result column="ORDER_EMAIL" property="orderEmail"/>	
+		<result column="ORDER_DETAIL" property="orderDetail"/>	
+		<result column="ORDER_REQUEST" property="orderRequest"/>	
+		<result column="PAYMENT_METHOD" property="paymentMethod"/>	
+		<result column="ORDER_TOTAL_PRICE" property="orderTotalPrice"/>	
+		<result column="ORDER_DATE" property="orderDate"/>	
+		<result column="PAYMENT_DATE" property="paymentDate"/>	
+		<result column="PAYMENT_STATUS" property="paymentStatus"/>	
+		<result column="ORDER_PRODUCT_NO" property="productNo"/>	
+		<result column="ORDER_PRODUCT_NAME" property="productName"/>	
+		<result column="ORDER_PRODUCT_AMOUNT" property="productAmount"/>	
+		
+		 <collection property="orderProduct" ofType="OrderProductDto">
+				<result column="ORDER_NO" property="orderNo" />
+				<result column="ORDER_PRODUCT_NAME" property="orderProductName"/>
+				<result column="ORDER_PRODUCT_NO" property="orderProductNo" />			
+				<result column="ORDER_PRODUCT_AMOUNT" property="orderProductAmount" />
+		 </collection>
+		 
 	</resultMap>
-
+	
+	<resultMap id="orderProductResult" type="OrderProductDto">
+		<id column="ORDER_NO" property="orderNo" />
+		<result column="ORDER_PRODUCT_NAME" property="orderProductName"/>	
+		<result column="ORDER_PRODUCT_NO" property="orderProductNo"/>	
+		<result column="ORDER_PRODUCT_AMOUNT" property="orderProductAmount"/>	
+	</resultMap>
+	
+	
+	<!-- 상품 주문 (구매) -->
+	<insert id="ajaxkakaoPayment">
+		INSERT
+				INTO
+					TB_ORDER
+					(
+					ORDER_NO
+				,	ORDER_MEMBER_NO
+				,	ORDER_NAME
+				,	ORDER_PHONE
+				,	ORDER_EMAIL
+				,	ORDER_DETAIL
+				,	ORDER_REQUEST
+				,	PAYMENT_METHOD
+				,	ORDER_TOTAL_PRICE
+				,	PAYMENT_DATE
+				,	PAYMENT_STATUS
+					)
+				 VALUES
+					(
+					SEQ_ORNO.NEXTVAL
+				, #{memberNo}
+				, #{orderName}
+				, #{orerPhone}
+				, #{orderEmail}
+				, #{orderDetail}
+				, #{orderRequest}
+				, #{paymentMethod}
+				, #{orderTotalPrice}
+				, SYSDATE
+				, #{paymentStatus}
+					)
+	</insert>
+	
+	<!-- 구매 상품 정보(주문번호,상품이름,상품번호,상품수량) -->
+	<insert id="orderProductList">
+    <foreach item="item" collection="list" open="INSERT ALL"  close="SELECT * FROM DUAL" separator=" " >
+				INTO
+				 TB_PRODUCT_ORDER
+				 (
+				   ORDER_NO
+				 , ORDER_PRODUCT_NAME
+				 , ORDER_PRODUCT_NO
+				 , ORDER_PRODUCT_AMOUNT
+				 )
+				 VALUES
+				 (
+				   SEQ_ORNO.CURRVAL
+				 , #{item.orderProductName}
+				 , #{item.orderProductNo}
+				 , #{item.orderProductAmount}
+				 )
+			</foreach>
+	</insert>
+	
+	<delete id="deleteCartList">
+	    DELETE FROM TB_CART
+	    WHERE USER_NO = #{userNo}
+	      AND PRODUCT_NO IN
+	    <foreach item="item" index="index" collection="list"
+      					open="(" separator="," close=")">
+        #{item}
+  		</foreach>
+	</delete>
+	
+	
 </mapper>
+
+
+

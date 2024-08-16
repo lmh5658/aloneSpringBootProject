@@ -35,5 +35,7 @@ public class MemberDto {
 	private String userPath;
 	private String streetAddress;
 	private String otherAddress;
+	private int point; //default => 0
+	private String coupon; // default => '가입' (가입시 3000원할인쿠폰)
 	
 }

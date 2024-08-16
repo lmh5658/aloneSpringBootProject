@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.mh.boot.dto.PageInfoDto;
 import com.mh.boot.dto.ProductDto;
+import com.mh.boot.dto.ReviewDto;
 
 public interface ProductService {
   
@@ -12,7 +13,7 @@ public interface ProductService {
   
   List<ProductDto> selectProductList(PageInfoDto pi, String type);
   
-  ProductDto selectProduct(int no);
+  ProductDto selectProduct(Map<String, Object> map);
   
   int selectCart(Map<String, Object> map);
   
@@ -22,9 +23,16 @@ public interface ProductService {
   
   List<ProductDto> selectCartList(int userNo);
   
-  int deleteCart(Map<String, Object> map);
+  int deleteCart(Map<String, Object> list);
   
   int selectCartCheck(int userNo);
   
   int cartCountUpdate(Map<String, Object> map);
+  
+  int writeReview(ReviewDto review);
+  
+  List<ReviewDto> reviewSelect(int productNo, PageInfoDto pi);
+  
+  int reviewListCount(int productNo);
+
 }

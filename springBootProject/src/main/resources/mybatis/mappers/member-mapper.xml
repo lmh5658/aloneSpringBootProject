@@ -22,6 +22,8 @@
     <result column="USER_PATH" property="userPath"/>
     <result column="STREET_ADDRESS" property="streetAddress"/>
     <result column="OTHER_ADDERSS" property="otherAddress"/>
+    <result column="POINT" property="point"/>
+    <result column="COUPON" property="coupon"/>
   </resultMap>
   
 

@@ -149,13 +149,13 @@ img{
 									    justify-content: center;
 									    margin-top: 100px;">
 	        	<ul class="pagination">
-						  <li class="page-item ${ pi.currentPage == 1 ?  'disabled' : ''}"><a class="page-link" href="${contextPath}/product/list.do?type=${type}&page=${ pi.currentPage - 1}">Previous</a></li>
+						  <li class="page-item ${ pi.currentPage == 1 ?  'disabled' : ''}"><a class="page-link" href="${contextPath}/product/list.do?type=${type}&page=${ pi.currentPage - 1}">이전</a></li>
 						  <c:forEach var="p" begin="${ pi.startPage }" end="${ pi.endPage }">
 							  <li class="page-item ${ pi.currentPage == p ? 'disabled active' : '' }">
 							  	<a class="page-link" href="${contextPath}/product/list.do?type=${type}&page=${p}">${ p }</a>
 							  </li>
 							</c:forEach>
-						  <li class="page-item ${ pi.currentPage == pi.maxPage ? 'disabled' : '' }"><a class="page-link" href="${contextPath}/product/list.do?type=${type}&page=${ pi.currentPage + 1 }">Next</a></li>
+						  <li class="page-item ${ pi.currentPage == pi.maxPage ? 'disabled' : '' }"><a class="page-link" href="${contextPath}/product/list.do?type=${type}&page=${ pi.currentPage + 1 }">다음</a></li>
 						</ul>
 	        </div>
 	    </div>
@@ -168,7 +168,7 @@ img{
 //상품 상세 페이지로 이동 스크립트
 $(document).on("click", ".product-image", function(){
     var productNo = $(this).find(".productNo").val();
-    location.href = "${contextPath}/product/detail.page?no=" + productNo;
+    location.href = "${contextPath}/product/detail.page?productNo=" + productNo;
 });
 
 //가격 콤마 스크립트

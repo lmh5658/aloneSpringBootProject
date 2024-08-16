@@ -1,12 +1,17 @@
 package com.mh.boot.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.mh.boot.dto.MemberDto;
 import com.mh.boot.dto.PageInfoDto;
 import com.mh.boot.dto.ProductDto;
+import com.mh.boot.dto.ReviewDto;
 import com.mh.boot.service.ProductService;
 import com.mh.boot.util.FileUtil;
 import com.mh.boot.util.PagingUtil;
@@ -60,8 +66,23 @@ public class ProductController {
   }
   
   @GetMapping("/detail.page") 
-  public String detail(int no, Model model, RedirectAttributes redirectAttributes) {
-      model.addAttribute("list", productService.selectProduct(no));
+  public String detail(@RequestParam(value="page", defaultValue="1") int currentPage, int productNo, Model model, RedirectAttributes redirectAttributes
+		  			  , HttpSession session) {
+	  
+	  int listCount = productService.reviewListCount(productNo);
+	  PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 4, 5);
+	  
+	  List<ReviewDto> list = new ArrayList<>();
+	  
+	  Map<String, Object> map = new HashMap<>();
+	  map.put("productNo", productNo);
+	  if(session.getAttribute("loginUser") != null && !session.getAttribute("loginUser").equals("")) {
+		  map.put("userNo", ((MemberDto)session.getAttribute("loginUser")).getUserNo());		  
+	  }
+	  
+      model.addAttribute("list", productService.selectProduct(map));
+      model.addAttribute("reviewList", productService.reviewSelect(productNo, pi));
+      
       return "product/pDetail";
   }
   
@@ -116,13 +137,13 @@ public class ProductController {
   @GetMapping("/deleteCart.do")
   public int deleteCart(int productNo, HttpSession session) {
 	  
-	  Map<String, Object> map = new HashMap<>();
-	  map.put("userNo", ((MemberDto)session.getAttribute("loginUser")).getUserNo());
-	  map.put("productNo", productNo);
-	  
-	  return productService.deleteCart(map);
-  }
-  
+
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("userNo", ((MemberDto) session.getAttribute("loginUser")).getUserNo());
+	    map.put("productNo", productNo);
+
+	    return productService.deleteCart(map);
+	}
   
   @ResponseBody
   @GetMapping("/cartCountUpdate.do")
@@ -136,7 +157,79 @@ public class ProductController {
 	  return productService.cartCountUpdate(map);
   }
   
- 
+  
+  /**
+   * 
+   * @param ajax 리뷰 작성
+   * @return
+   */
+  @ResponseBody
+  @PostMapping("/writeReview.do")
+  public ResponseEntity<?> writeReview(@RequestParam(value="page", defaultValue="1") int currentPage, @ModelAttribute ReviewDto review, HttpSession session, int productNo) {
+	  
+	  
+	  
+	  
+	  int listCount = productService.reviewListCount(productNo);
+	  
+	  PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 4, 5);
+	  
+	  Map<String, Object> map = new HashMap<>();
+	  List<ReviewDto> list = new ArrayList<>();
+	  
+	  try {
+		  
+		  if (session.getAttribute("loginUser") != null && review != null) {
+			  review.setMemberNo(((MemberDto)session.getAttribute("loginUser")).getUserNo());
+			  review.setNickName(((MemberDto)session.getAttribute("loginUser")).getNickName());
+		      productService.writeReview(review);
+		      list =  productService.reviewSelect(productNo, pi);
+		   }
+		  
+		  map.put("list", list);
+		  map.put("pi", pi);
+		  
+	  } catch (Exception e) {
+		  throw new FtpConnectionFailedException("리뷰 오류 : " + e.getMessage());
+	  }
+	  
+	  return ResponseEntity.ok(map);
+	  
+  }
+  
+  /**
+   * 
+   * @param ajax 리뷰 게시판 조회
+   * @return
+   */
+  @ResponseBody
+  @GetMapping("/reviewList.do")
+  public ResponseEntity<?> writeReview(@RequestParam(value="page", defaultValue="1") int currentPage, HttpSession session, int productNo) {
+	  
+	  
+	  int listCount = productService.reviewListCount(productNo);
+	  
+	  PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 4, 5);
+	  
+	  Map<String, Object> map = new HashMap<>();
+	  List<ReviewDto> list = new ArrayList<>();
+	  
+	  try {
+		  
+		  list =  productService.reviewSelect(productNo, pi);			  
+		 
+		  map.put("list", list);
+		  map.put("pi", pi);
+		  
+	  } catch (Exception e) {
+		  throw new FtpConnectionFailedException("리뷰 조회 오류 : " + e.getMessage());
+	  }
+	  
+	  return ResponseEntity.ok(map);
+	  
+  }
+  
+  
   
   
 }

@@ -27,4 +27,5 @@ public class ProductDto {
   private int reviewCheck;
   private int count;
   
+  private String userNo;
 }

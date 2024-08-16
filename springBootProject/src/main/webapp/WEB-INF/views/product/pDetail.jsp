@@ -441,6 +441,14 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
     text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
     cursor: pointer;
 }
+.page{
+	border: none;
+  background: #f9f9f9;
+  margin:10px;
+}
+.bt{
+margin: 10px;
+}
 </style>
 </head>
 <body>
@@ -512,58 +520,59 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
 		            	<div class="review-container">
 									    <div class="rating-summary">
 									        <div class="product-rating">
-									            <span class="rating-score">4.2</span> /5
-									        </div>
-									        <div class="rating-distribution">
-									            <div class="distribution-bar">
-									                <span class="bar-label">5점</span>
-									                <div class="bar"><div class="fill" style="width: 55%;"></div></div>
-									            </div>
-									            <div class="distribution-bar">
-									                <span class="bar-label">4점</span>
-									                <div class="bar"><div class="fill" style="width: 35%;"></div></div>
-									            </div>
-									            <div class="distribution-bar">
-									                <span class="bar-label">3점</span>
-									                <div class="bar"><div class="fill" style="width: 25%;"></div></div>
-									            </div>
-									            <div class="distribution-bar">
-									                <span class="bar-label">2점</span>
-									                <div class="bar"><div class="fill" style="width: 15%;"></div></div>
-									            </div>
-									            <div class="distribution-bar">
-									                <span class="bar-label">1점</span>
-									                <div class="bar"><div class="fill" style="width: 5%;"></div></div>
-									            </div>
-									            <!-- 다른 점수들에 대해서도 반복 -->
-									        </div>
+													    <span id="rating-score" data-rating="${reviewList[0].avgRatingTotal}"></span> / 5
+													</div>
+													<div class="rating-distribution">
+													    <div class="distribution-bar">
+													        <span class="bar-label">5점</span>
+													        <div class="bar"><div class="fill" id="bar-5"></div></div>
+													    </div>
+													    <div class="distribution-bar">
+													        <span class="bar-label">4점</span>
+													        <div class="bar"><div class="fill" id="bar-4"></div></div>
+													    </div>
+													    <div class="distribution-bar">
+													        <span class="bar-label">3점</span>
+													        <div class="bar"><div class="fill" id="bar-3"></div></div>
+													    </div>
+													    <div class="distribution-bar">
+													        <span class="bar-label">2점</span>
+													        <div class="bar"><div class="fill" id="bar-2"></div></div>
+													    </div>
+													    <div class="distribution-bar">
+													        <span class="bar-label">1점</span>
+													        <div class="bar"><div class="fill" id="bar-1"></div></div>
+													    </div>
+													</div>
 									    </div>
 									    <div class="review-list">
-									        <div class="review-item">
-									            <div class="review-stars">★★★★★</div>
-									            <div class="review-text">너무 만족스러워요! 지인한테 엄청 추천했어요!</div>
-									        </div>
-									        <div class="review-item">
-									            <div class="review-stars">★★★★★</div>
-									            <div class="review-text">5점 만점에 10점! 부모님이 너무 좋아하세요.</div>
-									        </div>
-									        <div class="review-item">
-									            <div class="review-stars">★★★★☆</div>
-									            <div class="review-text">왜 진작 사지 않았을까요..? 고민은 구매만 늦출 뿐!!</div>
-									        </div>
+									        
 									    </div>
 									    <div class="review-count">
-									            <span>총 리뷰</span> 17
+									            <span>총 리뷰 </span><b></b>건
 									    </div>
+									    <div>
+									    <div style="display: flex;
+															    justify-content: center;
+															    margin-top: 100px;
+															    margin: 5px;">
+								        	<ul class="pagination">
+													  
+													</ul>
+								        </div>
+									    
+									    </div>
+									    
 									    <div style="display: flex;
 															    justify-content: flex-end;
 															    align-items: center;
-															    flex-direction: row;">
+															    flex-direction: row;
+															    ">
 									    	<button class="write-review-button" data-toggle="modal" data-target="#myModal">리뷰 작성하기</button>
 									    </div>
 										    <div class="review-prompt">
-												    <div class="stars">★★★★★</div>
-												    <p class="review-text">리뷰 작성시 <strong>최대 1,500</strong>를 드립니다.<br>첫번째 리뷰를 작성해보세요.</p>
+												    <div class="stars" style="display: flex; justify-content: space-between;"><div style="margin-left: 86px;">★★★★★</div><div style="cursor: pointer;" onclick="closed();">x</div></div>
+												    <p class="review-text">리뷰 작성시 <strong>최대 1000 포인트</strong>을 드립니다.<br>첫번째 리뷰를 작성해보세요.</p>
 												    <button class="review-button" data-toggle="modal" data-target="#myModal">리뷰작성하기</button>
 												</div>
 									</div>
@@ -601,7 +610,7 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
 														</form>
 														
 														<div>
-															<textarea rows="5" cols="61" resize="none" id="reviewContent">
+															<textarea rows="5" cols="61" resize="none" id="reviewContent" style="resize: none; width: 466px;" placeholder="리뷰를 작성해주세요.">
 															
 															</textarea>
 														</div>
@@ -619,7 +628,7 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
 		            
 		            
 		        </div>
-		        
+		        <!-- 
 		        <div class="product-description-full">
 		            <h2>상품 설명</h2>
 		        </div>
@@ -631,9 +640,76 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
 		            <div class="related-product">관련 상품 3</div>
 		        </div>
 		    </div>
-		    
+		    	-->
+		    	
+<script>
+
+function closed(){
+	 $(".review-prompt").css({
+		    "z-index": "-1",
+     "display": "none" // 보이도록 설정
+ });
+	 $(".write-review-button").css("display", "none");
+}
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 평균 점수와 각 점수의 리뷰 수를 템플릿 엔진에서 JavaScript로 전달
+    var ratingScoreElement = document.getElementById('rating-score');
+    var avgRatingTotal = parseFloat(ratingScoreElement.getAttribute('data-rating'));
+
+    // 서버에서 전달된 값들을 받아와서 숫자로 변환
+    var ratingAvg5 = parseInt("${reviewList[0].avgRating5}", 10);
+    var ratingAvg4 = parseInt("${reviewList[0].avgRating4}", 10);
+    var ratingAvg3 = parseInt("${ reviewList[0].avgRating3}", 10);
+    var ratingAvg2 = parseInt("${reviewList[0].avgRating2}", 10);
+    var ratingAvg1 = parseInt("${reviewList[0].avgRating1}", 10);
+    var totalReviews = parseInt("${reviewList[0].avgRatingTotal}", 10);
+    var totalReviewCount = parseInt("${reviewList[0].totalReviewCount}", 10);
+
+    
+    // 실제 데이터로 각 점수별 카운트 설정
+    
+    var ratingsCount = {
+        5: ratingAvg5,
+        4: ratingAvg4,
+        3: ratingAvg3,
+        2: ratingAvg2,
+        1: ratingAvg1
+    };
+
+    console.log('Ratings Count:', ratingsCount);
+    if (!isNaN(totalReviews) && totalReviews > 0) {
+			
+		    for (var rating in ratingsCount) {
+		        var count = ratingsCount[rating];
+		        var percentage = (count / totalReviews) * 100;
+
+		        percentage = Math.min(percentage, 100);
+
+		        document.getElementById('bar-' + rating).style.width = percentage + '%';
+
+		        console.log('Rating ' + rating + ': ' + percentage + '%');
+		       
+		    }
+
+		}
+    
+    // 평균 점수를 표시
+    document.getElementById('rating-score').textContent = avgRatingTotal.toFixed(1);
+    
+    
+    $(".review-count b").html(totalReviewCount == null ? 0 : totalReviewCount);
+});
+</script>
 		    
 <script>
+
+var loginCheck = "${ loginUser }"
+
 //current position
 var pos = 0;
 //number of slides
@@ -749,51 +825,44 @@ $(document).ready(function() {
 
 //리뷰 작성 여부
 $(document).ready(function(){
-    var orderCheck = "${ list.orderCheck }";
+	
     var reviewCheck = "${ list.reviewCheck }";
-
-    if (orderCheck <= 1 && reviewCheck == 0) {
-        $(".review-prompt").css({
-            "z-index": "1",
-            "display": "block" // 보이도록 설정
-        });
-        $(".write-review-button").css("display", "none");
-    } else if (orderCheck <= 1 && reviewCheck <= 1) {
-        $(".review-prompt").css({
-            "z-index": "-1",
-            "display": "none" // 숨기도록 설정
-        });
-        $(".write-review-button").css("display", "block");
-    }
+    var orderCheck = "${ list.orderCheck }";
+		let login = "${ loginUser }";
+		
+		if(login == ""){
+			 $(".review-prompt").css({
+				    "z-index": "-1",
+		        "display": "none" // 보이도록 설정
+		    });
+			 $(".write-review-button").css("display", "none");
+		}else{
+			if (reviewCheck == 0 && orderCheck >= 1) {
+				
+	        $(".review-prompt").css({
+	            "z-index": "1",
+	            "display": "block" // 보이도록 설정
+	        });
+	        $(".write-review-button").css("display", "none");
+	        
+	    } else if(reviewCheck >= 1 && orderCheck >= 1){
+	        $(".review-prompt").css({
+	            "z-index": "-1",
+	            "display": "none" // 숨기도록 설정
+	    		});
+	        $(".write-review-button").css("display", "block");
+	    }else{
+	    	 $(".review-prompt").css({
+				    "z-index": "-1",
+		        "display": "none" // 보이도록 설정
+		    });
+			 $(".write-review-button").css("display", "none");
+	    }
+			
+		}
+   
     
 });
-
-
-
-
-//등록버튼 confirm
-$("#signUp").on("click",function(){
-	 if(confirm("정말로 등록하시겠습니까?")){
-		  $.ajax({
-			  url:"${contextPath}/product/writeReview.do",
-			  data:{
-				 rating:$("input[type='radio'][name='reviewStar']:checked").val(),
-				 reviewContent:$("#reviewContent").val(),
-				 memberNo:"${no}"
-			  },
-			  success:function(response){
-				  
-			  },
-			  error:function(){
-				  console.log("ajax통신실패");
-			  }
-			  
-			  
-			  
-		  })
-		 
-	 }
-})
 
 
 
@@ -821,17 +890,155 @@ $("#minus").on("click", function(){
   
   
 })
-// 해야될것 (토요일)=========================================
-// 로그인이 되지 않은 상태에서 리뷰작성하기 버튼 클릭하면 => 로그인화면으로 이동
-// 구글 api 로그인 연동하기 크로스도메인 이슈
-// 일반 회원가입 스프링 시큐리티
-// 상품 리뷰 작성하기 완료하기
-// 도란도란 게시판 => 인스타그램같은 커뮤니티 대댓글기능 + 사진올리기 + 좋아요기능 + 페이징처리 (되는데까지 해보기)
-//=======================================================
 
+//리뷰버튼 클릭시 로그인체크 스크립트
+ $(document).on("click", ".review-button", function() {
+	 
+    if (loginCheck == "") {
+        $("#myModal").modal('hide');
+        $('#loginModal').modal('show');
+    }
+    
+});
 
 
 </script>
+
+<script>
+$(document).ready(function() {
+    // 페이지 로드 시 리뷰를 가져오고 페이징을 렌더링
+    loadPage(1);
+});
+
+//페이지 데이터 로드 및 렌더링
+function loadPage(pageNumber) {
+    $.ajax({
+        url: "${contextPath}/product/reviewList.do", // 리뷰 목록
+        type: "get",
+        data: {
+            productNo: "${list.productNo}",
+            page: pageNumber
+        },
+        success: function(response) {
+            renderReviews(response);
+            console.log(response);
+        },
+        error: function() {
+            console.log("AJAX 통신 실패");
+        }
+    });
+}
+
+
+$("#signUp").on("click", function() {
+    if (confirm("리뷰를 등록하시겠습니까?")) {
+        submitReview();
+    }
+});
+
+function submitReview() {
+    $.ajax({
+        url: "${contextPath}/product/writeReview.do",
+        type: "post",
+        data: {
+            rating: $("input[type='radio'][name='reviewStar']:checked").val(),
+            reviewContent: $("#reviewContent").val().trim(),
+            productNo: "${list.productNo}"
+        },
+        success: function(response) {
+            if (response.list) {
+                alert("리뷰 등록이 완료되었습니다.");
+                $(".review-prompt").css({
+    	            "z-index": "-1",
+    	            "display": "none" // 숨기도록 설정
+    	    		});
+                renderReviews(response);
+                
+            } else {
+                console.log("리뷰 등록 실패");
+            }
+        },
+        error: function() {
+            console.log("AJAX 통신 실패");
+        }
+    });
+}
+
+    
+
+
+
+// 리뷰와 페이징 버튼 렌더링
+function renderReviews(response) {
+	
+    let body = "";
+    response.list.forEach(function(number) {
+        body += "<div class='review-item'>";
+        body += "<div style='display: flex;'>";
+        body += "<div class='review-stars' style='width: 80%;'>" +
+            (number.rating == 5 ? '★★★★★' :
+            number.rating == 4 ? '★★★★' :
+            number.rating === 3 ? '★★★' :
+            number.rating === 2 ? '★★' : '★') + "</div>";
+        body += "<div style='display: flex; justify-content: flex-end; width: 20%;'>" + number.nickName + "</div>";
+        body += "</div>";
+        body += "<div style='display: flex;'>";
+        body += "<div class='review-text' style='width: 80%;'>" + number.reviewContent + "</div>";
+        body += "<div style='display: flex; justify-content: flex-end; width: 20%;'>" + number.reviewPostDt + "</div>";
+        body += "</div>";
+        body += "</div>";
+    });
+
+    $(".review-list").html(body);
+    console.log(response);
+    $(".review-count b").html(response.list == "" ? "0" : response.list[0].totalReviewCount);
+    renderPagination(response.pi);
+}
+
+// 페이징 버튼 렌더링
+function renderPagination(pi) {
+    let html = '';
+		if(pi.listCount != 0){
+			
+       if (pi.currentPage == 1) {
+           html += "<button class='page bt' disabled>이전</button>";
+       } else {
+           html += "<button class='page bt' onclick='loadPage(" + (pi.currentPage - 1) + ")'>이전</button>";
+       }
+
+       // 페이지 번호 버튼 렌더링
+       for (let i = 1; i <= pi.endPage; i++) {
+           if (i == pi.currentPage) {
+               html += '<button class="page" disabled active>' + (i) + '</button>';
+           } else {
+               html += "<button class='page'" + (pi.currenPage == i ? "disabled active" : "")  + " onclick='loadPage(" + i + ")'>" + (i) + "</button>";
+           }
+       }
+
+       // Next 버튼 렌더링
+       if (pi.currentPage == pi.maxPage) {
+           html += "<button class='page bt' disabled>다음</button>";
+       } else {
+           html +=  "<button class='page bt' onclick='loadPage(" + (pi.currentPage + 1) + ")'>다음</button>";
+       }
+
+       $('.pagination').html(html);
+		}else{
+			$('.pagination').html("");
+		}
+   
+}
+
+</script>
+
+
+
+
+
+
+
+
+
 
 </body>
 </html>

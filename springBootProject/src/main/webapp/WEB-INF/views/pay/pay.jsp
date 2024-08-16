@@ -7,6 +7,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<!-- 포트원 결제 -->
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+<!-- iamport.payment.js -->
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+<!-- 포트원 결제 -->
 </head>
 <style>
 body {
@@ -124,7 +129,7 @@ form textarea {
             		<table>
             			<tr>
             				<th>주문자 이름<b style="color: red;">&nbsp;*</b></th>
-            				<td><input type="text" id="address" name="orderName" placeholder="수령인을 입력하세요." required></td>
+            				<td><input type="text" id="orderName" name="orderName" placeholder="수령인을 입력하세요." required></td>
             			</tr>
             			<tr>
             				<th>휴대전화<b style="color: red;">&nbsp;*</b></th>
@@ -172,16 +177,22 @@ form textarea {
 					                  </tr>
 					              </thead>
 					              <tbody>
-					                  <c:forEach var="item" items="${ cartList }">
-					                      <tr class="item">
-					                          <td id="productName"><div></div><image src="${contextPath}${item.productThumbnailPath}" style="width: 100px;"><div>${ item.proName }</td>
-					                          <td>${ item.count }</td>
-					                          <td class="price">${ item.productPrice }</td>
-					                          <td class="total">${ item.count * item.productPrice }</td>
-																	<input type="hidden" class="pNo" value="${ item.productNo }" name="productNo">
-																	<input type="hidden" value="${ item.count }" name="productAmount">
-					                      </tr>
-					                  </c:forEach>
+					                  <c:forEach var="item" items="${ cartList }" begin="0" end="${ cartList.size() - 1 }" varStatus="status">
+													    <tr class="item">
+													        <td id="productName">
+													            <div></div>
+													            <img src="${contextPath}${item.productThumbnailPath}" style="width: 100px;">
+													            <div>${item.proName}</div>
+													        </td>
+													        <td>${item.count}</td>
+													        <td class="price">${item.productPrice}</td>
+													        <td class="total">${item.count * item.productPrice}</td>
+													        <input type="hidden" class="pNo" value="${item.productNo}" name="orderProduct[${status.index}].orderProductNo">
+													        <input type="hidden" value="${item.proName}" name="orderProduct[${status.index}].orderProductName">
+													        <input type="hidden" value="${item.count}" name="orderProduct[${status.index}].orderProductAmount">
+													        <input type="hidden" value="${userNo}" name="orderProduct[${status.index}].userNo">
+													    </tr>
+													</c:forEach>
 					              </tbody>
 					          </table>
 					          <div class="final-amount" style="text-align: right;font-size: 25px;">
@@ -203,7 +214,7 @@ form textarea {
 												    align-items: center;
 												    justify-content: center;
 												    margin: 103p">
-	                <button type="button" class="pay-button">결제하기</button>					      
+	                <button type="button" class="pay-button" id="payBtn">결제하기</button>					      
 					      </div>
                 
                 
@@ -211,29 +222,29 @@ form textarea {
         </div>
     </div>
 <script>
-var IMP = window.IMP;
+
+
+
 
 $(document).ready(function(){
 	
-	$(".pay-button").on("click", function (event) {
-	
-		if( $("input[type='radio':checked]").length > 0 && $("#kakaoRadio").is(":checked") == "true"){
-			  kakaoPay();
-		}else{
-			alert("결제수단을 설정해주세요.");
-			event.preventDefault();
-		}
-		
+    $(".pay-button").on("click", function (event) {
+        // 올바른 셀렉터를 사용하여 체크된 라디오 버튼을 확인합니다.
+        if ($("input[type='radio']:checked").length > 0 && $("#kakaoRadio").is(":checked")) {
+            kakaoPay();
+        } else {
+            alert("결제수단을 설정해주세요.");
+            event.preventDefault();
+        }
+    });
+    
 });
-
-})
 
 //구매자 정보
 
-
-
-
 function kakaoPay() {
+	
+	var IMP = window.IMP;
 	
 	var today = new Date();
 	var hours = today.getHours(); // 시
@@ -243,16 +254,16 @@ function kakaoPay() {
 	var makeMerchantUid = hours + minutes + seconds + milliseconds;
 	
 if (confirm("구매 하시겠습니까?")) { // 구매 클릭시 한번 더 확인하기
-		
    //const emoticonName = document.getElementById('title').innerText
 	 let userEmail = '${memberList.email}';
 	 let userName = '${memberList.userName}';
 	 let userPhone = '${memberList.phone}';
 	 var totalPrice = "${totalPrice}";
-   IMP.init("imp37456887"); // 가맹점 식별코드
-   
-   IMP.request_pay({
-	   
+	 
+			
+			
+	 		IMP.init('imp37456887'); //가맹점 식별코드
+   		IMP.request_pay({
        pg: 'kakaopay.TC0ONETIME', // PG사 코드표에서 선택
        pay_method: 'card', // 결제 방식
        merchant_uid: "IMP" + makeMerchantUid, // 결제 고유 번호
@@ -273,19 +284,20 @@ if (confirm("구매 하시겠습니까?")) { // 구매 클릭시 한번 더 확�
        	$.ajax({
        		url:"${contextPath}/pay/ajaxkakaoPayment.do",
        		type:"post",
-       		data:{
-       			order:$("#paymentForm").serialize()
-       		},
+       		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+       		dataType: "text",
+       		data:$("#paymentForm").serialize(),
        		success:function(response){
        			
        			console.log("전달 여부 :" + response);
        			//결제 성공시
        		
-  	        if (response == "SUCCESS") { // DB저장 성공시
+  	        if (response > 0) { // DB저장 성공시
   	            
-  	        		location.href="${contextPath}/pay/payCompleted.do";
+  	        		console.log("ajax통신 성공!!");
+  	        		//location.href="${contextPath}/pay/payCompleted.do";
   	        
-  	        } else { // 결제완료 후 DB저장 실패시
+  	        } else{ // 결제완료 후 DB저장 실패시
   	            alert(`error:[${response.status}]\n결제요청이 승인된 경우 관리자에게 문의바랍니다.`);
   	            // DB저장 실패시 status에 따라 추가적인 작업 가능성
   	        }

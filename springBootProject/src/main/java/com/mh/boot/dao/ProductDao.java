@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mh.boot.dto.PageInfoDto;
 import com.mh.boot.dto.ProductDto;
+import com.mh.boot.dto.ReviewDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,8 +28,8 @@ public class ProductDao {
     return sqlSessionTemplate.selectList("productMapper.selectProductList", type, rowBounds);
   }
   
-  public ProductDto selectProduct(int no){
-	 return sqlSessionTemplate.selectOne("productMapper.selectProduct", no);
+  public ProductDto selectProduct(Map<String, Object> map){
+	 return sqlSessionTemplate.selectOne("productMapper.selectProduct", map);
   }
   
   public int selectCart(Map<String, Object> map) {
@@ -58,6 +59,24 @@ public class ProductDao {
   public  int cartCountUpdate(Map<String, Object> map) {
 	  return sqlSessionTemplate.update("productMapper.cartCountUpdate", map);
   }
+  
+  public int writeReview(ReviewDto review) {
+	  return sqlSessionTemplate.insert("productMapper.writeReview", review);
+  }
+  
+  public List<ReviewDto> reviewSelect(int ProductNo, PageInfoDto pi){
+	  RowBounds rowBounds = new RowBounds((pi.getCurrentPage() - 1) * pi.getBoardLimit(), pi.getBoardLimit());
+	  return sqlSessionTemplate.selectList("productMapper.reviewSelect", ProductNo, rowBounds);
+
+  }
+  
+  
+  public int reviewListCount(int productNo) {
+	  return sqlSessionTemplate.selectOne("productMapper.reviewListCount", productNo);
+  }
+  
+  
+  
   
   
 }

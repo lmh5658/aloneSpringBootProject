@@ -19,6 +19,17 @@
     <result column="COUNT" property="count"/>
   </resultMap>
   
+  <resultMap id="reviewResult" type="ReviewDto">
+    <id column="REVIEW_NO" property="reviewNo"/>
+    <result column="PRODUCT_NO" property="productNo"/>
+    <result column="MEMBER_NO" property="memberNo"/>
+    <result column="RATING" property="rating"/>
+    <result column="REVIEW_CONTENT" property="reviewContent"/>
+    <result column="REVIEW_POST_DATE" property="reviewPostDt"/>
+    <result column="REVIEW_ATTACHMENT_PATH" property="reviewAttachPath"/>
+    <result column="REVIEW_NICKNAME" property="nickName"/>
+  </resultMap>
+  
 
   
   
@@ -53,7 +64,7 @@
   
   <!-- 상품 상세 -->
   <select id="selectProduct" resultMap="productResult">
-  	 SELECT 
+  	  SELECT 
            PRODUCT_NO
          , CATEGORY_TYPE
          , PRODUCT_NAME
@@ -64,17 +75,21 @@
          , PRO_SALE_PRICE
          , PRO_THUMBNAIL_PATH
          , PRO_DETAIL_PATH
-         , (SELECT COUNT(*)
-              FROM TB_ORDER
-             WHERE PAYMENT_NO = PRODUCT_NO
-               AND ORDER_MEMBER_NO = 1) ORDER_CHECK
-         , (SELECT COUNT(*)
-              FROM TB_REVIEW
-             WHERE PRODUCT_NO = PRODUCT_NO
-               AND MEMBER_NO = 1
-               AND REVIEW_POST_DATE IN NULL) REVIEW_CHECK
+         <if test="userNo != null and !userNo.equals('')">
+	         , (SELECT COUNT(*) 
+	              FROM TB_REVIEW
+	            WHERE PRODUCT_NO = PRODUCT_NO
+	              AND MEMBER_NO = #{userNo}
+	            ) REVIEW_CHECK  
+	         , (SELECT COUNT(*)
+	              FROM TB_ORDER
+	              JOIN TB_PRODUCT_ORDER USING(ORDER_NO)
+	              WHERE ORDER_PRODUCT_NO = PRODUCT_NO
+	               AND ORDER_MEMBER_NO = #{userNo}
+	           ) ORDER_CHECK
+           </if>
       FROM TB_PRODUCT P
-     WHERE PRODUCT_NO = #{no}
+     WHERE PRODUCT_NO = #{productNo}
   </select>
   <!-- 상품 상세 -->
   
@@ -134,11 +149,11 @@
   </select>
   
   <!-- 장바구니 상품 삭제 -->
-  <delete id="deleteCart">
-  	DELETE TB_CART
-  	 WHERE PRODUCT_NO = #{productNo} 
-  	   AND USER_NO = #{userNo} 
-  </delete>
+<delete id="deleteCart">
+    DELETE FROM TB_CART
+    WHERE USER_NO = #{userNo}
+    AND PRODUCT_NO = #{productNo}
+</delete>
   
   <!-- 장바구니 상품 수량변경 업데이트 -->
   <update id="cartCountUpdate">
@@ -154,6 +169,83 @@
   	 WHERE PRODUCT_NO = ${productNo}
   	   AND USER_NO = ${userNo}
   </update>
+  
+  <!-- 상품 리뷰 등록 -->
+  <insert id="writeReview">
+  	INSERT
+  			INTO
+  				TB_REVIEW
+  				(
+  				REVIEW_NO
+				,	PRODUCT_NO
+				,	MEMBER_NO
+				,	RATING
+				,	REVIEW_CONTENT
+				, REVIEW_NICKNAME
+  				)
+  			VALUES
+  				(
+  				SEQ_RENO.NEXTVAL
+  			, #{productNo}
+  			, #{memberNo}
+  			, #{rating}
+  			, #{reviewContent}
+  			, #{nickName}
+  				)
+  </insert>
+  
+  <!-- 상품 리뷰 리스트 -->
+  <select id="reviewSelect" resultMap="reviewResult">
+  	SELECT
+		     REVIEW_NO
+		   , RATING
+		   , REVIEW_CONTENT
+		   , REVIEW_NICKNAME
+		   , TO_CHAR(REVIEW_POST_DATE, 'YYYY/MM/DD') REVIEW_POST_DATE
+		   
+		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
+		       FROM TB_REVIEW
+		      WHERE PRODUCT_NO = #{productNo} AND RATING = 5) AS avgRating5
+		      
+		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
+		       FROM TB_REVIEW
+		      WHERE PRODUCT_NO = #{productNo} AND RATING = 4) AS avgRating4
+		      
+		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
+		       FROM TB_REVIEW
+		      WHERE PRODUCT_NO = #{productNo} AND RATING = 3) AS avgRating3
+		      
+		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
+		       FROM TB_REVIEW
+		      WHERE PRODUCT_NO = #{productNo} AND RATING = 2) AS avgRating2
+		      
+		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
+		       FROM TB_REVIEW
+		      WHERE PRODUCT_NO = #{productNo} AND RATING = 1) AS avgRating1
+		      
+		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
+		       FROM TB_REVIEW
+		      WHERE PRODUCT_NO = #{productNo}) AS avgRatingTotal
+		      
+		   , (SELECT COUNT(RATING)
+		       FROM TB_REVIEW
+		      WHERE PRODUCT_NO = #{productNo}) AS totalReviewCount
+		      
+		FROM TB_REVIEW
+		WHERE PRODUCT_NO = #{productNo}
+		ORDER 
+		   BY REVIEW_NO DESC
+  </select>
+  
+  <!-- 리뷰 갯수 (페이징) -->
+  <select id="reviewListCount" resultType="_int">
+  	SELECT COUNT(*)
+			FROM TB_REVIEW
+		 WHERE PRODUCT_NO = #{productNo}
+  </select>
+  
+  
+  
   
   
   <!-- 

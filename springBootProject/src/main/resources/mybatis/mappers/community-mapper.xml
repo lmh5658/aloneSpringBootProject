@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="communityMapper">
+
+	<resultMap id="communityResult" type="CommunityDto">
+    <id column="POST_NO" property="postNo"/>
+    <result column="POST_CONTENT" property="postContent"/>
+    <result column="POST_TITLE" property="postTitle"/>
+    <result column="WRITER_NO" property="writerNo"/>
+    <result column="WRITER_NICKNAME" property="writerNickName"/>
+    <result column="POST_TYPE" property="postType"/>
+    <result column="POST_UPLOAD_DATE" property="postUploadDt"/>
+    <result column="FILE_STATUS" property="fileStatus"/>
+    <result column="POST_STATUS" property="postStatus"/>
+    <result column="POST_COUNT" property="postCount"/>
+    
+    <collection resultMap="attachResult" property="attachList" />
+  </resultMap>
+  
+  <resultMap id="attachResult" type="AttachDto">
+		<id column="file_no" property="fileNo"/>
+		<result column="file_path" property="filePath"/>
+		<result column="filesystem_name" property="filesystemName"/>
+		<result column="original_name" property="originalName"/>
+	</resultMap>
+	
+	<resultMap id="commentResult" type="CommentDto">
+    <id column="ID" property="id"/>
+    <result column="ANSWER_NUM" property="answerNum"/>
+    <result column="CONTENT" property="content"/>
+    <result column="REF_GROUP" property="refGroup"/>
+    <result column="REF_ORDER" property="refOrder"/>
+    <result column="STEP" property="step"/>
+    <result column="PARENT_NUM" property="parentNum"/>
+    <result column="BOARD_NO" property="boardNo"/>
+    <result column="REGIST_DATE" property="registDt"/>
+    <result column="MODIFY_DATE" property="modifyDt"/>
+    <result column="DEL_YN" property="delYN"/>
+    <result column="USER_NO" property="userNo"/>
+    <result column="USER_NICKNAME" property="userNickName"/>
+  </resultMap>
+	
+	
+	<!-- 게시글 등록 -->
+	<insert id="insertBoard">
+		INSERT
+			INTO
+				TB_COMMUNITY
+				(
+				POST_NO
+			,	POST_CONTENT
+			,	POST_TITLE
+			,	WRITER_NO
+			,	WRITER_NICKNAME
+			,	POST_TYPE
+				)
+				VALUES
+				(
+				SEQ_COMNO.NEXTVAL
+			, #{postContent}
+			, #{postTitle}
+			, #{writerNo}
+			, #{writerNickName}
+			, #{postType}
+				)
+	</insert>
+	
+	<!-- 게시판 첨부파일 등록 -->
+	<insert id="insertAttachment">
+		INSERT
+			INTO
+				TB_ATTACHMENT
+				(
+				FILE_NO
+			,	FILE_PATH
+			,	FILESYSTEM_NAME
+			,	ORIGINAL_NAME
+			,	FILE_TYPE
+			,	REF_NO
+				)
+				VALUES
+				(
+				SEQ_ATNO.NEXTVAL
+			, #{filePath}
+			, #{filesystemName}
+			, #{originalName}
+			, #{refType}
+			, SEQ_COMNO.CURRVAL
+				)
+	</insert>
+	
+	<!-- 게시판 리스트 갯수 조회 -->
+	<select id="selectBoardListCount" resultType="_int">
+		SELECT COUNT(*)
+	    FROM 
+	        TB_COMMUNITY
+		 WHERE 
+		     POST_TYPE = #{type}	
+	</select>
+	<!-- 게시판 리스트 조회 -->
+	<select id="boardList" resultMap="communityResult">
+		 SELECT 
+					 POST_NO
+					,POST_TITLE
+					,WRITER_NO
+					,WRITER_NICKNAME
+					,POST_UPLOAD_DATE
+					,(SELECT COUNT(*)
+					    FROM TB_ATTACHMENT
+					  WHERE REF_NO = POST_NO) FILE_STATUS
+					,POST_COUNT
+	    FROM 
+	        TB_COMMUNITY
+		 WHERE 
+		     POST_TYPE = #{type}
+		 ORDER
+		    BY POST_NO DESC   
+	</select>
+	
+	<select id="detail" resultMap="communityResult">
+			 SELECT 
+						  POST_NO
+						, POST_TITLE
+						, POST_CONTENT
+						, WRITER_NO
+						, WRITER_NICKNAME
+						, POST_UPLOAD_DATE
+						, POST_COUNT
+	          , FILE_NO
+	          , FILE_PATH
+	          , FILESYSTEM_NAME
+	          , ORIGINAL_NAME
+	          , UPLOAD_DATE
+	          , FILE_TYPE
+	    FROM 
+	         TB_COMMUNITY
+      JOIN 
+           TB_ATTACHMENT ON(FILE_TYPE = #{postType} AND POST_NO = REF_NO)
+		  WHERE REF_NO = #{postNo}
+		    AND POST_STATUS = 'Y' 
+	</select>
+	
+	<update id="updateIncreaseCount">
+		UPDATE TB_COMMUNITY
+		  SET POST_COUNT = POST_COUNT + 1
+		 WHERE POST_NO = #{postNo}
+	</update>
+	
+	<!-- 첫번째 댓글용 	-->
+	<insert id="insertComment" parameterType="com.mh.boot.dto.CommentDto">
+	INSERT
+		INTO
+			TB_COMMENT
+			(
+				ID
+			, ANSWER_NUM
+			, CONTENT
+			, REF_GROUP
+			, REF_ORDER
+			, STEP
+			, PARENT_NUM
+			, BOARD_NO
+			, USER_NO
+			, USER_NICKNAME
+			)
+			VALUES
+			(
+			  SEQ_CTNO.NEXTVAL
+			, #{answerNum}
+			, #{content}
+			, #{refGroup}
+			, #{refOrder}
+			, #{step}
+			, #{parentNum}
+			, #{boardNo}
+			, #{userNo}
+			, #{userNickName}
+			)
+  	<selectKey keyProperty="id" resultType="int" order="AFTER">
+        SELECT SEQ_CTNO.CURRVAL AS ID FROM DUAL
+    </selectKey>
+	</insert>
+	
+	<!-- insert시 pk값 알아오는 구문
+
+ -->
+	
+	<!-- 대댓글 수정용 
+	<update id="updateComment">
+
+	</update>
+	-->
+	<!-- 대댓글 삭제용 
+	<update id="updateDeleteComment">
+
+	</update>
+	-->
+	
+	
+	<!--  ajax 댓글 조회 -->
+	<select id="ajaxCommentSelect" resultMap="commentResult">
+		SELECT
+	    			ID
+			    , ANSWER_NUM
+			    , CONTENT
+			    , REF_GROUP
+			    , REF_ORDER
+			    , STEP
+			    , PARENT_NUM
+			    , BOARD_NO
+			    , REGIST_DATE
+			    , MODIFY_DATE
+			    , DEL_YN
+			    , USER_NO
+			    , USER_NICKNAME
+		 FROM TB_COMMENT
+		WHERE BOARD_NO = #{boardNo}
+ ORDER BY REF_GROUP ASC,
+					REF_ORDER ASC
+	</select>
+	
+	<select id="selectRefGroupCount" resultType="_int">
+		SELECT NVL(MAX(REF_GROUP), 0)
+		  FROM TB_COMMENT
+		 WHERE BOARD_NO = #{boardNo}
+	</select>
+	
+	<select id="selectParentCount" resultType="_int">
+		SELECT COUNT(*)
+		  FROM TB_COMMENT
+		 WHERE BOARD_NO = #{boardNo}
+		   AND PARENT_NUM = #{id}
+	</select>
+	
+	<update id="updateAnswerCount">
+		UPDATE TB_COMMENT
+		   SET ANSWER_NUM = ANSWER_NUM + 1
+		 WHERE ID = #{id} 
+	</update>
+	
+	<select id="selectParentRefOrder" resultType="_int">
+		SELECT NVL(MAX(REF_ORDER), 0)
+		  FROM TB_COMMENT
+		 WHERE BOARD_NO = #{boardNo}
+			  	AND PARENT_NUM = #{id}
+	</select>
+	
+	<select id="selectStep" resultType="_int">
+		SELECT NVL(STEP, 0)
+		  FROM TB_COMMENT
+		 WHERE ID = #{id}
+	</select>
+	
+	<!-- comment 페이지 갯수 -->
+	<select id="selectCommentCount" resultType="_int">
+		SELECT COUNT(*)
+		  FROM TB_COMMENT
+		 WHERE BOARD_NO = #{boardNo}
+	</select>
+	
+	<update id="updateRefOrder">
+		UPDATE TB_COMMENT
+		   SET REF_ORDER = REF_ORDER + 1
+		  WHERE ID IN
+      <foreach item="item" index="index" collection="list"
+      					open="(" separator="," close=")">
+        ${item}
+  		</foreach>
+	</update>
+	
+	
+	
+	
+	
+	
+  
+
+
+</mapper>
