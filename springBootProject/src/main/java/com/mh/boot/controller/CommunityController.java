@@ -21,6 +21,7 @@ import com.mh.boot.dto.AttachDto;
 import com.mh.boot.dto.CommentDto;
 import com.mh.boot.dto.CommunityDto;
 import com.mh.boot.dto.MemberDto;
+import com.mh.boot.dto.MessageBoxDto;
 import com.mh.boot.dto.PageInfoDto;
 import com.mh.boot.service.CommunityService;
 import com.mh.boot.util.FileUtil;
@@ -43,7 +44,65 @@ public class CommunityController {
 	
 
 	/**
-	 * @param 도란도란 커뮤니티 게시판 리스트 출력
+	 * > 쪽지함 리스트 조회
+	 */
+	@ResponseBody
+	@GetMapping("/ajaxSelectMessage.do")
+	public ResponseEntity<?> ajaxSelectMessageList(@SessionAttribute("loginUser") MemberDto member
+											 , @RequestParam(value = "page", defaultValue = "1") int currentPage){
+		Map<String, Object> sendMap = new HashMap<>();
+		sendMap.put("userId", member.getUserId());
+		sendMap.put("send", "send");
+		
+		Map<String, Object> recMap = new HashMap<>();
+		recMap.put("userId", member.getUserId());
+		recMap.put("receive", "receive");
+		
+		Map<String, Object> collectMap = new HashMap<>();
+		collectMap.put("userId", member.getUserId());
+		collectMap.put("collect", "collect");
+
+		
+		//보낸쪽지함 조회
+		int sendListCount = communityService.selectMessageListCount(sendMap);
+		PageInfoDto piSend = pagingUtil.getPageInfoDto(sendListCount, currentPage, 5, 10);
+		List<MessageBoxDto> sendList = communityService.ajaxSelectMessageList(sendMap, piSend);
+		
+		//받은 쪽지함 조회
+		int receiveCount = communityService.selectMessageListCount(recMap);
+		PageInfoDto piReceive = pagingUtil.getPageInfoDto(receiveCount, currentPage, 5, 10);
+		List<MessageBoxDto> receiveList = communityService.ajaxSelectMessageList(recMap, piReceive);
+		
+		//휴지통 리스트
+		int collectCount = communityService.selectMessageListCount(collectMap);
+		PageInfoDto piCollect = pagingUtil.getPageInfoDto(collectCount, currentPage, 5, 10);
+		List<MessageBoxDto> collectList = communityService.ajaxSelectMessageList(collectMap, piCollect);
+		
+		//읽지 않은 메세지함 갯수 조회
+		int readCount = communityService.selectNoReadCount(member.getUserId());
+		
+		log.debug("sendList :>>>>>>>>> {}", sendList);
+		log.debug("receiveList :>>>>>>>>> {}", receiveList);
+		log.debug("collectList :>>>>>>>>> {}", collectList);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("piSend", piSend);
+		map.put("sendList", sendList);
+		
+		map.put("piReceive", piReceive);
+		map.put("receiveList", receiveList);
+		
+		map.put("piCollect", piCollect);
+		map.put("collectList", collectList);
+		
+		map.put("readCount", readCount); //읽지 않은 메시지 갯수
+		
+		return ResponseEntity.ok(map);
+	}
+	
+	
+	/**
+	 * > 도란도란 커뮤니티 게시판 리스트 출력
 	 * 
 	 */
 	@GetMapping("/doranMain.page")
@@ -52,7 +111,7 @@ public class CommunityController {
 	}
 	
 	/**
-	 * 자유게시판 페이지
+	 * > 자유게시판 페이지
 	 */
 	@GetMapping("/board.do")
 	public String boardList(@RequestParam(value="page", defaultValue="1") int currentPage, String type, Model model) {
@@ -68,7 +127,7 @@ public class CommunityController {
 	}
 	
 	/**
-	 * 게시판 글쓰기 Form
+	 * > 게시판 글쓰기 Form
 	 */
 	@GetMapping("/writerForm.page")
 	public void writeForm() {
@@ -76,7 +135,7 @@ public class CommunityController {
 	}
 	
 	/**
-	 * 게시판 글쓰기 Insert (자유게시판 타입 =>'J', 공지사항 => 'G')
+	 * > 게시판 글쓰기 Insert (자유게시판 타입 =>'J', 공지사항 => 'G')
 	 */
 	@PostMapping("/insertWriter.do")
 	public String insertWriter(CommunityDto com, List<MultipartFile> uploadFiles, RedirectAttributes redirectAttributes
@@ -123,9 +182,7 @@ public class CommunityController {
 		
 	}
 	/**
-	 * 
-	 * @param 게시글 조회수 증가 => redirect:/ 게시글 상세페이지 (게시글 작성자가 아닌 사용자만 COUNT + 1)
-	 * @return
+	 * > 게시글 조회수 증가 => redirect:/ 게시글 상세페이지 (게시글 작성자가 아닌 사용자만 COUNT + 1)
 	 */
 	@GetMapping("/increase.do") // 조회수 증가용 (내글이 아닌 게시글 클릭시에만 호출)
 	public String increase(CommunityDto com) {
@@ -136,9 +193,7 @@ public class CommunityController {
 	}
 	
 	/**
-	 * 
-	 * @param 게시판 상세페이지 ( 게시글 리스트, 첨부파일 리스트 )
-	 * @param model
+	 * > 게시판 상세페이지 ( 게시글 리스트, 첨부파일 리스트 )
 	 */
 	@GetMapping("/detail.page")
 	public void detail(CommunityDto com, @RequestParam(value = "page", defaultValue = "1") int currentPage
@@ -159,7 +214,7 @@ public class CommunityController {
 	
 	
 	/**댓글 --------------------------------------
-	 * 댓글INSERT
+	 *  > 댓글 insert
 	 */
 	@ResponseBody
 	@PostMapping("/insertComment.do")
@@ -170,7 +225,6 @@ public class CommunityController {
 										, @SessionAttribute("loginUser") MemberDto member) {
 		
 		
-		log.debug("arrList >>>>>>>>>>>>> : {}", arr);
 		//comment list 갯수
 		int listCount = communityService.selectCommentCount(comment.getBoardNo());
 		
@@ -179,10 +233,7 @@ public class CommunityController {
 		
 		int result = 0;
 		int key = 0;
-		
-		
-		
-		
+		//reply로 넘어오는 값이 "부모댓글"이면 실행
 		if (reply != null && reply.equals("부모댓글")) {
 			
 			int refCount = communityService.selectRefGroupCount(comment);
@@ -194,62 +245,81 @@ public class CommunityController {
             result = communityService.insertComment(comment);
             key = comment.getId();
             
+        //reply로 넘어오는 값이 "부모댓글이 아니라면" 실행
         }else{
-        	
-        	//parent_num => id count갯수 알아오기
-        	//int count = communityService.selectParentCount(comment);
+        	//넘어온 값들 map안에 담아주기
         	Map<String, Object> map = new HashMap<>();
-        	map.put("id", comment.getId());
+        	map.put("refGroup", comment.getRefGroup());
+        	map.put("refOrder", comment.getRefOrder());
         	map.put("boardNo", comment.getBoardNo());
+        	map.put("id", comment.getId());
+        	map.put("step", comment.getStep());
         	
-        	int refOrderCount = communityService.selectParentRefOrder(map);
-        	
-        	//대데대댓글 구별해서 
+        	//reply로 넘어오는 값이 "대대대댓글"이면 실행
         	if(reply != null && reply.equals("대대대댓글")) {
         		
-        		//refOrder => 뒤에 있는 refOrder번호를 본인이 갖는다.
-        		if(arr != null && !arr.isEmpty()) {
-        			communityService.updateRefOrder(arr);
+        	
+        		//ID로 자식 갯수 조회
+        		//=> 조회하는 이유 대대댓글을 달기위해서 
+        		//CASE 1)자식요소가 없다면 부모요소 + 1
+        		//CASE 2)자식요소가 있다면 제일 큰 자식요소의 REF_ORDER를 조회 한 후 + 1 
+        		int children = communityService.checkAnswerNum(map);
+        		log.debug("children : >>> {}", children);
+        		
+        		//CASE1)자식요소가 있다면
+        		if(children != 0) {      
+        			//자식요소의 제일 큰 번호를 조회한 후 + 1
+        			comment.setRefOrder(communityService.selectReplyRefOrder(map) + 1);
+        			//자식요소를 제외한 뒤에 번호들 REF_ORDER + 1 UPDATE
+        			List<Integer> list = communityService.selectNextRefOrders(map);
+        			if(list != null && !list.isEmpty()) {
+        				communityService.updateNextRefGroupId(list);        				
+        			}
         			
-        			comment.setRefOrder(comment.getRefOrder());
-            		//같은 그룹에 속한 뒤에있는 댓글들  (refOrder + 1) update
-            		
-        		}else {
-        			comment.setRefOrder(refOrderCount + 1);
+        		//CASE2)자식요소가 없다면
+        		}else if(children == 0) {
+        			//넘어온 ID값의 REF_ORDER를 조회한 후 + 1
+        			comment.setRefOrder(communityService.selectRefOrder(map) + 1);
+        			//뒤에 번호들 REF_ORDER + 1 UPDATE
+        			List<Integer> list = communityService.selectNextRefOrders(map);
+        			if(list != null && !list.isEmpty()) {
+        				communityService.updateNextRefGroupId(list);        				
+        			}
+        			
         		}
         		
-        	//대댓글
-			}else{
+        	//reply로 넘어오는 값이 "대댓글"이라면 실행
+			}else{ //댓글
 				
-	        	comment.setRefOrder(refOrderCount + 1);
+				int refOrderCount = communityService.selectParentRefOrder(map);
 	        	
+				comment.setRefOrder(refOrderCount + 1);
 			}
         	
-        	
-        	
-        	//자식 갯수 업데이트
-        	int answerUpdate = communityService.updateAnswerCount(map);
+        	//공통적으로 들어가야 할 값들은 if밖으로
         	int stepCount = communityService.selectStep(map);
+			comment.setStep(stepCount + 1);
+			
+        	//ANSWER_NUM 업데이트 => 자식요소가 몇개인지
+        	int answerUpdate = communityService.updateAnswerCount(map);
         	
         	comment.setUserNo(member.getUserNo());
 			comment.setUserNickName(member.getNickName());
-			
-			comment.setStep(stepCount + 1);
 			comment.setParentNum(comment.getId());
 			
+			//최종 INSERT
 			result = communityService.insertComment(comment);
-			key = comment.getId();
-			
+			key = comment.getId(); //<=등록한 PK값을 알아내서 대댓글, 대대댓글 요소에 대댓글을 등록하면 MARGIN-LEFT STYLE를 주려고했음.
+								   //댓글을 달면 스타일은 잘 적용됫지만, 새로고침하면 스타일이 저장되지 않아 풀려버림.
+								   //그래서 script바로 뒤쪽에 배열을 두고 배열 안에 아이디값를 저장하고 스타일을 적용하려 했는데 풀려버림.
+								   //포기함
         }
-		
+		//저장에 성공하면 리스트 조회 후 MAP안에 LIST, PI데이터값 담기
 		List<CommentDto> list =  (result > 0) ? communityService.ajaxCommentSelect(comment, pi) : null; 
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("list", list);
 		map.put("pi", pi);
-		if(reply != null && reply.equals("대대대댓글") || reply.equals("대댓글")) {
-			map.put("key", key);
-		}
 		
 		return ResponseEntity.ok(map);
 		
@@ -258,20 +328,39 @@ public class CommunityController {
 	
 	
 	
-	/*
+	
 	@ResponseBody
-	@GetMapping("/updateComment.do")
-	public void updateComment() {
+	@PostMapping("/updateComment.do")
+	public Map<String, Object> updateComment(CommentDto comment, @RequestParam(value = "page", defaultValue = "1") int currentPage) {
+		int listCount = communityService.selectCommentCount(comment.getBoardNo());
+		PageInfoDto pi = (PageInfoDto)pagingUtil.getPageInfoDto(listCount, currentPage, 5, 20);
 		
+		List<CommentDto> list = communityService.updateComment(comment) > 0 ? communityService.ajaxCommentSelect(comment, pi) : null;
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("list", list);
+		map.put("pi", pi);
+		
+		return map;
 	}
+		
 	
 	@ResponseBody
 	@GetMapping("/updateDeleteComment.do")
-	public void updateDeleteComment() {
+	public Map<String, Object> updateDeleteComment(CommentDto comment, @RequestParam(value = "page", defaultValue = "1") int currentPage) {
 		
+		int listCount = communityService.selectCommentCount(comment.getBoardNo());
+		PageInfoDto pi = (PageInfoDto)pagingUtil.getPageInfoDto(listCount, currentPage, 5, 20);
 		
+		List<CommentDto> list = communityService.updateDeleteComment(comment) > 0 ? communityService.ajaxCommentSelect(comment, pi) : null;
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("list", list);
+		map.put("pi", pi);
+		
+		return map;
 	}
-	*/
+	
 	
 	/**
 	 * 로딩될때 댓글 ajax list 불러오기
@@ -283,7 +372,6 @@ public class CommunityController {
 		//comment list 갯수
 		int listCount = communityService.selectCommentCount(comment.getBoardNo());
 		PageInfoDto pi = (PageInfoDto)pagingUtil.getPageInfoDto(listCount, currentPage, 5, 20);
-		
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("list", communityService.ajaxCommentSelect(comment, pi));

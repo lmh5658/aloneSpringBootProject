@@ -17,7 +17,7 @@ body {
 }
 
 .container {
-    width: 90%;
+    width: 100%;
     max-width: 800px;
     margin: 0 auto;
     font-family: Arial, sans-serif;
@@ -26,24 +26,39 @@ body {
 
 /* 게시글 스타일 */
 .post {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 20px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
 .post-title {
+    font-size: 2em;
     margin: 0;
-    font-size: 28px;
     color: #333;
 }
-
+.post-meta {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 15px;
+}
+.post-meta span {
+    margin-right: 15px;
+}
 .post-content {
-    margin-top: 10px;
-    font-size: 18px;
-    color: #555;
+    font-size: 1.1em;
+    color: #444;
+}
+.post-image {
+    margin: 20px 0;
+    text-align: center;
+}
+.post-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
 }
 
 /* 댓글 목록 */
@@ -150,8 +165,22 @@ body {
     font-size: 14px;
 }
 
+.submit-edit {
+    background-color: #fb8ce89e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
 .submit-reply:hover {
     background-color: #218838;
+}
+
+.submit-edit:hover {
+    background-color: #e996db78;
 }
 
 /* 대댓글 박스 */
@@ -246,42 +275,91 @@ body {
 .submit-comment:hover {
     background-color: #0056b3;
 }
+.edit-form .replyContent{
+		width: 583px;
+    resize: none;
+}
+.edit-form-form .replyContent{
+		width: 583px;
+    resize: none;
+}    
+.edit-form-content{
+    display: flex;
+    align-items: flex-end;
+    margin: 17px;
+}
 
+.comment * {
+    font-size: 16px; /* 글자 크기 조정 */
+    color: gray;
+}
+.replies *{
+    font-size: 16px; /* 글자 크기 조정 */
+    color: gray;
+}
+
+.comment button{
+    font-size: 15px; /* 글자 크기 조정 */
+    color: white;
+}
+.replies button{
+    font-size: 15px; /* 글자 크기 조정 */
+    color: white;
+}
+
+.comment .comment-content{
+	  font-size: 18px; /* 글자 크기 조정 */
+    color: black;
+}
+.replies .reply-content{
+	  font-size: 18px; /* 글자 크기 조정 */
+    color: black;
+}
 
 </style>
 </head>
 
 <body>
-    <jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
+    
+		<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
 		
 <div class="container">
-        <!-- 게시글 -->
-        <div class="post">
-            <h1 class="post-title">게시글 제목</h1>
-            <p class="post-content">게시글 내용이 여기에 들어갑니다. 게시글에 대한 설명과 내용을 적습니다.</p>
-        </div>
 
-        <!-- 댓글 목록 -->
+        <!-- 게시글 S-->
+         <div class="post">
+		        <h1 class="post-title">${ board[0].postTitle }</h1>
+		        <div class="post-meta">
+		            <span>작성일: ${ board[0].postUploadDt }</span>
+		            <span>닉네임: ${ board[0].writerNickName }</span>
+		        </div>
+		        <div class="post-image">
+		        		<c:forEach var="item" items="${ attachList }">
+		            	<img src="${item.filePath}/${item.filesystemName}" alt="게시글 이미지">
+		            </c:forEach>
+		        </div>
+		        <p class="post-content">${ board[0].postContent }</p>
+			    </div>
+				<!-- 게시글 E-->
+				
+        <!-- 댓글 목록 S -->
         <h2>댓글</h2>
         <div class="comments-section">
         
 						 
             
         </div>
+        <!-- 댓글 목록 E -->
         
-        
-        <!-- 페이징영역 -->
-	       <c:if test="${ not empty commentList }">
+        <!-- 페이징영역 S -->
 	      	 <div style="display: flex; justify-content: center; align-items: center;">
 						 <ul class="pagination">
 						 
         		 </ul>
 	        </div>
-				 </c:if>
+				<!-- 페이징영역 E -->
 				
 				
-				
-        <!-- 댓글 작성 폼 -->
+        <!-- 댓글 작성 폼 S -->
         <div class="comment-form-container">
             <h2>댓글 작성</h2>
             <form class="comment-form">
@@ -289,6 +367,7 @@ body {
                 <button type="submit" class="submit-comment">등록</button>
             </form>
         </div>
+        <!-- 댓글 작성 폼 E -->
 </div>
 
 <script>
@@ -334,34 +413,49 @@ $(document).on('click', '.submit-comment', function(e) {
     e.preventDefault(); // 폼 제출 방지
     
     let content = $("#commentContent").val().trim();
-    
-    if (content === '') {
-        alert('댓글을 입력하세요.');
-    } else {
-        $.ajax({
-            url: "${contextPath}/community/insertComment.do",
-            type: "post",
-            data: {
-                content: content,
-                refOrder: 0,
-                step: 0,
-                parentNum: 0,
-                boardNo: "${board[0].postNo}",
-                reply: "부모댓글"
-            },
-            success: function(response) {
-                console.log('댓글 등록:', response);
-                if(response != null){
-                	alert("댓글이 성공적으로 등록되었습니다.");
-	                $("#commentContent").html(''); // 댓글 작성 폼 초기화
-	                renderComments(response); // 전체 댓글 다시 렌더링                	
-                }
-            },
-            error: function(response) {
-                console.log("AJAX 통신 실패 =>" + response);
-            }
-        });
+    //로그인체크
+    let loginCheck = "${ loginUser == "" }";
+    if(loginCheck == true){
+    	
+    	$("#myModal").modal("show");
+    	
+    }else{
+    	
+    	if (content === '') {
+            alert('댓글을 입력하세요.');
+        } else {
+        		if(confirm("댓글을 등록하시겠습니까?")){
+        			 $.ajax({
+ 	                url: "${contextPath}/community/insertComment.do",
+ 	                type: "post",
+ 	                data: {
+ 	                    content: content,
+ 	                    refOrder: 0,
+ 	                    step: 0,
+ 	                    parentNum: 0,
+ 	                    boardNo: "${board[0].postNo}",
+ 	                    reply: "부모댓글"
+ 	                },
+ 	                success: function(response) {
+ 	                    console.log('댓글 등록:', response);
+ 	                    if(response != null){
+ 	    	                $("#commentContent").val("");
+ 	    	                renderComments(response); // 전체 댓글 다시 렌더링                	
+ 	                    }
+ 	                },
+ 	                error: function(response) {
+ 	                    console.log("AJAX 통신 실패 =>" + response);
+ 	                }
+        	     });
+        			 
+        		}else{
+        			
+        		}
+           
+        }
+    	
     }
+    
 });
 
 // 대댓글 폼 제출 처리
@@ -372,35 +466,40 @@ $(document).on('click', '.submit-reply', function(e) {
     let content = $(this).closest(".reply-form").find(".replyContent").val().trim();
     let id = $(this).closest(".reply-form").find(".reply-form-content").data("id");
     
-    if (content === '') {
-        alert('대댓글을 입력하세요.');
-    } else {
-        $.ajax({
-            url: "${contextPath}/community/insertComment.do",
-            type: "post",
-            data: {
-                id: id,
-                boardNo: "${board[0].postNo}",
-                refGroup: refGroup,
-                content: content,
-                reply: "대댓글"
-            },
-            success: function(response) {
-            	
-            	if(response != null){
-            		 console.log('대댓글 등록:', response);
-            		 
-	                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
-	                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
-	                renderComments(response); // 전체 댓글 다시 렌더링
-            	}
-               
-            },
-            error: function() {
-                console.log("AJAX 통신 실패");
-            }
-        });
-    }
+    
+    let loginCheck = "${ loginUser == "" }";
+    
+    	 if (content === '') {
+    	        alert('대댓글을 입력하세요.');
+  	    } else {
+  	        $.ajax({
+  	            url: "${contextPath}/community/insertComment.do",
+  	            type: "post",
+  	            data: {
+  	                id: id,
+  	                boardNo: "${board[0].postNo}",
+  	                refGroup: refGroup,
+  	                content: content,
+  	                reply: "대댓글"
+  	            },
+  	            success: function(response) {
+  	            	
+  	            	if(response != null){
+  	            		 console.log('대댓글 등록:', response);
+  	            		 
+  		                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
+  		                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
+  		                renderComments(response); // 전체 댓글 다시 렌더링
+  	            	}
+  	               
+  	            },
+  	            error: function() {
+  	                console.log("AJAX 통신 실패");
+  	            }
+  	        });
+  	    }
+   
+   
 });
 
 //대대대대대댓글 폼 제출 처리
@@ -410,72 +509,108 @@ $(document).on('click', '.submit-reply-reply', function(e) {
     let reply = $(this).closest(".reply-form-form");
     
     let refGroup = reply.data("ref");
-    let content = reply.find(".replyContent").val().trim();
+    let content = reply.find(".replyContent").val();
     let id = reply.find(".reply-form-content").data("id");
+    let step = reply.data("step");
+    let refOrder = $(this).closest(".replies").find(".reply-header").data("order");
     
-    //같은 그룹에 있는 클릭한 요소의 같은 형제들의 id값알아오는 스크립트
-    let arr = [];  
-		$(this).closest(".replies").nextAll('.replies').each(function() {
-	     
-	     let dataRef = $(this).find(".reply-form-form").data("ref");
-	     
-	     if (dataRef === refGroup) {
-	    	 
-	         arr.push($(this).data("no")); 
-	     }
-	     
-	 });
     
-		
-    let refOrder = $(this).closest(".replies").next('.replies').find(".reply-header").data("order");
+    	if (content.trim() === '') {
+            alert('댓글을 입력하세요.');
+       } else {
+           $.ajax({
+               url: "${contextPath}/community/insertComment.do",
+               type: "post",
+               dataType:"json",
+               data: {
+                   id: id,
+                   boardNo: "${board[0].postNo}",
+                   refGroup: refGroup,
+                   content: content,
+                   reply: "대대대댓글",
+                   refOrder: refOrder,
+                   step: step
+                   //arr: arr
+                   
+               },
+               success: function(response) {
+               	
+               	if(response != null){
+               		 console.log('대댓글 등록:', response);
+               		 
+   	                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
+   	                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
+   	                renderComments(response); // 전체 댓글 다시 렌더링
+               	}
+                  
+               },
+               error: function() {
+                   console.log("AJAX 통신 실패");
+               }
+           });
+       }
+    	
     
-    console.log("refOrder =>" + refOrder);
-    console.log("형제 id = >" + arr);
     
-    if (content === '') {
-        alert('댓글을 입력하세요.');
+});
+
+//-----------------------버튼 스크립트 S----------------------------------
+$(document).on('click', '.reply-button', function() {
+		let toName1 = "┖─" + $(this).closest(".comment").find(".user-nickname").text();
+		let toName2 = "┖─" + $(this).closest(".replies").find(".user-nickname").text();
+    console.log("toName : >>" + toName2);
+    
+	
+    // 현재 클릭한 버튼이 속한 댓글/대댓글에서 reply-form, reply-form-form 선택
+    var $currentForm = $(this).closest('.comment, .replies').find('.reply-form, .reply-form-form');
+
+    // 동일한 댓글/대댓글 내에서만 폼이 토글되도록 수정
+    if ($currentForm.is(":visible")) {
+        $currentForm.hide(); // 이미 열려 있으면 숨기기
     } else {
-        $.ajax({
-            url: "${contextPath}/community/insertComment.do",
-            type: "post",
-            dataType:"json",
-            data: {
-                id: id,
-                boardNo: "${board[0].postNo}",
-                refGroup: refGroup,
-                content: content,
-                reply: "대대대댓글",
-                refOrder: refOrder,
-                arr: arr
-                
-            },
-            success: function(response) {
-            	
-            	if(response != null){
-            		 console.log('대댓글 등록:', response);
-            		 
-	                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
-	                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
-	                renderComments(response); // 전체 댓글 다시 렌더링
-            	}
-               
-            },
-            error: function() {
-                console.log("AJAX 통신 실패");
-            }
-        });
+        // 현재 댓글/대댓글 내에서 모든 폼을 숨기고 선택된 폼만 보이기
+        $(this).closest('.comment, .replies').find('.reply-form, .reply-form-form').hide();
+        $currentForm.show();
+        $(this).closest('.comment').find('.replyContent').val(toName1);
+        $(this).closest('.replies').find('.replyContent').val(toName2);
     }
 });
 
-// 댓글 작성 폼 토글 처리
-$(document).on('click', '.reply-button', function() {
-    $('.reply-form, .reply-form-form').not($(this).closest('.comment, .replies').find('.reply-form, .reply-form-form')).hide();
-    $(this).closest('.comment, .replies').find('.reply-form, .reply-form-form').toggle();
+// 댓글 수정 버튼 클릭 시
+$(document).on("click", ".edit-comment", function() {
+		let toName = "┖─" + $(this).closest(".comment").find(".user-nickname").text();
+    console.log("toName : >>" + toName);
+	
+    var $editForms = $(this).closest('.comment').find('.edit-form');
+    
+    if ($editForms.is(":visible")) {
+        $editForms.hide(); // 이미 열려 있으면 숨깁니다.
+    } else {
+        // 현재 댓글 내에서만 모든 폼 숨기고 선택된 폼만 보이기
+        $(this).closest('.comment').find('.reply-form, .reply-form-form, .edit-form').hide();
+        $editForms.show();
+        $(this).closest('.comment').find('.replyContent').val(toName);
+    }
     
     
 });
 
+// 대댓글 수정 버튼 클릭 시
+$(document).on("click", ".edit-reply", function() {
+		let toName = "┖" + $(this).closest(".replies").find(".user-nickname").text();
+    var $editForm = $(this).closest('.replies').find('.edit-form-form');
+    
+    if ($editForm.is(":visible")) {
+        $editForm.hide(); // 이미 열려 있으면 숨깁니다.
+    } else {
+        // 현재 대댓글 내에서만 모든 폼 숨기고 선택된 폼만 보이기
+        $(this).closest('.replies').find('.reply-form, .reply-form-form, .edit-form-form').hide();
+        $editForm.show();
+        $(this).closest('.replies').find('.replyContent').val(toName);
+    }
+});
 
+//-------------------------버튼스크립트 E-----------------------------------
 
 
 // 댓글과 대댓글을 렌더링하는 함수
@@ -484,61 +619,75 @@ function renderComments(comment) {
 		let comments = comment.list;
 		let pi = comment.pi;
 		let login = "${loginUser.userNo}";
-    var html = '<div class="comments">'; // 모든 댓글을 감싸는 div를 추가합니다.
-    let keys = comment.key;
+    var html = '<div class="comments">';
 
-    arrKey.push(keys);
     
     for (let i = 0; i < comments.length; i++) {
     	
     	var style = comments[i].userNo != login ? 'style="display:none;"' : '';
+    	let buttonStyle = comments[i].delYN == "N";
     	
         if (comments[i].parentNum == 0 && comments[i].refOrder == 0) {
+        	
             html += '<div class="comment">';
             html += '  <div class="comment-header">';
             html += '    <strong class="user-nickname">' + comments[i].userNickName + '</strong>';
-            html += '    <p class="comment-content">' + comments[i].content + '</p>';
-            html += '    <span class="comment-date">' + comments[i].registDt + '</span>';
-            html += '    <div class="comment-actions"' +  style + '>';
+            html += '    <p class="comment-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>")  + '</p>';
+            html += '    <span class="comment-date">' + timeForToday(comments[i].registDt) + '</span>';
+            html += '    <div ' + (buttonStyle ? "" : "style='display:none;'") +' class="comment-actions"' +  style + '>';
             html += '      <button class="reply-button">답글쓰기</button>';
             html += '      <button class="edit-comment">수정</button>';
             html += '      <button class="delete-comment">삭제</button>';
             html += '    </div>';
+            
+            html += '  <div class="edit-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
+            html += '    <form class="edit-form-content" data-id="' + comments[i].id + '">';
+            html += '      <textarea placeholder="댓글을 수정하세요." rows="4" class="replyContent"></textarea>';
+            html += '      <button type="submit" class="submit-edit">수정</button>';
+            html += '    </form>';
             html += '  </div>';
+            
+            
             html += '  <div class="reply-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
             html += '    <form class="reply-form-content" data-id="' + comments[i].id + '">';
             html += '      <textarea placeholder="대댓글을 입력하세요." rows="4" class="replyContent"></textarea>';
             html += '      <button type="submit" class="submit-reply">등록</button>';
             html += '    </form>';
             html += '  </div>';
+            html += '  </div>';
             
         }
 
         if (comments[i].parentNum != 0) {
         	
-        	let marginStyle = arrKey.includes(comments[i].id) ? 'style="margin-left: 20px;"' : '';
-        	html += '  <div class="replies" data-no="' + comments[i].id + '" ' + marginStyle + '>'; 
+        		html += '  <div class="replies" data-no="' + comments[i].id + '">'; 
             html += '    <div class="reply">';
             html += '      <div class="reply-header" data-order="' + comments[i].refOrder + '">';
-            html += '        <strong class="user-nickname">' + comments[i].userNickName + '</strong>';
-            html += '        <p class="reply-content">' + comments[i].content + '</p>';
-            html += '        <span class="reply-date">' + comments[i].registDt + '</span>';
-            html += '        <div class="reply-actions" ' +  style + '>';
+            html += '        <strong class="user-nickname" data-step="' + comments[i].step  + '">' + comments[i].userNickName + '</strong>';
+            html += '        <p class="reply-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>")  + '</p>';
+            html += '        <span class="reply-date">' + timeForToday(comments[i].registDt) + '</span>';
+            html += '        <div ' + (buttonStyle ? "" : "style='display:none;'") + 'class="reply-actions" ' +  style + '>';
+            html += '          <button class="reply-button">답글쓰기</button>';
             html += '          <button class="edit-reply">수정</button>';
             html += '          <button class="delete-reply">삭제</button>';
-            html += '          <button class="reply-button">답글쓰기</button>';
             html += '        </div>';
             html += '      </div>';
             html += '    </div>';
             
-            html += '  <div class="reply-form-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
+            html += '  <div class="edit-form-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
+            html += '    <form class="edit-form-content" data-id="' + comments[i].id + '">';
+            html += '      <textarea placeholder="댓글을 수정하세요." rows="4" class="replyContent"></textarea>';
+            html += '      <button type="submit" class="submit-edit-edit">수정</button>';
+            html += '    </form>';
+            html += '  </div>';
+            
+            html += '  <div class="reply-form-form" style="display: none;" data-step="' + comments[i].step  + '" data-ref="' + comments[i].refGroup + '">';
             html += '    <form class="reply-form-content" data-id="' + comments[i].id + '">';
             html += '      <textarea placeholder="대댓글을 입력하세요." rows="4" class="replyContent"></textarea>';
             html += '      <button type="submit" class="submit-reply-reply">등록</button>';
             html += '    </form>';
             html += '  </div>';
-            
-            html += '  </div>'; // replies div 닫기
+            html += ' </div>'; 
             
         }
 
@@ -597,51 +746,173 @@ function paging(pi){
 }
 
 
-
-
-// 댓글 수정 버튼 클릭 시 수정 처리
-$(document).on('click', '.edit-comment', function() {
-    var $comment = $(this).closest('.comment');
-    var $content = $comment.find('.comment-content');
-    var newContent = prompt('댓글을 수정하세요:', $content.text());
-
-    if (newContent !== null) {
-        $content.text(newContent);
-        console.log('댓글 수정:', newContent);
+//댓글 수정 버튼 클릭 시 수정 처리
+$(document).on('click', '.submit-edit', function(e) {
+	  e.preventDefault();
+    var $comment = $(this).closest('.edit-form');
+    
+    var $content = $comment.find('.replyContent').val();
+		let id = $comment.find(".edit-form-content").data("id");
+		
+		
+    if ( $content.trim != "" ) {
+					
+    		$.ajax({
+    			url:"${contextPath}/community/updateComment.do",
+    			type:"post",
+    			data:{
+    				id:id,
+    				content:$content,
+    				boardNo:"${board[0].postNo}"
+    			},
+    			success:function(response){
+    				
+    				if(response != ""){
+    					alert("댓글 수정이 완료되었습니다.");
+    					renderComments(response); // 전체 댓글 다시 렌더링
+    				}else{
+    					console.log("success 실패")
+    				}
+    					
+    					
+    			},
+    			error:function(){
+    				console.log("ajax통신 오류");
+    			}
+    			
+    		});
         // 서버에 수정된 내용 전송 로직 추가 가능
+    }else{
+    	alert("내용이 없습니다 다시 작성해주세요.");
     }
+    
 });
 
 // 댓글 삭제 버튼 클릭 시 삭제 처리
 $(document).on('click', '.delete-comment', function() {
+	
+		let id = $(this).closest(".comment").find(".edit-form-content").data("id");
     if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
-        $(this).closest('.comment').remove();
-        console.log('댓글 삭제');
-        // 서버에 삭제 요청 로직 추가 가능
+        $.ajax({
+        	url:"${contextPath}/community/updateDeleteComment.do",
+        	type:"get",
+        	data:"id=" + id + "&boardNo=" + "${board[0].postNo}",
+        	success:function(response){
+        		if(response != ""){
+							alert("댓글이 정상적으로 삭제되었습니다.");
+							renderComments(response); // 전체 댓글 다시 렌더링
+						}else{
+							console.log("success 실패")
+						}
+					
+        	},
+        	error:function(){
+        		console.log("ajax통신 오류");
+        	}
+        })
+
     }
 });
 
-// 대댓글 수정 버튼 클릭 시 수정 처리
-$(document).on('click', '.edit-reply', function() {
-    var $reply = $(this).closest('.reply');
-    var $content = $reply.find('.reply-content');
-    var newContent = prompt('대댓글을 수정하세요:', $content.text());
 
-    if (newContent !== null) {
-        $content.text(newContent);
-        console.log('대댓글 수정:', newContent);
-        // 서버에 수정된 내용 전송 로직 추가 가능
-    }
+
+//대댓글 수정 버튼 클릭 시 수정 처리
+$(document).on('click', '.submit-edit-edit', function(e) {
+	
+		e.preventDefault();
+    let reply = $(this).closest('.replies');
+    let content = reply.find('.replyContent').val();
+    let id = reply.find(".edit-form-content").data("id");
+    
+    console.log("content>>" + content);
+		console.log("id>>" + id);
+		
+    if ( content.trim != "" ) {
+		
+				$.ajax({
+					url:"${contextPath}/community/updateComment.do",
+					type:"post",
+					data:{
+						id: id,
+						content: content,
+						boardNo: "${board[0].postNo}" 
+					},
+					success:function(response){
+						
+						if(response != ""){
+							alert("댓글이 정상적으로 수정되었습니다.");
+							renderComments(response); // 전체 댓글 다시 렌더링
+						}else{
+							console.log("success 실패")
+						}	
+						
+					},
+					error:function(){
+						console.log("ajax통신 오류");
+					}
+					
+				});
+				
+		}else{
+			alert("내용이 없습니다 다시 작성해주세요.");
+		}
 });
+
 
 // 대댓글 삭제 버튼 클릭 시 삭제 처리
 $(document).on('click', '.delete-reply', function() {
-    if (confirm('정말로 이 대댓글을 삭제하시겠습니까?')) {
-        $(this).closest('.reply').remove();
-        console.log('대댓글 삭제');
-        // 서버에 삭제 요청 로직 추가 가능
+	
+		let $reply = $(this).closest('.replies');
+		let id = $reply.find(".edit-form-content").data("id");
+		
+    if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+        $.ajax({
+        	url:"${contextPath}/community/updateDeleteComment.do",
+        	type:"get",
+        	data:"id=" + id + "&boardNo=" + "${board[0].postNo}",
+        	success:function(response){
+        		if(response != ""){
+							alert("댓글이 정상적으로 삭제되었습니다.");
+							renderComments(response); // 전체 댓글 다시 렌더링
+						}else{
+							console.log("success 실패")
+						}
+					
+        	},
+        	error:function(){
+        		console.log("ajax통신 오류");
+        	}
+        })
+
     }
 });
+
+//시간조회 스크립트
+function timeForToday(value) {
+	
+    const today = new Date();
+    const timeValue = new Date(value);
+
+    const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+    if (betweenTime < 1) return '방금전';
+    if (betweenTime < 60) {
+        return betweenTime + '분전';
+    }
+
+    const betweenTimeHour = Math.floor(betweenTime / 60);
+    if (betweenTimeHour < 24) {
+        return betweenTimeHour + '시간전';
+    }
+
+    const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+    if (betweenTimeDay < 365) {
+        return betweenTimeDay + '일전';
+    }
+
+    return Math.floor(betweenTimeDay / 365) + '년전';
+ }
+
+
 </script> 
 
 

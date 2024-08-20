@@ -1,9 +1,12 @@
 package com.mh.boot.dao;
 
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.mh.boot.dto.MemberDto;
+import com.mh.boot.dto.MessageBoxDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +43,17 @@ public class MemberDao {
 	public int selectNickNamecount(String checkNickName) {
 		return sqlSessionTemplate.selectOne("memberMapper.selectNickNamecount", checkNickName);
 	}
-
 	
+	public int insertSend(MessageBoxDto message) {
+		return sqlSessionTemplate.insert("memberMapper.insertSend", message);
+	}
+	
+	public int updateMessage(Map<String, Object> map) {
+		return sqlSessionTemplate.update("memberMapper.updateMessage", map);
+	}
+	
+	public MessageBoxDto selectMessage(int messageNo) {
+		return sqlSessionTemplate.selectOne("memberMapper.selectMessage", messageNo);
+	}
+
 }

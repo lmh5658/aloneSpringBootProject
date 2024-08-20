@@ -1,6 +1,5 @@
 package com.mh.boot.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +9,7 @@ import com.mh.boot.dao.CommunityDao;
 import com.mh.boot.dto.AttachDto;
 import com.mh.boot.dto.CommentDto;
 import com.mh.boot.dto.CommunityDto;
+import com.mh.boot.dto.MessageBoxDto;
 import com.mh.boot.dto.PageInfoDto;
 
 import lombok.RequiredArgsConstructor;
@@ -73,10 +73,6 @@ public class CommunityServiceImpl implements CommunityService{
 		return communityDao.ajaxCommentSelect(comment, pi);
 	}
 
-	@Override
-	public int selectParentCount(CommentDto comment) {
-		return communityDao.selectParentCount(comment);
-	}
 
 	@Override
 	public int selectRefGroupCount(CommentDto comment) {
@@ -107,6 +103,78 @@ public class CommunityServiceImpl implements CommunityService{
 	public int updateRefOrder(List<String> arr) {
 		return communityDao.updateRefOrder(arr);
 	}
+
+	@Override
+	public int updateComment(CommentDto comment) {
+		return communityDao.updateComment(comment);
+	}
+
+	@Override
+	public int updateDeleteComment(CommentDto comment) {
+		return communityDao.updateDeleteComment(comment);
+	}
+
+	@Override
+	public int selectMessageListCount(Map<String, Object> sendMap) {
+		return communityDao.selectMessageListCount(sendMap);
+	}
+
+	@Override
+	public List<MessageBoxDto> ajaxSelectMessageList(Map<String, Object> map, PageInfoDto pi) {
+		return communityDao.ajaxSelectMessageList(map, pi);
+	}
+
+	@Override
+	public int selectNoReadCount(String userId) {
+		return communityDao.selectNoReadCount(userId);
+	}
+
+	
+
+	@Override
+	public int selectReplyRefGropCount(Map<String, Object> map) {
+		return communityDao.selectReplyRefGropCount(map);
+	}
+	
+
+	@Override
+	public List<Integer> selectNextRefGroupId(Map<String, Object> map) {
+		return communityDao.selectNextRefGroupId(map);
+	}
+
+	
+	
+	
+	@Override
+	public int checkAnswerNum(Map<String, Object> map) {
+		return communityDao.checkAnswerNum(map);
+	}
+
+	@Override
+	public int selectReplyRefOrder(Map<String, Object> map) {
+		return communityDao.selectReplyRefOrder(map);
+	}
+
+	@Override
+	public List<Integer> selectNextRefOrders(Map<String, Object> map) {
+		return communityDao.selectNextRefOrders(map);
+	}
+	
+	@Override
+	public int updateNextRefGroupId(List<Integer> list) {
+		return communityDao.updateNextRefGroupId(list);
+	}
+
+	@Override
+	public int selectRefOrder(Map<String, Object> map) {
+		return communityDao.selectRefOrder(map);
+	}
+	
+	
+
+	
+	
+	
 	
 	
 

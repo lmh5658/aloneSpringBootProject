@@ -26,6 +26,23 @@
     <result column="COUPON" property="coupon"/>
   </resultMap>
   
+  <resultMap id="messageResult" type="MessageBoxDto">
+    <id column="MESSAGE_NO" property="messageNo"/>
+    <result column="SEND_ID" property="sendId"/>
+    <result column="RECEIVE_ID" property="receiveId"/>
+    <result column="TITLE" property="title"/>
+    <result column="CONTENT" property="content"/>
+    <result column="DATE_SEND" property="dateSend"/>
+    <result column="DATE_READ" property="dateRead"/>
+    <result column="MESSAGE_STATUS" property="msgStatus"/>
+    <result column="MESSAGE_COLLECT" property="msgCollect"/>
+    <result column="SEND_DEL_STATUS" property="sendDelStatus"/>
+    <result column="RECEIVE_DEL_STATUS" property="reDelStatus"/>
+    <result column="CUSTODY" property="custody"/>
+    <result column="SEND_NICKNAME" property="sendNickName"/>   
+    <result column="RECEIVE_NICKNAME" property="receiveNickName"/>
+  </resultMap>
+  
 
 	<!-- 로그인용 -->
 	<select id="selectMember" resultMap="memberResult">
@@ -144,7 +161,85 @@
   			)
   </insert>
   
+  <insert id="insertSend" parameterType="com.mh.boot.dto.MessageBoxDto" useGeneratedKeys="true" keyProperty="messageNo">
+  	INSERT
+  			INTO
+  			 TB_MESSAGE_BOX
+  			 (
+  			   MESSAGE_NO
+  			 , SEND_ID
+  			 , RECEIVE_ID
+  			 , CONTENT
+  			 , TITLE
+  			 , SEND_NICKNAME
+  			 )
+	  		VALUES
+	  		(
+	  		SEQ_MESNO.NEXTVAL
+	  	, #{sendId}
+	  	, #{receiveId}
+	  	, #{content}
+	  	, #{title}
+	  	, #{sendNickName}
+	  		)
+    <selectKey keyProperty="messageNo" resultType="int" order="AFTER">
+        SELECT SEQ_MESNO.CURRVAL AS MESSAGE_NO FROM DUAL
+    </selectKey>
+  </insert>
+   
+	 <select id="selectMessage" resultMap="messageResult">
+	 	SELECT
+				   MESSAGE_NO
+				 , SEND_ID
+				 , RECEIVE_ID
+				 , TITLE
+				 , CONTENT
+				 , DATE_SEND
+				 , DATE_READ
+				 , (SELECT NICKNAME
+            FROM TB_MEMBER
+           WHERE SEND_ID = USER_ID) SEND_NICKNAME
+		 FROM TB_MESSAGE_BOX
+		WHERE MESSAGE_NO = #{messageNo}
+	 </select>
   
+  <update id="updateMessage">
+ 	UPDATE TB_MESSAGE_BOX
+ 	<choose>
+ 		<when test="type != null and type.equals('read')">
+ 		 SET DATE_READ = SYSDATE
+ 	 WHERE
+ 		</when>
+ 		<when test="type != null and type.equals('receive')">
+ 		 SET RECEIVE_DEL_STATUS = 'Y'
+ 	 WHERE
+ 		</when>
+ 		<when test="type != null and type.equals('send')">
+ 		 SET SEND_DEL_STATUS = 'Y'
+ 	 WHERE 
+ 		</when>
+ 		<when test="type != null and type.equals('collect')">
+ 			SET MESSAGE_COLLECT = 'Y'
+ 	  WHERE 
+ 		</when>
+ 		<when test="type != null and type.equals('deleteCustody')">
+ 			SET CUSTODY = 'N'
+ 			  , RECEIVE_DEL_STATUS = 'Y'
+ 			  , SEND_DEL_STATUS = 'Y'
+ 		WHERE (SEND_ID = #{userId} OR RECEIVE_ID = #{userId})
+ 		  AND
+ 		</when>
+ 		<otherwise>
+ 			SET CUSTODY = 'Y'
+ 		WHERE 
+ 		</otherwise>
+ 	</choose>
+   	MESSAGE_NO = #{messageNo}
+ </update>
+
+
+ 
+
   
 
 

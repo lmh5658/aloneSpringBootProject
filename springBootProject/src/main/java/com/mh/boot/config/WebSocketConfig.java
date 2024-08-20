@@ -7,7 +7,7 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
-import com.mh.boot.handler.ChatEchoHandler;
+import com.mh.boot.handler.EchoHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 public class WebSocketConfig implements WebSocketConfigurer {
 	
-	private final ChatEchoHandler chatEchoHandler;
+	private final EchoHandler EchoHandler;
+	
+	//HttpSession 과 WebSocketSession을 연결시켜주는 의존성 주입 + sockjs 사용
 	
 	@Bean
 	HttpSessionHandshakeInterceptor httpSessionHandshakeInterceptor() {
@@ -34,7 +36,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 			<websocket:sockjs />
 		</websocket:handlers>
 		*/
-		registry.addHandler(chatEchoHandler, "/chat")
+		registry.addHandler(EchoHandler, "/common")
 				.addInterceptors(httpSessionHandshakeInterceptor())
 				.withSockJS();
 	}

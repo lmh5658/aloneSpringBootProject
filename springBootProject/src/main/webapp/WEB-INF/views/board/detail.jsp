@@ -41,7 +41,7 @@
                   <th>첨부파일</th>
                   <td colspan="3">
                   	<c:forEach var="at" items="${ board.attachList }">
-                      <a href="${ contextPath }${at.filePath}/${at.filesystemName}" download="${ at.originalName }">${ at.originalName }</a> <br>
+                      <a href="C:\${ contextPath }${at.filePath}/${at.filesystemName}" download="${ at.originalName }">${ at.originalName }</a> <br>
                     </c:forEach>
                   </td>
               </tr>

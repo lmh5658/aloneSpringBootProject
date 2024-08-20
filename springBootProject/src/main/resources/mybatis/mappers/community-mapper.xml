@@ -40,6 +40,23 @@
     <result column="USER_NICKNAME" property="userNickName"/>
   </resultMap>
 	
+	<resultMap id="messageResult" type="MessageBoxDto">
+    <id column="MESSAGE_NO" property="messageNo"/>
+    <result column="SEND_ID" property="sendId"/>
+    <result column="RECEIVE_ID" property="receiveId"/>
+    <result column="TITLE" property="title"/>
+    <result column="CONTENT" property="content"/>
+    <result column="DATE_SEND" property="dateSend"/>
+    <result column="DATE_READ" property="dateRead"/>
+    <result column="MESSAGE_STATUS" property="msgStatus"/>
+    <result column="MESSAGE_COLLECT" property="msgCollect"/>
+    <result column="SEND_DEL_STATUS" property="sendDelStatus"/>
+    <result column="RECEIVE_DEL_STATUS" property="reDelStatus"/>
+    <result column="CUSTODY" property="custody"/>
+    
+    <result column="SEND_NICKNAME" property="sendNickName"/>
+    <result column="RECEIVE_NICKNAME" property="receiveNickName"/>
+  </resultMap>
 	
 	<!-- 게시글 등록 -->
 	<insert id="insertBoard">
@@ -180,21 +197,21 @@
         SELECT SEQ_CTNO.CURRVAL AS ID FROM DUAL
     </selectKey>
 	</insert>
-	
-	<!-- insert시 pk값 알아오는 구문
 
- -->
-	
-	<!-- 대댓글 수정용 
+	<!-- 댓글 수정용 -->
 	<update id="updateComment">
-
+		UPDATE TB_COMMENT
+		  SET CONTENT = #{content}
+		 WHERE ID = #{id}
 	</update>
-	-->
-	<!-- 대댓글 삭제용 
+
+	<!-- 댓글 삭제용 -->
 	<update id="updateDeleteComment">
-
+		UPDATE TB_COMMENT
+		   SET DEL_YN = 'Y'
+		  WHERE ID = #{id}
 	</update>
-	-->
+	
 	
 	
 	<!--  ajax 댓글 조회 -->
@@ -224,13 +241,7 @@
 		  FROM TB_COMMENT
 		 WHERE BOARD_NO = #{boardNo}
 	</select>
-	
-	<select id="selectParentCount" resultType="_int">
-		SELECT COUNT(*)
-		  FROM TB_COMMENT
-		 WHERE BOARD_NO = #{boardNo}
-		   AND PARENT_NUM = #{id}
-	</select>
+
 	
 	<update id="updateAnswerCount">
 		UPDATE TB_COMMENT
@@ -242,14 +253,82 @@
 		SELECT NVL(MAX(REF_ORDER), 0)
 		  FROM TB_COMMENT
 		 WHERE BOARD_NO = #{boardNo}
-			  	AND PARENT_NUM = #{id}
+			 AND REF_GROUP = #{refGroup}
 	</select>
 	
 	<select id="selectStep" resultType="_int">
-		SELECT NVL(STEP, 0)
+       SELECT NVL((SELECT STEP
+						    		FROM TB_COMMENT
+						   		  WHERE ID = (SELECT PARENT_NUM
+									                FROM TB_COMMENT
+									                WHERE ID = #{id})), 0) AS STEP
+				FROM DUAL
+	</select>
+	
+	
+	
+	
+	
+	<!-- 댓글의 자식요소 조회 -->
+	<select id="checkAnswerNum" resultType="_int">
+		 SELECT ANSWER_NUM
+		   FROM TB_COMMENT
+		  WHERE ID = #{id}
+	</select>
+	
+	<select id="selectRefOrder" resultType="_int">
+		SELECT REF_ORDER
 		  FROM TB_COMMENT
 		 WHERE ID = #{id}
 	</select>
+	
+	<!-- 댓글의 자식요소가 있다면 댓글자식요소의 제일 큰 순번 + 1 -->
+	<select id="selectReplyRefOrder" resultType="_int">
+		SELECT NVL(MAX(REF_ORDER),0)
+		  FROM TB_COMMENT
+		 WHERE PARENT_NUM = #{id}
+		   AND BOARD_NO = #{boardNo}
+	</select>
+	
+	<select id="selectNextRefOrders" resultType="java.lang.Integer">
+	<![CDATA[
+			SELECT ID 
+			FROM TB_COMMENT 
+			WHERE BOARD_NO = #{boardNo}
+				AND REF_ORDER > #{refOrder}
+				AND REF_GROUP = #{refGroup}
+				AND PARENT_NUM != #{id}
+	 ]]>
+	</select>
+	
+	<update id="updateNextRefGroupId">
+		UPDATE TB_COMMENT
+		  SET  REF_ORDER = REF_ORDER + 1
+		  WHERE ID IN 
+		  <foreach item="item" index="index" collection="list"
+      					open="(" separator="," close=")">
+          #{item}
+  		</foreach>
+	</update>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
 	
 	<!-- comment 페이지 갯수 -->
 	<select id="selectCommentCount" resultType="_int">
@@ -269,9 +348,83 @@
 	</update>
 	
 	
+	<select id="selectMessageListCount" resultType="_int">
+		SELECT COUNT(*)
+		  FROM TB_MESSAGE_BOX 
+		 <choose>
+		 	<when test="send != null and send.equals('send')">
+		 	WHERE SEND_ID = #{userId}
+		 	  AND SEND_DEL_STATUS = 'N'
+		 	  AND CUSTODY = 'N'
+		 	</when>
+		 	<when test="receive != null and receive.equals('receive')">
+		 	WHERE RECEIVE_ID = #{userId}
+		 	  AND RECEIVE_DEL_STATUS = 'N'
+		 	  AND CUSTODY = 'N' 
+		 	</when>
+		 	<otherwise>
+        WHERE CUSTODY = 'Y' 
+         AND (SEND_ID = #{userId} OR RECEIVE_ID = #{userId})
+		 	</otherwise>
+		 </choose>
+		    AND MESSAGE_COLLECT = 'N'
+	</select>
 	
 	
-	
+	<!-- 
+	<select id="selectReceiveCount">
+		SELECT COUNT(*)
+		  FROM TB_MESSAGE_BOX 
+		 WHERE RECEIVE_ID = #{userId}
+	</select>
+	 -->
+	 
+	 <select id="ajaxSelectMessageList" resultMap="messageResult">
+	 SELECT
+				   MESSAGE_NO
+				 , SEND_ID
+				 , RECEIVE_ID
+				 , TITLE
+				 , CONTENT
+				 , DATE_SEND
+				 , DATE_READ
+				 , SEND_NICKNAME
+         , (SELECT NICKNAME
+             FROM TB_MEMBER
+            WHERE RECEIVE_ID = USER_ID) RECEIVE_NICKNAME
+         , MESSAGE_COLLECT
+		FROM TB_MESSAGE_BOX
+		 <choose>
+		 	<when test="receive != null and receive.equals('receive')">
+		 	WHERE RECEIVE_ID = #{userId}
+		 	  AND RECEIVE_DEL_STATUS = 'N'
+		 	  AND CUSTODY = 'N' 
+		 	  AND MESSAGE_COLLECT = 'N'
+		 	</when>
+		 	<when test="send != null and send.equals('send')">
+		 	WHERE SEND_ID = #{userId}
+		 	  AND SEND_DEL_STATUS = 'N'
+		 	  AND CUSTODY = 'N'
+		 	</when>
+		 	<otherwise>
+      WHERE CUSTODY = 'Y' 
+        AND (SEND_ID = #{userId} OR RECEIVE_ID = #{userId})
+		 	</otherwise>
+		 </choose>
+		 ORDER
+		    BY MESSAGE_NO DESC
+	 </select>
+	 
+	 <select id="selectNoReadCount" resultType="_int">
+	   SELECT COUNT(*)
+		   FROM TB_MESSAGE_BOX 
+		  WHERE RECEIVE_ID = #{userId}
+        AND DATE_READ IS NULL
+	 </select>
+
+	 
+	 
+
 	
   
 

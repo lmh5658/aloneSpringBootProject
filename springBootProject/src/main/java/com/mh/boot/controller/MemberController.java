@@ -1,20 +1,25 @@
 package com.mh.boot.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mh.boot.dto.MemberDto;
+import com.mh.boot.dto.MessageBoxDto;
+import com.mh.boot.service.CommunityService;
 import com.mh.boot.service.MemberService;
 import com.mh.boot.util.FileUtil;
 
@@ -31,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 	
 	private final MemberService memberService;
+	private final CommunityService comunityService;
 	private final BCryptPasswordEncoder bcryptPwdEncoder;
 	private final FileUtil fileUtil;
 	
@@ -89,11 +95,9 @@ public class MemberController {
 	}
 	
 	/**
-	 * 
-	 * @param checkNickName
-	 * @return 닉네임 체크용 AJAX 
-	 * 		   값이 0일경우 => "NNNNN" 
-	 * 		   값이 0이 아닐경우 => "YYYYY" 전달
+	 * > 닉네임 체크용 AJAX 
+	 *   값이 1일경우 => "NNNNN" 
+	 * 	 값이 0일경우 => "YYYYY" 전달
 	 */
 	@ResponseBody
 	@GetMapping("/nickNamecheck.do")
@@ -101,11 +105,9 @@ public class MemberController {
 		return memberService.selectNickNamecount(checkNickName) > 0 ? "NNNNN" : "YYYYY";
 	}
 	/**
-	 * 
-	 * @param member
-	 * @return 회원가입 스프링 시큐리티 적용(BcryptPasswordEncoder) => 랜덤값 암호화
-	 * 		   회원가입 실패 => 이전 화면 + alert
-	 * 		   회원가입 성공 => 메인페이지로 이동 + alert
+	 * > 회원가입 스프링 시큐리티 적용(BcryptPasswordEncoder) => 랜덤값 암호화
+	 * 	 회원가입 실패 => 이전 화면 + alert
+	 * 	 회원가입 성공 => 메인페이지로 이동 + alert
 	 * 		   				(redirectAttributs.addFlashAttribute '포워딩' 적용 return "redirect:/")
 	 */
 	@PostMapping("/signup.do")
@@ -149,7 +151,7 @@ public class MemberController {
 	public String myinfo() {
 		return "member/myinfo";
 	}
-	
+	/*
 	@ResponseBody
 	@PostMapping("/modifyProfile.do")
 	public String ajaxModifyProfile(MultipartFile uploadFile
@@ -175,6 +177,7 @@ public class MemberController {
 		}
 		
 	}
+	*/
 	
 	@PostMapping("/modify.do")
 	public String modify(MemberDto member
@@ -220,9 +223,69 @@ public class MemberController {
 	}
 	
 	
+	/**
+	 * > 쪽지 데이터 저장
+	 */
+	@ResponseBody
+	@PostMapping("/insertSend.do")
+	public String insertSend(MessageBoxDto message, @SessionAttribute("loginUser") MemberDto member) {
+		/*
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String formattedDate = sdf.format(new Date());
+		*/
+		message.setSendId(member.getUserId());
+		message.setSendNickName(member.getNickName());
+		//message.setDateSend(formattedDate);
+		
+		memberService.insertSend(message);
+		int messageNo = message.getMessageNo(); //방금 등록한 pk번호
+		MessageBoxDto  messageBox =  memberService.selectMessage(messageNo);
+		
+		int readCount = comunityService.selectNoReadCount(member.getUserId());
+		
+		String join = String.valueOf(messageBox.getMessageNo()) + "," + messageBox.getSendId() + "," + messageBox.getReceiveId() + "," +
+					  messageBox.getTitle() + "," + messageBox.getContent() + "," + messageBox.getSendNickName() + "," +
+					  messageBox.getDateSend() + "," + messageBox.getDateRead() + "," + readCount;
+		
+		return join;
+	}
 	
 	
-	
-	
+
+	/**
+	 * 쪽지 업데이트
+	 */
+	@ResponseBody
+	@GetMapping("/updateMessage.do")
+	public String updateMessage(int messageNo, String type, @SessionAttribute("loginUser") MemberDto member){
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("messageNo", messageNo);
+		map.put("type", type);
+		map.put("userId", member.getUserId());
+
+		if(type != null && type.equals("read")) {
+			memberService.updateMessage(map);
+			MessageBoxDto  messageBox = memberService.selectMessage(messageNo);
+			int readCount = comunityService.selectNoReadCount(member.getUserId());
+			
+			String join = String.valueOf(messageBox.getMessageNo()) + "," + messageBox.getDateRead() + "," + messageBox.getSendId() + "," + readCount;
+			log.debug("readJoin :>>>>>>>", join);
+			return join;
+			
+		}else if(type != null && type.equals("collect")){
+			MessageBoxDto  messageBox = memberService.selectMessage(messageNo);
+			if(messageBox.getDateRead() == null) {
+				memberService.updateMessage(map);
+				return "SUCCESS";
+			}else {
+				return "FAIL";
+			}
+		}else {
+			return memberService.updateMessage(map) == 1 ? "SUCCESS" : "FAIL";
+		}
+		
+	}
 
 }

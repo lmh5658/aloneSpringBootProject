@@ -1,6 +1,5 @@
 package com.mh.boot.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.mh.boot.dto.AttachDto;
 import com.mh.boot.dto.CommentDto;
 import com.mh.boot.dto.CommunityDto;
+import com.mh.boot.dto.MessageBoxDto;
 import com.mh.boot.dto.PageInfoDto;
 
 import lombok.RequiredArgsConstructor;
@@ -65,9 +65,6 @@ public class CommunityDao {
 		return sqlSessionTemplate.selectList("communityMapper.ajaxCommentSelect", comment, rowBounds);
 	}	
 	
-	public int selectParentCount(CommentDto comment){
-		return sqlSessionTemplate.selectOne("communityMapper.selectParentCount", comment);
-	}
 	
 	public int selectRefGroupCount(CommentDto comment){
 		return sqlSessionTemplate.selectOne("communityMapper.selectRefGroupCount", comment);
@@ -92,4 +89,59 @@ public class CommunityDao {
 	public int updateRefOrder(List<String> array){
 		return sqlSessionTemplate.update("communityMapper.updateRefOrder", array);
 	}
+	
+	public int updateComment(CommentDto comment) {
+		return sqlSessionTemplate.update("communityMapper.updateComment", comment);
+	}
+	
+	public int updateDeleteComment(CommentDto comment) {
+		return sqlSessionTemplate.update("communityMapper.updateDeleteComment", comment);
+	}
+	
+	public int selectMessageListCount(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectMessageListCount", map);		
+	}
+	
+	public List<MessageBoxDto> ajaxSelectMessageList(Map<String, Object> map, PageInfoDto pi) {
+		RowBounds rowBounds = new RowBounds((pi.getCurrentPage()-1) * pi.getBoardLimit(), pi.getBoardLimit());
+		return sqlSessionTemplate.selectList("communityMapper.ajaxSelectMessageList", map, rowBounds);		
+	}
+	
+	public int selectNoReadCount(String userId) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectNoReadCount", userId);		
+	}
+	
+	
+	public int selectReplyRefGropCount(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectReplyRefGropCount", map);		
+	}
+	
+	public List<Integer> selectNextRefGroupId(Map<String, Object> map) {
+		return sqlSessionTemplate.selectList("communityMapper.selectNextRefGroupId", map);
+	}
+
+	
+	
+	
+	public int checkAnswerNum(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("communityMapper.checkAnswerNum", map);
+	}
+	
+	public int selectReplyRefOrder(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectReplyRefOrder", map);
+	}
+	
+	public List<Integer> selectNextRefOrders(Map<String, Object> map) {
+		return sqlSessionTemplate.selectList("communityMapper.selectNextRefOrders", map);
+	}
+	
+	public int updateNextRefGroupId(List<Integer> list) {
+		return sqlSessionTemplate.update("communityMapper.updateNextRefGroupId", list);
+	}
+	
+	public int selectRefOrder(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectRefOrder", map);
+	}
+	
+	
 }

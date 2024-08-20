@@ -18,11 +18,11 @@ import lombok.ToString;
 public class CommentDto {
 	
 	private int id;
-	private int answerNum; // 댓글의 자식 갯수
+	private int answerNum; // 댓글의 자식 갯수 => update
 	private String content; // 댓글내용
 	private int refGroup; // 1번 댓글은 1번그룹 / 2번댓글은 2번 그룹
-	private int refOrder; //댓글단 최상위  + 1
-	private int step; //부모댓글의 + 1
+	private int refOrder; //댓글단 최상위  + 1 (순번)
+	private int step; //최상위(그룹에 속해있는)부모댓글의 + 1
 	private int parentNum; // 부모의 id번호
 	private int boardNo; //게시글번호
 	private String registDt;//생성날짜

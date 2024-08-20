@@ -1,9 +1,12 @@
 package com.mh.boot.service;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
 import com.mh.boot.dao.MemberDao;
 import com.mh.boot.dto.MemberDto;
+import com.mh.boot.dto.MessageBoxDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,5 +50,21 @@ public class MemberServiceImpl implements MemberService {
 	public int selectNickNamecount(String checkNickName) {
 		return memberDao.selectNickNamecount(checkNickName);
 	}
+
+	@Override
+	public int insertSend(MessageBoxDto message) {
+		return memberDao.insertSend(message);
+	}
+
+	@Override
+	public int updateMessage(Map<String, Object> map) {
+		return memberDao.updateMessage(map);
+	}
+
+	@Override
+	public MessageBoxDto selectMessage(int messageNo) {
+		return memberDao.selectMessage(messageNo);
+	}
+
 
 }

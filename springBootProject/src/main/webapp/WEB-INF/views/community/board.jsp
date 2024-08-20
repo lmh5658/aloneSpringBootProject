@@ -133,7 +133,7 @@ button:hover {
 <body>
 	
 	<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
-	 <div style=" display: flex; justify-content: center;align-items: center;">
+	 <div style=" display: flex; justify-content: center;align-items: center; margin: 30px;">
         <h2>자유게시판</h2>
     </div>
     
@@ -185,7 +185,7 @@ button:hover {
                </c:choose>
                 </tbody>
             </table>
-            	<div style="display: flex;justify-content: center;margin-top: 20px;">
+            	<div style="display: flex;justify-content: center;margin-top: 50px;">
             	 <div class="pagination">
  
             	  	<c:if test="${ not empty list }">

@@ -4,13 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import com.mh.boot.dto.MemberDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +15,6 @@ public class ChatEchoHandler extends TextWebSocketHandler {
 	
 	// sessionList : 현재 웹소켓과 연결된 클라이언트들을 저장해놓는 리스트
 	private List<WebSocketSession> sessionList = new ArrayList<>();
-	
 	//private final ChatService chatService;
 	
 	
@@ -29,6 +23,7 @@ public class ChatEchoHandler extends TextWebSocketHandler {
 	 * 
 	 * @param session - 현재 웹소켓과 연결된 클라이언트 정보를 가지고 있는 객체
 	 */
+	/*
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		
@@ -48,12 +43,13 @@ public class ChatEchoHandler extends TextWebSocketHandler {
 		}
 		
 	}
-	
+	*/
 	/**
 	 * 2) handleMessage : 데이터(텍스트, 파일 등)가 웹소켓으로 전송되었을 때 처리할 내용을 정의
 	 * 
 	 * @param message - 현재 웹소켓으로 전달된 데이터에 대한 정보를 가지고 있는 객체
 	 */
+	/*
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
 		log.debug("============= 메세지 들어옴 ============");
@@ -73,10 +69,11 @@ public class ChatEchoHandler extends TextWebSocketHandler {
 		// insert요청하기 
 		
 	}
-	
+	*/
 	/**
 	 * 3) afterConnectionClosed : 클라이언트와 연결이 끊겼을 때 처리할 내용을 정의
 	 */
+	/*
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		
@@ -95,5 +92,5 @@ public class ChatEchoHandler extends TextWebSocketHandler {
 		}
 	
 	}
-
+	*/
 }

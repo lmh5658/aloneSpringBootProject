@@ -1,6 +1,10 @@
 package com.mh.boot.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.mh.boot.dto.MemberDto;
+import com.mh.boot.dto.MessageBoxDto;
 
 public interface MemberService {
 	
@@ -20,6 +24,14 @@ public interface MemberService {
 	
 	// 닉네임 중복 체크용
 	int selectNickNamecount(String checkNickName);
+	
+	//쪽지 저장
+	int insertSend(MessageBoxDto message);
+	
+	//쪽지 삭제
+	int updateMessage(Map<String, Object> map);
+	
+	MessageBoxDto selectMessage(int messageNo);
 	
 
 }
