@@ -109,6 +109,115 @@ form textarea {
     font-weight: bolder;
 
 }
+
+
+
+/* 결제 정보 섹션 */
+.payment-section {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #fafafa; /* 밝은 회색 배경 */
+    margin-bottom: 20px;
+}
+
+.payment-section h2 {
+    font-size: 2em;
+    color: #ff6f61; /* 제목 색상 */
+    margin-bottom: 10px;
+}
+
+.payment-details {
+		margin-bottom: 20px;
+    margin-top: 68px;
+    text-align: end;
+    margin-right: 36px;
+}
+
+.payment-details p {
+    font-size: 1.2em;
+    color: #333;
+}
+
+.point-deduction {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.point-deduction h3 {
+    font-size: 1.5em;
+    color: #ff6f61;
+    margin-bottom: 10px;
+}
+
+.point-deduction form {
+    display: flex;
+    flex-direction: column;
+}
+
+.point-deduction label {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.point-deduction input {
+    font-size: 1em;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.point-deduction button {
+    font-size: 1.2em;
+    background-color: #000000b5;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.point-deduction button:hover {
+    background-color: #ff3f2e; /* 버튼 hover 효과 */
+}
+
+/* 포인트 혜택 섹션 */
+.benefits-section {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #fafafa; /* 밝은 회색 배경 */
+}
+
+.benefits-section h2 {
+    font-size: 2em;
+    color: #ff6f61; /* 제목 색상 */
+    margin-bottom: 10px;
+}
+
+.benefits-details {
+    font-size: 1.2em;
+    color: #333;
+}
+
+.benefits-details p {
+    margin-bottom: 10px;
+}
+
+#pointCheckbox{
+		width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+#allPoints{
+	width: 20px;
+	margin-top: 2px;
+}
 </style>
 <body>
     <jsp:include page="/WEB-INF/views/common/header.jsp"/>
@@ -166,7 +275,7 @@ form textarea {
                 
                 <!-- 상품 목록 -->
 					      <div class="cart-summary">
-					          <h2>상품 목록</h2>
+					          <h2>결제 상품 목록</h2>
 					          <table class="cart-table">
 					              <thead>
 					                  <tr>
@@ -185,8 +294,8 @@ form textarea {
 													            <div>${item.proName}</div>
 													        </td>
 													        <td>${item.count}</td>
-													        <td class="price">${item.productPrice}</td>
-													        <td class="total">${item.count * item.productPrice}</td>
+													        <td class="price">${ item.productPrice - item.productSalePrice }</td>
+													        <td class="total">${item.count * (item.productPrice - item.productSalePrice)}</td>
 													        <input type="hidden" class="pNo" value="${item.productNo}" name="orderProduct[${status.index}].orderProductNo">
 													        <input type="hidden" value="${item.proName}" name="orderProduct[${status.index}].orderProductName">
 													        <input type="hidden" value="${item.count}" name="orderProduct[${status.index}].orderProductAmount">
@@ -195,25 +304,58 @@ form textarea {
 													</c:forEach>
 					              </tbody>
 					          </table>
-					          <div class="final-amount" style="text-align: right;font-size: 25px;">
-					              <p>최종 결제 금액: <span id="totalAmountValue"> ${totalPrice} </span> 원</p>
-												<input type="hidden" value="${ totalPrice }" name="orderTotalPrice">
-												<input type="hidden" value="kakaoPay" name="paymentMethod">
-					          </div>
-					          
 					      </div>
+	                <section class="payment-section">
+                		<h2>결제 정보</h2>
+		                <section class="point-deduction">
+		                		<div style="display: flex; align-items: baseline;">
+		                			<label for="coupon">보유 쿠폰 : &nbsp;&nbsp;</label>
+		                			<select id="coupon" name="coupon">
+											       <option value="noCoupon">보유한 쿠폰이 존재하지않습니다.</option>						        
+											    </select>
+		                		</div>
+		                    <p><strong>보유 포인트 : &nbsp;&nbsp;</strong><h7 id="netPoint"></h7>P</p>
+										    <label for="deduct-amount">차감할 포인트를 입력하세요(포인트 차감 버튼을 눌러야 적용됩니다.)</label>
+										    <input type="number" id="deduct-amount" name="deduct-amount" min="0" value=0 placeholder="포인트 입력" required>
+										    <div id="pointCheckbox">
+										    	 <div>
+										    	 		<label style="text-align: end;"><input type="checkbox" id="allPoints" name="allPoints"><b>모든 포인트</b></label>
+										    	 </div>
+										    	 <div>
+											    		<button type="button" id="deductPoint">포인트 차감</button>										    	 
+										    	 </div>
+										    </div>
+										    <div class="payment-details">
+			                    <p><strong>결제 금액 : &nbsp;&nbsp;</strong> <strong id="totalPrice"> ${totalPrice} </strong> 원</p>
+			                    <p><strong>배송비 : &nbsp;&nbsp;</strong> + 3,000 원</p>
+			                    <p id="pointD">
+			                    	<strong>포인트 : &nbsp;&nbsp;</strong> <strong id="deduct"> 0 </strong> 원
+			                    </p>
+			                    <p><strong>총 결제 금액 : &nbsp;&nbsp;</strong><strong id="totalPrices"></strong>원</p>
+			                    <input type="hidden" name="orderTotalPrice" value="">
+		                		</div>
+										</section>
+		                
+		            </section>
+		            <section class="benefits-section">
+		                <h2>구매시 예상 포인트 혜택</h2>
+		                <div class="benefits-details">
+		                    <p><strong>구매 적립 : &nbsp;&nbsp;</strong><strong id="EarnPurchaseRewards"></strong>원</p>
+		                    <p><strong>리뷰 적립 : &nbsp;&nbsp;</strong><strong id="reviewPurchaseRewards"></strong> 원</p>
+		                    <p><strong>최대 적립 금액 : &nbsp;&nbsp;</strong><strong id="maxPurchaseRewards"></strong>원</p>
+		                </div>
+		            </section>
 					      
 					      <div class="cart-summary" style="height: 266px;display: flex;flex-direction: column;justify-content: center; align-items: flex-start;">
 					          <h2>결제수단</h2>
-					          <div style="margin-top: 48px;">
-					          	<input type="radio" style="width: 10px; height: 10px;" id="kakaoRadio">
-					          	<img alt="" src="${contextPath}/resources/images/payment_icon_yellow_small.png">
+					          <div style=" margin-top: 48px;display: flex; align-items: baseline;">
+					          	<input type="radio" style="width: 20px; height: 20px;" id="kakaoRadio">
+					          	 <label for="kakaoRadio">
+					          		<img alt="" src="${contextPath}/resources/images/payment_icon_yellow_small.png">
+					          	 </label>
 					          </div>
 					      </div>
-					      <div style="display: flex;
-												    align-items: center;
-												    justify-content: center;
-												    margin: 103p">
+					      <div style="display: flex; align-items: center;justify-content: center;margin: 103p">
 	                <button type="button" class="pay-button" id="payBtn">결제하기</button>					      
 					      </div>
                 
@@ -222,22 +364,148 @@ form textarea {
         </div>
     </div>
 <script>
+$(document).ready(function(){
+	let price = parseFloat($("#totalPrice").text().trim().replace(/,/g, ''));
+	let purchaseRewards = price * 0.015
+	let productAmount = "${cartList.size()}";
+	let reviewTotalPrice = productAmount * 500;
+	let maxPurchaseRewards = purchaseRewards + reviewTotalPrice;
+	$("#EarnPurchaseRewards").text(purchaseRewards.toLocaleString('ko-KR'));
+	$("#reviewPurchaseRewards").text(reviewTotalPrice.toLocaleString('ko-KR'));
+	$("#maxPurchaseRewards").text(maxPurchaseRewards.toLocaleString('ko-KR'));
+})
 
+$("#allPoints").on("change", function() {
+    let myPoint = $("#netPoint").text().trim().replace(/,/g, '');
+    
+      $("#deduct-amount").val(myPoint);
+      $(this).prop("checked", true);
+    
+});
 
-
+$("#deduct-amount").on("input", function() {
+    
+    let myPoint = parseFloat($("#netPoint").text().trim().replace(/,/g, ''));
+    let deductAmount = parseFloat($(this).val());
+	
+    if (myPoint < deductAmount) {
+        alert("초과된 포인트입니다. 다시 입력해주세요.");
+        $(this).val('');
+        return;
+    }
+		
+});
 
 $(document).ready(function(){
+	let rawValue = parseFloat($("#totalPrice").text().trim().replace(/,/g, ''));
+	let totalPrices = rawValue + 3000
+	$("#totalPrices").html(totalPrices.toLocaleString('ko-KR'));
+	$("input[type='hidden'][name='orderTotalPrice']").val(totalPrices.toLocaleString('ko-KR'));
+})
+
+
+
+//포인트 차감 버튼클릭시 실행되는 스크립트
+$("#deductPoint").on("click", function() {
+		
+    let totalPrice = parseFloat($("#totalPrice").text().trim().replace(/,/g, ''));
+    let coupon = 0;
+    let point = parseFloat($("#deduct-amount").val());
+    
+    if($("#couponSelect").length > 0){
+    	coupon = parseFloat($("#couponSelect").text().trim().replace(/,/g, ''));
+    }
+    
+    let total = totalPrice + 3000 - $("#deduct-amount").val();
+    
+    if (!Number.isNaN(point)) {
+    	
+        let formattedPoint = point.toLocaleString('ko-KR');
+        $("#deduct").text(point == 0 ? 0 : "- " + formattedPoint);
+        let total = totalPrice + 3000 - point - coupon;
+        $("#totalPrices").text(total.toLocaleString('ko-KR'));
+        $("input[type='hidden'][name='orderTotalPrice']").val(total.toLocaleString('ko-KR'));
+        
+    } else {
+        alert("유효하지 않은 포인트입니다.");
+    }
+});
+
+
+$(document).on("change", "#coupon", function() {
 	
-    $(".pay-button").on("click", function (event) {
-        // 올바른 셀렉터를 사용하여 체크된 라디오 버튼을 확인합니다.
-        if ($("input[type='radio']:checked").length > 0 && $("#kakaoRadio").is(":checked")) {
-            kakaoPay();
-        } else {
-            alert("결제수단을 설정해주세요.");
-            event.preventDefault();
+    let total = parseFloat($("#totalPrice").text().trim().replace(/,/g, '')) || 0;
+    let point = parseFloat($("#deduct").text().trim().replace(/,/g, '')) || 0;
+
+    let couponValue = $(this).val();
+    
+    if (couponValue === "CPW001") {
+        let discount = (total + 3000 - point) * 0.1; // 쿠폰 할인 계산
+
+        let $couponComplete = $(".payment-details").find("#couponComplete");
+        if ($couponComplete.length == 0) {
+            $("#pointD").append('<p id="couponComplete"><strong>쿠폰 : &nbsp;&nbsp; - </strong> <strong id="couponSelect">' +  discount.toLocaleString('ko-KR') + '</strong> 원</p>');
+        }
+        
+        // 총 결제 금액 계산 및 업데이트
+        let finalTotalPrice = total + 3000 - point - discount;
+        $("#totalPrices").text(finalTotalPrice.toLocaleString('ko-KR'));
+        $("input[type='hidden'][name='orderTotalPrice']").val(finalTotalPrice.toLocaleString('ko-KR'));
+        
+    } else {
+        let finalTotalPrice = total + 3000 - point;
+        $("#totalPrices").text(finalTotalPrice.toLocaleString('ko-KR'));
+        $("input[type='hidden'][name='orderTotalPrice']").val(finalTotalPrice.toLocaleString('ko-KR'));
+        $(".payment-details").find("#couponComplete").remove();
+    }
+});
+
+
+
+
+
+
+//로그인회원의 적립포인트, 쿠폰 조회하는 AJAX
+$(document).ready(function() {
+    $.ajax({
+        url: "${contextPath}/pay/selectMyPoint.do",
+        type: "get",
+        success: function(response) {
+            console.log(response);
+            let earnPoint = response.earnPoint
+            let PointMinusAmount = response.PointMinusAmount
+            let sumPoint = earnPoint - PointMinusAmount;
+            let point = sumPoint.toString().replace(/[,-]/g, ''); 
+
+            let netPoint = point.toLocaleString('ko-KR');
+            $("#netPoint").html(point == 0 ? 0 : netPoint);
+
+            let coupon = response.couponList;
+            if (coupon.length > 0) {
+                let html = '<option value="noCoupon">쿠폰을 선택하세요.</option>';
+                coupon.forEach(function(item) {
+                    html += '<option value="' + item.couponSerialNumber + '">' + item.couponName + '</option>';
+                });
+                $("#coupon").html(html);
+            }
+        },
+        error: function() {
+            // 오류 처리
+            console.error("포인트와 쿠폰 정보를 가져오는 중 오류가 발생했습니다.");
         }
     });
-    
+});
+
+
+
+$(".pay-button").on("click", function (event) {
+	
+    if ($("input[type='radio']:checked").length > 0 && $("#kakaoRadio").is(":checked")) {
+        kakaoPay();
+    } else {
+        alert("결제수단을 설정해주세요.");
+        event.preventDefault();
+    }
 });
 
 //구매자 정보
@@ -258,10 +526,8 @@ if (confirm("구매 하시겠습니까?")) { // 구매 클릭시 한번 더 확�
 	 let userEmail = '${memberList.email}';
 	 let userName = '${memberList.userName}';
 	 let userPhone = '${memberList.phone}';
-	 var totalPrice = "${totalPrice}";
+	 var totalPrice = $("#totalPrices").text().trim();
 	 
-			
-			
 	 		IMP.init('imp37456887'); //가맹점 식별코드
    		IMP.request_pay({
        pg: 'kakaopay.TC0ONETIME', // PG사 코드표에서 선택
@@ -286,17 +552,13 @@ if (confirm("구매 하시겠습니까?")) { // 구매 클릭시 한번 더 확�
        		type:"post",
        		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
        		dataType: "text",
-       		data:$("#paymentForm").serialize(),
-       		success:function(response){
+       		data:$("#paymentForm").serialize() + "&type=cart",
+       		success:function(orderKey){
        			
-       			console.log("전달 여부 :" + response);
        			//결제 성공시
-       		
-  	        if (response > 0) { // DB저장 성공시
-  	            
-  	        		console.log("ajax통신 성공!!");
-  	        		//location.href="${contextPath}/pay/payCompleted.do";
-  	        
+  	        if (orderKey > 0) { // DB저장 성공시
+  	        		console.log("카카오페이 결제완료 ajax통신 성공!!");
+  	        		insertPoint(orderKey);
   	        } else{ // 결제완료 후 DB저장 실패시
   	            alert(`error:[${response.status}]\n결제요청이 승인된 경우 관리자에게 문의바랍니다.`);
   	            // DB저장 실패시 status에 따라 추가적인 작업 가능성
@@ -324,7 +586,33 @@ if (confirm("구매 하시겠습니까?")) { // 구매 클릭시 한번 더 확�
 }
 </script>    
     
-   
+<script>
+function insertPoint(orderKey){
+	//let plusPoint = $("#EarnPurchaseRewards").text().trim();
+	let minusPoint = $("#deduct").text().trim().replace(/[, -]/g, '');
+	let redeemCoupon = $("#coupon").val();
+	$.ajax({
+		url:"${contextPath}/pay/ajaxPayPointCoupon.do",
+		type:"post",
+		data:{
+			orderNo: orderKey,
+			minusPoint: minusPoint,
+			redeemCoupon: redeemCoupon
+		},
+		success:function(response){
+			console.log("point적립성공여부 => " + response);
+			location.href="${contextPath}/pay/payComplete.page?orderNo=" + orderKey;
+		},
+		error:function(){
+			
+		}
+		
+	})
+	
+	
+}
+
+</script>   
     
     
 <script>

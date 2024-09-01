@@ -66,5 +66,39 @@ public class MemberServiceImpl implements MemberService {
 		return memberDao.selectMessage(messageNo);
 	}
 
+	@Override
+	public MemberDto selectFindUserId(MemberDto member) {
+		return memberDao.selectFindUserId(member);
+	}
+
+	@Override
+	public int findPwdChange(Map<String, Object> map) {
+		return memberDao.findPwdChange(map);
+	}
+
+	@Override
+	public int insertCoupon(Map<String, Object> map) {
+		return memberDao.insertCoupon(map);
+	}
+
+	@Override
+	public String selectLoginUserPwd(String userId) {
+		return memberDao.selectLoginUserPwd(userId);
+	}
+
+	@Override
+	public int updateUserModifyProfile(MemberDto m) {
+		return memberDao.updateUserModifyProfile(m);
+	}
+
+	@Override
+	public int updatePassword(Map<String, Object> map) {
+		return memberDao.updatePassword(map);
+	}
+	
+	
+	
+	
+
 
 }

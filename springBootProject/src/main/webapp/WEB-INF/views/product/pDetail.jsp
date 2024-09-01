@@ -64,8 +64,7 @@ body {
 }
 
 .product-title {
-    font-size: 24px;
-    margin-bottom: 10px;
+    font-size: 30px;
 }
 
 .product-price {
@@ -73,7 +72,6 @@ body {
     color: #e74c3c;
     display: flex;
     justify-content: flex-end;
-    padding-top: 200px;
 }
 
 .product-description {
@@ -265,7 +263,7 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: relative;
-    
+    font-size: 20px;
 }
 
 .rating-summary {
@@ -277,7 +275,7 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
 }
 
 .product-rating .rating-score {
-    font-size: 32px;
+    font-size: 15px;
     font-weight: bold;
     color: #ffcc00;
 }
@@ -285,6 +283,9 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
 .review-count {
     font-size: 18px;
     color: #888888;
+}
+.review{
+margin-top: 123px;
 }
 
 .rating-distribution {
@@ -334,6 +335,7 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
 
 .review-list {
     margin-top: 20px;
+    height: 620px;
 }
 
 .review-item {
@@ -361,7 +363,7 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
     width: 300px; /* 필요한 크기에 따라 조정 가능 */
     padding: 20px;
     background-color: #f9f9f9;
-    border: 2px dashed #ff9900; /* 점선 테두리 */
+    border: 2px dashed #007bff59; /* 점선 테두리 */
     border-radius: 12px; /* 둥근 테두리 */
     text-align: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -406,13 +408,40 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
 	margin-top: 250px;
   height: 400px;
 }
-#myform{
+#myform, #myforms{
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
-
+#myforms fieldset{
+	display: inline-block;
+	direction: rtl;
+	border:0;
+}
+#myforms fieldset legend{
+    text-align: right;
+}
+#myforms input[type=radio]{
+    display: none;
+}
+#myforms label{
+    font-size: 3em;
+    color: transparent;
+    text-shadow: 0 0 0 #f0f0f0;
+}
+#myforms label:hover{
+    text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+    cursor: pointer;
+}
+#myforms label:hover ~ label{
+    text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+    cursor: pointer;
+}
+#myforms input[type=radio]:checked ~ label{
+    text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+    cursor: pointer;
+}
 #myform fieldset{
 	display: inline-block;
 	direction: rtl;
@@ -448,6 +477,178 @@ h2{ color: #7f8c8d; font-family: Neucha, Arial, sans serif; font-size:18px; marg
 }
 .bt{
 margin: 10px;
+}
+
+
+/* 관련 상품 스타일 */
+.related-products {
+    margin: 20px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+.related-product-detail{
+	height: 1000px;
+	margin-top: 100px;
+}
+
+.product-grid {
+    display: flex;
+    gap: 17px;
+    flex-wrap: wrap;
+}
+
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    width: 184px;
+    text-align: center;
+}
+
+.product-card img {
+    width: 100%;
+    border-radius: 5px;
+    height: 180px;
+}
+
+.product-name {
+    font-size: 18px;
+    margin: 10px 0;
+    height: 50px;
+}
+
+.product-price {
+    font-size: 16px;
+    color: #e60012;
+}
+
+.view-button {
+    background-color: #e60012;
+    color: white;
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.view-button:hover {
+    background-color: #c6000d;
+}
+
+
+
+.product-rating {
+  	color: #333;
+    text-align: end;
+    font-size: 27px;
+}
+
+.no-reviews {
+  color: #888; /* 회색으로 부드럽게 표시 */
+}
+
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+
+
+
+.arrow-left {
+    left: 10px;
+    border: 2px solid white;
+    background: none;
+}
+
+.arrow-right {
+    right: 10px;
+    border: 2px solid white;
+    background: none;
+}
+
+.reviews h2{
+	margin-bottom: 42px;
+	color: #004085; 
+	font-weight: bold;
+}
+.add-to-cart{
+	border: 3px #dd68e333 solid;
+  border-radius: 6px;
+  background: #dd68e333;
+  padding: 5px;
+  font-size: 20px;
+  margin-right: 21px;
+
+}
+
+.buy-now{
+border: 3px #000000 solid;
+    border-radius: 6px;
+    background: #000000;
+    padding: 5px;
+    font-size: 20px;
+    width: 300px;
+    color: white;
+}
+
+#minus, #add{
+    border: 1px solid #ced4da;
+    background: #ffffff;
+    width: 33px;
+    font-size: 21px;
+}
+
+#amount{
+text-align: center;
+    border: 1px solid #ced4da;
+    width: 32px;
+    font-size: 22px;
+}
+.product-details>.product-price{
+	font-size:30px;
+	color: #004085;
+	font-weight: bold;
+}
+
+#signUp{
+		border: 3px #dd68e333 solid;
+    border-radius: 6px;
+    background: #dd68e333;
+    padding: 5px;
+    font-size: 20px;
+    color: black;
+    width: 83px;
+}
+
+#reviewContent{
+	resize: none;
+	width: 466px;
+	border: 3px #f8e1f9 dashed;
+}
+
+#firstReviewContent{
+	resize: none;
+	width: 466px;
+	border: 3px #f8e1f9 dashed;
+}
+
+.arrow>svg{
+		background: #fbcbfd;
+    border-radius: 22px;
+    color: white;
+}
+
+.no-to-cart{
+    border: 3px #dd68e333 solid;
+    border-radius: 6px;
+    background: #dd68e333;
+    padding: 5px;
+    font-size: 20px;
+    margin-right: 21px;
 }
 </style>
 </head>
@@ -501,86 +702,107 @@ margin: 10px;
 		
 		            <div class="product-details">
 		                <h1 class="product-title">${ list.proName }</h1>
-		                <p class="product-price"><b id="pPrice">${ list.productPrice }</b><b> 원</b></p>
+		                <c:choose>
+		                <c:when test="${ list.productSaleStatus == 'Y' }">
+			                <p class="product-price" style="margin-top: 211px;"><b id="pPrice">${ list.productPrice - list.productSalePrice }</b><b> 원</b> &nbsp;&nbsp; <b style="color: red;text-decoration: line-through;">${ list.productPrice }원</b></b></p>		                
+		                </c:when>
+		                <c:otherwise>
+			                <p class="product-price" style="margin-top: 211px;"><b id="pPrice">${ list.productPrice }</b><b> 원</b></p>
+		                </c:otherwise>
+		                </c:choose>
 		                <div class="purchase-options">
-		                		<div style="display: flex;">
+		                		<div style="display: flex;margin-right: 20px;">
+		                			<input type="button" value="  -  " id="minus"> 
 			                    <input type="text" name="amount" id="amount" value="1" size="3" max="" min="1">
-			                   	
-				                   	<input type="button" value="  -  " id="minus"> 
-				                   	<input type="button" value="  +  " id="add">
+				                	<input type="button" value="  +  " id="add">
 			                   	
 		                   	</div>
-		                    <button class="add-to-cart">장바구니</button>
-		                    <button class="buy-now">구매하기</button>
+		                   	<c:choose>
+		                    <c:when test="${ list.proAmount == 0 }">
+		                    <button style="cursor: not-allowed;" class="no-to-cart" disabled>
+			                    <svg xmlns="http://www.w3.org/2000/svg" style="color: #000000;" width="25" height="25" fill="currentColor" class="bi bi-cart2" viewBox="0 0 16 16">
+													  <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l1.25 5h8.22l1.25-5zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/>
+													</svg>                   
+		                    
+		                    </c:when>
+		                     <c:otherwise>
+		                     <button class="add-to-cart">
+		                   		 <svg xmlns="http://www.w3.org/2000/svg" style="color: #000000;"  width="25" height="25" fill="currentColor" class="bi bi-cart2" viewBox="0 0 16 16">
+													  <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l1.25 5h8.22l1.25-5zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/>
+														</svg>
+													</button>                    
+		                    </c:otherwise>
+		                    </c:choose>
+		                    <c:choose>
+		                    <c:when test="${ list.proAmount == 0 }">
+		                    	 <button class="buy-now" style="cursor: not-allowed;" disabled>Sold Out</button>		
+		                    </c:when>
+		                    <c:otherwise>
+		                   		 <button class="buy-now">구매하기</button>		                    
+		                    </c:otherwise>
+		                    </c:choose>
+		                    
 		                </div>
 		            </div>
 		        </div>
+		        
+		        <script>
+		        	$(".buy-now").on("click", function(){
+		        		let price = "${list.productPrice - list.productSalePrice}";
+		        		let amount = $("#amount").val();
+		        		let totalPrice = (parseFloat(price) * parseFloat(amount)).toLocaleString('ko-KR');
+		        		let productdNo = "${list.productNo}" 
+		        		if("${loginUser}" != ""){
+			        		location.href="${contextPath}/pay/directPay.page?totalPrice=" + totalPrice + "&productNo=" + productdNo + "&amount=" + amount;		        			
+		        		}else{
+		        			location.href="${contextPath}/member/loginPage.page";
+		        		}
+		        	})
+		        </script>
+
+		        
 		        <div class="reviews">
 		            <div class="review">
-		            	<div class="review-container">
-									    <div class="rating-summary">
-									        <div class="product-rating">
-													    <span id="rating-score" data-rating="${reviewList[0].avgRatingTotal}"></span> / 5
+		            	<h2>리뷰</h2>
+				           <div class="review-container">
+				            		<div id="reviewYes" style="display:none;">
+				            			<!-- 별점 영역 -->
+											    <div class="rating-summary">
+											    
+											    </div>
+											    <div class="product-rating">
+															<span id="rating-score" data-rating="${reviewList[0].avgRatingTotal}"></span> / 5.0점
 													</div>
-													<div class="rating-distribution">
-													    <div class="distribution-bar">
-													        <span class="bar-label">5점</span>
-													        <div class="bar"><div class="fill" id="bar-5"></div></div>
-													    </div>
-													    <div class="distribution-bar">
-													        <span class="bar-label">4점</span>
-													        <div class="bar"><div class="fill" id="bar-4"></div></div>
-													    </div>
-													    <div class="distribution-bar">
-													        <span class="bar-label">3점</span>
-													        <div class="bar"><div class="fill" id="bar-3"></div></div>
-													    </div>
-													    <div class="distribution-bar">
-													        <span class="bar-label">2점</span>
-													        <div class="bar"><div class="fill" id="bar-2"></div></div>
-													    </div>
-													    <div class="distribution-bar">
-													        <span class="bar-label">1점</span>
-													        <div class="bar"><div class="fill" id="bar-1"></div></div>
-													    </div>
-													</div>
-									    </div>
-									    <div class="review-list">
-									        
-									    </div>
-									    <div class="review-count">
-									            <span>총 리뷰 </span><b></b>건
-									    </div>
-									    <div>
-									    <div style="display: flex;
-															    justify-content: center;
-															    margin-top: 100px;
-															    margin: 5px;">
-								        	<ul class="pagination">
-													  
-													</ul>
-								        </div>
-									    
-									    </div>
-									    
-									    <div style="display: flex;
-															    justify-content: flex-end;
-															    align-items: center;
-															    flex-direction: row;
-															    ">
-									    	<button class="write-review-button" data-toggle="modal" data-target="#myModal">리뷰 작성하기</button>
-									    </div>
-										    <div class="review-prompt">
-												    <div class="stars" style="display: flex; justify-content: space-between;"><div style="margin-left: 86px;">★★★★★</div><div style="cursor: pointer;" onclick="closed();">x</div></div>
-												    <p class="review-text">리뷰 작성시 <strong>최대 1000 포인트</strong>을 드립니다.<br>첫번째 리뷰를 작성해보세요.</p>
-												    <button class="review-button" data-toggle="modal" data-target="#myModal">리뷰작성하기</button>
-												</div>
-									</div>
-		            </div>
-		            
-		            <!-- 리뷰 모달 화면 div -->
-		            		<!-- Button to Open the Modal -->
-										
+											     <!-- 리뷰 리스트 영역 -->
+											    <div class="review-list">
+											    
+											    </div>
+											    <div class="review-count">
+											        <span>총 리뷰 </span><b></b>건
+											    </div>
+											    <div>
+													<!-- 페이징 영역 -->
+											    <div style="display: flex;justify-content: center;margin-top: 100px;margin: 5px;">
+										        	<ul class="pagination">
+										        	
+															</ul>
+										      </div>
+											   </div>
+											 </div>
+		            			<p class="not_review" id="reviewNo" style="text-align: center; height: 264px; display: none;">
+											 <span class="no-reviews">아직 작성된 리뷰가 없습니다.</span>
+											</p>
+								    <div style="display: flex; justify-content: flex-end; align-items: center; flex-direction: row;">
+								    	<button class="write-review-button" data-toggle="modal" data-target="#myModal">리뷰 작성하기</button>
+								    </div>
+								    <div class="review-prompt">
+										    <div class="stars" style="display: flex; justify-content: space-between;"><div style="margin-left: 86px;">★★★★★</div><div style="cursor: pointer;" onclick="closed();">x</div></div>
+										    <p class="review-text">리뷰 작성시 <strong>최대 1000 포인트</strong>을 드립니다.<br>첫번째 리뷰를 작성해보세요.</p>
+										    <button class="review-button" data-toggle="modal" data-target="#firstMyModal">리뷰작성하기</button>
+										</div>
+							</div>
+	         </div>   
+		            <!-- 리뷰 모달 화면 S -->
 										<!-- The Modal -->
 										<div class="modal" id="myModal">
 										  <div class="modal-dialog">
@@ -624,25 +846,127 @@ margin: 10px;
 										    </div>
 										  </div>
 										</div>
-		            <!-- 리뷰 모달 화면 div -->
+		            <!-- 리뷰 모달 화면 E-->
 		            
+		            <!-- 리뷰 모달 화면 S -->
+										<!-- The Modal -->
+										<div class="modal" id="firstMyModal">
+										  <div class="modal-dialog">
+										    <div class="modal-content">
+									
+										      <!-- Modal Header -->
+										      <div class="modal-header">
+										        <h4 class="modal-title">리뷰 작성하기</h4>
+										        <button type="button" class="close" data-dismiss="modal">&times;</button>
+										      </div>
+									
+										      <!-- Modal body -->
+										      <div class="modal-body">
+										        <form class="mb-3" name="myforms" id="myforms" method="post">
+															<fieldset>
+																<input type="radio" name="reviewStar" value="5" id="rat1"><label
+																	for="rat1">★</label>
+																<input type="radio" name="reviewStar" value="4" id="rat2"><label
+																	for="rat2">★</label>
+																<input type="radio" name="reviewStar" value="3" id="rat3"><label
+																	for="rat3">★</label>
+																<input type="radio" name="reviewStar" value="2" id="rat4"><label
+																	for="rat4">★</label>
+																<input type="radio" name="reviewStar" value="1" id="rat5"><label
+																	for="rat5">★</label>
+															</fieldset>
+														</form>
+														
+														<div>
+															<textarea rows="5" cols="61" resize="none" id="firstReviewContent" style="resize: none; width: 466px;" placeholder="리뷰를 작성해주세요.">
+															
+															</textarea>
+														</div>
+										      </div>
+									
+										      <!-- Modal footer -->
+										      <div class="modal-footer" style="display: flex; justify-content: center;">
+										        <button type="button" class="btn btn-danger" data-dismiss="modal" id="firstReview">등록</button>
+										      </div>
+									
+										    </div>
+										  </div>
+										</div>
+		            <!-- 리뷰 모달 화면 E-->
 		            
-		        </div>
-		        <!-- 
-		        <div class="product-description-full">
-		            <h2>상품 설명</h2>
-		        </div>
-		
-		        <div class="related-products">
-		            <h2>관련 상품</h2>
-		            <div class="related-product">관련 상품 1</div>
-		            <div class="related-product">관련 상품 2</div>
-		            <div class="related-product">관련 상품 3</div>
-		        </div>
-		    </div>
-		    	-->
-		    	
+		            <div class="related-product-detail">
+		            	<h2>상품 상세</h2>
+								</div>
+							  <div class="related-products">
+							      <h2>관련 추천 TOP 상품</h2>
+							      <div class="product-grid">
+							          
+							          
+							      </div>
+							  </div>
+            
+        </div>
+      
+        
+    </div>
+		<jsp:include page="/WEB-INF/views/common/footer.jsp"/>  
+		  	
 <script>
+//장바구니 스크립트
+$(document).on("click", ".add-to-cart", function(){
+	
+	let count = $("#amount").val();
+	let productNo = "${list.productNo}";
+	
+	if("${ loginUser }" != ""){
+		
+		if(confirm("상품이 장바구니에 담겼습니다. 장바구니로 이동하시겠습니까?")){
+				
+				$.ajax({
+					url:"${contextPath}/product/insertCart.do",
+					type:"GET",
+					data:{
+						productNo: productNo,
+						count: count
+					},
+					success:function(response){
+						
+							location.href="${contextPath}/product/cart.page"
+						
+					},
+					error:function(){
+						console.log("ajax통신 실패");
+					}
+				})
+				
+				
+		}else{
+			
+			$.ajax({
+				url:"${contextPath}/product/insertCart.do",
+				type:"GET",
+				data:{
+					productNo: productNo,
+					count: count
+				},
+				success:function(response){
+					
+						console.log(response);					
+					
+				},
+				error:function(){
+					console.log("ajax통신 실패");
+				}
+				
+			})
+		}
+
+	}else{
+		
+		
+	}
+	
+})
 
 function closed(){
 	 $(".review-prompt").css({
@@ -652,58 +976,6 @@ function closed(){
 	 $(".write-review-button").css("display", "none");
 }
 
-
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    // 평균 점수와 각 점수의 리뷰 수를 템플릿 엔진에서 JavaScript로 전달
-    var ratingScoreElement = document.getElementById('rating-score');
-    var avgRatingTotal = parseFloat(ratingScoreElement.getAttribute('data-rating'));
-
-    // 서버에서 전달된 값들을 받아와서 숫자로 변환
-    var ratingAvg5 = parseInt("${reviewList[0].avgRating5}", 10);
-    var ratingAvg4 = parseInt("${reviewList[0].avgRating4}", 10);
-    var ratingAvg3 = parseInt("${ reviewList[0].avgRating3}", 10);
-    var ratingAvg2 = parseInt("${reviewList[0].avgRating2}", 10);
-    var ratingAvg1 = parseInt("${reviewList[0].avgRating1}", 10);
-    var totalReviews = parseInt("${reviewList[0].avgRatingTotal}", 10);
-    var totalReviewCount = parseInt("${reviewList[0].totalReviewCount}", 10);
-
-    
-    // 실제 데이터로 각 점수별 카운트 설정
-    
-    var ratingsCount = {
-        5: ratingAvg5,
-        4: ratingAvg4,
-        3: ratingAvg3,
-        2: ratingAvg2,
-        1: ratingAvg1
-    };
-
-    console.log('Ratings Count:', ratingsCount);
-    if (!isNaN(totalReviews) && totalReviews > 0) {
-			
-		    for (var rating in ratingsCount) {
-		        var count = ratingsCount[rating];
-		        var percentage = (count / totalReviews) * 100;
-
-		        percentage = Math.min(percentage, 100);
-
-		        document.getElementById('bar-' + rating).style.width = percentage + '%';
-
-		        console.log('Rating ' + rating + ': ' + percentage + '%');
-		       
-		    }
-
-		}
-    
-    // 평균 점수를 표시
-    document.getElementById('rating-score').textContent = avgRatingTotal.toFixed(1);
-    
-    
-    $(".review-count b").html(totalReviewCount == null ? 0 : totalReviewCount);
-});
 </script>
 		    
 <script>
@@ -720,58 +992,51 @@ var sliderWidth = $('#slider-wrap').width();
 
 $(document).ready(function(){
   
-  
-  /*****************
-   BUILD THE SLIDER
-  *****************/
-  //set width to be 'x' times the number of slides
-  $('#slider-wrap ul#slider').width(sliderWidth*totalSlides);
-  
-    //next slide  
-  $('#next').click(function(){
-    slideRight();
-  });
-  
-  //previous slide
-  $('#previous').click(function(){
-    slideLeft();
-  });
-  
-  
-  
-  /*************************
-   //*> OPTIONAL SETTINGS
-  ************************/
-  //automatic slider
-  var autoSlider = setInterval(slideRight, 3000);
-  
-  //for each slide 
-  $.each($('#slider-wrap ul li'), function() { 
+ /*****************
+  BUILD THE SLIDER
+ *****************/
+ //set width to be 'x' times the number of slides
+ $('#slider-wrap ul#slider').width(sliderWidth*totalSlides);
+ 
+   //next slide  
+ $('#next').click(function(){
+   slideRight();
+ });
+ 
+ //previous slide
+ $('#previous').click(function(){
+   slideLeft();
+ });
+ 
+ /*************************
+  //*> OPTIONAL SETTINGS
+ ************************/
+ //automatic slider
+ var autoSlider = setInterval(slideRight, 3000);
+ 
+ //for each slide 
+ $.each($('#slider-wrap ul li'), function() { 
 
-     //create a pagination
-     var li = document.createElement('li');
-     $('#pagination-wrap ul').append(li);    
-  });
-  
-  //counter
-  countSlides();
-  
-  //pagination
-  pagination();
-  
-  //hide/show controls/btns when hover
-  //pause automatic slide when hover
-  $('#slider-wrap').hover(
-    function(){ $(this).addClass('active'); clearInterval(autoSlider); }, 
-    function(){ $(this).removeClass('active'); autoSlider = setInterval(slideRight, 3000); }
-  );
-  
-  
-
+    //create a pagination
+    var li = document.createElement('li');
+    $('#pagination-wrap ul').append(li);    
+ });
+ 
+ //counter
+ countSlides();
+ 
+ //pagination
+ pagination();
+ 
+ //hide/show controls/btns when hover
+ //pause automatic slide when hover
+ $('#slider-wrap').hover(
+   function(){ $(this).addClass('active'); clearInterval(autoSlider); }, 
+   function(){ $(this).removeClass('active'); autoSlider = setInterval(slideRight, 3000); }
+ );
+ 
 });//DOCUMENT READY
   
-
-
 /***********
  SLIDE LEFT
 ************/
@@ -784,7 +1049,6 @@ function slideLeft(){
   countSlides();
   pagination();
 }
-
 
 /************
  SLIDE RIGHT
@@ -799,9 +1063,6 @@ function slideRight(){
   pagination();
 }
 
-
-
-  
 /************************
  //*> OPTIONAL SETTINGS
 ************************/
@@ -813,6 +1074,9 @@ function pagination(){
   $('#pagination-wrap ul li').removeClass('active');
   $('#pagination-wrap ul li:eq('+pos+')').addClass('active');
 }
+
+
+
 
 //가격콤마
 $(document).ready(function() {
@@ -895,7 +1159,7 @@ $("#minus").on("click", function(){
  $(document).on("click", ".review-button", function() {
 	 
     if (loginCheck == "") {
-        $("#myModal").modal('hide');
+        $("#firstMyModal").modal('hide');
         $('#loginModal').modal('show');
     }
     
@@ -908,26 +1172,75 @@ $("#minus").on("click", function(){
 $(document).ready(function() {
     // 페이지 로드 시 리뷰를 가져오고 페이징을 렌더링
     loadPage(1);
+    loadPageOtherProducts(1);
 });
 
-//페이지 데이터 로드 및 렌더링
-function loadPage(pageNumber) {
+
+function loadPageOtherProducts(page) {
     $.ajax({
-        url: "${contextPath}/product/reviewList.do", // 리뷰 목록
+        url: "${contextPath}/product/ajaxOtherProductList.do",
         type: "get",
         data: {
-            productNo: "${list.productNo}",
-            page: pageNumber
+            page: page,
+            categoryType: "C",
+            productNo: "${list.productNo}"
         },
         success: function(response) {
-            renderReviews(response);
-            console.log(response);
+            let list = response.otherList;
+            let pi = response.pi;
+            let contextPath = '${contextPath}'; 
+
+            let html = "";
+            html += '    <button class="arrow arrow-left">';
+            html += '        <svg id="arrowL" data-pi="' + pi.currentPage + '" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-caret-left" viewBox="0 0 16 16">';
+            html += '            <path d="M10 12.796V3.204L4.519 8zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506L9.34 2.451C9.989 1.885 11 2.345 11 3.204v9.592a1 1 0 0 1-1.659.753"/>';
+            html += '        </svg>';
+            html += '    </button>';
+
+            list.forEach(function(item) {
+                html += '        <div class="product-card">';
+                html += '            <img style="cursor:pointer" src="' + contextPath + item.productThumbnailPath + '" onclick="location.href=\'' + contextPath + '/product/detail.page?page=1&productNo=' + item.productNo + '\'">';
+                html += '            <p class="product-name" style="text-align: center;">' + item.proName + '</p>';
+                html += '            <p class="product-price">' + item.productPrice.toLocaleString('ko-KR') + '원</p>';
+                html += '            <p class="product-rating" style="font-size: 15px;">평균 리뷰 점수 ' + item.avgRating.toFixed(1) + '</p>';
+                html += '        </div>';
+            });
+
+            html += '    <button class="arrow arrow-right">';
+            html += '        <svg id="arrowR" data-pi="' + pi.currentPage + '" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-caret-right" viewBox="0 0 16 16">';
+            html += '            <path d="M6 12.796V3.204L11.481 8zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753"/>';
+            html += '        </svg>';
+            html += '    </button>';
+
+            $(".product-grid").html(html);
         },
         error: function() {
-            console.log("AJAX 통신 실패");
+            console.error("상품 목록을 불러오는 데 실패했습니다.");
         }
     });
 }
+//상품관련 페이징처리
+$(document).on("click", "#arrowL", function() {
+    let pi = $(this).data("pi");
+    loadPageOtherProducts(pi == 1 ? 3 : pi - 1);
+});
+
+$(document).on("click", "#arrowR", function() {
+    let pi = $(this).data("pi");
+    loadPageOtherProducts(pi == 3 ? 1 : pi + 1);
+});
+
+//상품관련 setInterval 3초마다 적용
+$(document).ready(function() {
+	
+    setInterval(function() {
+        $("#arrowL").click();
+    }, 3000);
+	
+});
+
+
+
 
 
 $("#signUp").on("click", function() {
@@ -936,63 +1249,153 @@ $("#signUp").on("click", function() {
     }
 });
 
-function submitReview() {
-    $.ajax({
-        url: "${contextPath}/product/writeReview.do",
-        type: "post",
-        data: {
-            rating: $("input[type='radio'][name='reviewStar']:checked").val(),
-            reviewContent: $("#reviewContent").val().trim(),
-            productNo: "${list.productNo}"
-        },
-        success: function(response) {
-            if (response.list) {
-                alert("리뷰 등록이 완료되었습니다.");
-                $(".review-prompt").css({
-    	            "z-index": "-1",
-    	            "display": "none" // 숨기도록 설정
-    	    		});
-                renderReviews(response);
-                
-            } else {
-                console.log("리뷰 등록 실패");
-            }
-        },
-        error: function() {
-            console.log("AJAX 통신 실패");
-        }
-    });
+$("#firstReview").on("click", function() {
+    if (confirm("리뷰를 등록하시겠습니까?")) {
+    		firstReview();
+    }
+});
+
+
+
+//페이지 데이터 로드 및 렌더링
+function loadPage(page) {
+  $.ajax({
+      url: "${contextPath}/product/reviewList.do", // 리뷰 목록
+      type: "get",
+      data: {
+          productNo: "${list.productNo}",
+          page: page
+      },
+      success: function(response) {
+      	if(response.list.length > 0){
+      			$("#reviewYes").css("display", "block");
+      			$(".review-container").css("height", "1030px");
+      			renderReviews(response); 
+      	}else{
+      			$("#reviewNo").css("display", "block");
+      			$(".review-container").css("height", "370px");
+      	}
+          console.log(response);
+      },
+      error: function() {
+          console.log("AJAX 통신 실패");
+      }
+  });
+  
 }
 
-    
+
 
 
 
 // 리뷰와 페이징 버튼 렌더링
 function renderReviews(response) {
 	
+		rating = '';
+		rating += '<div class="rating-distribution">';
+		rating += '    <div class="distribution-bar">';
+		rating += '        <span class="bar-label">5점</span>';
+		rating += '        <div class="bar"><div class="fill" id="bar-5"></div></div>';
+		rating += '    </div>';
+		rating += '    <div class="distribution-bar">';
+		rating += '        <span class="bar-label">4점</span>';
+		rating += '        <div class="bar"><div class="fill" id="bar-4"></div></div>';
+		rating += '    </div>';
+		rating += '    <div class="distribution-bar">';
+		rating += '        <span class="bar-label">3점</span>';
+		rating += '        <div class="bar"><div class="fill" id="bar-3"></div></div>';
+		rating += '    </div>';
+		rating += '    <div class="distribution-bar">';
+		rating += '        <span class="bar-label">2점</span>';
+		rating += '        <div class="bar"><div class="fill" id="bar-2"></div></div>';
+		rating += '    </div>';
+		rating += '    <div class="distribution-bar">';
+		rating += '        <span class="bar-label">1점</span>';
+		rating += '        <div class="bar"><div class="fill" id="bar-1"></div></div>';
+		rating += '    </div>';
+		rating += '</div>';
+		
+		$(".rating-summary").html(rating);
+		ratingScore(response);
+		
     let body = "";
     response.list.forEach(function(number) {
         body += "<div class='review-item'>";
         body += "<div style='display: flex;'>";
         body += "<div class='review-stars' style='width: 80%;'>" +
             (number.rating == 5 ? '★★★★★' :
-            number.rating == 4 ? '★★★★' :
-            number.rating === 3 ? '★★★' :
-            number.rating === 2 ? '★★' : '★') + "</div>";
-        body += "<div style='display: flex; justify-content: flex-end; width: 20%;'>" + number.nickName + "</div>";
+            number.rating == 4 ? '★★★★☆' :
+            number.rating === 3 ? '★★★☆☆' :
+            number.rating === 2 ? '★★☆☆☆' : '★☆☆☆☆') + "</div>";
+        body += "<div style='display: flex; justify-content: flex-end; width: 20%;margin-right: 20px;'>" + number.nickName + "</div>";
         body += "</div>";
         body += "<div style='display: flex;'>";
         body += "<div class='review-text' style='width: 80%;'>" + number.reviewContent + "</div>";
-        body += "<div style='display: flex; justify-content: flex-end; width: 20%;'>" + number.reviewPostDt + "</div>";
+        body += "<div style='display: flex; justify-content: flex-end; width: 20%; align-items: center; margin-right: 20px;'>" + number.reviewPostDt + "</div>";
+        
+        if(number.memberNo == response.userNo){
+        	 body += "<div style='display: flex; align-items: center;'>";
+        	 body += "  <button id='deleteBtn' onclick='deleteFunction(\"" + number.reviewNo + "\")' style='display: flex; align-items: center; border: none; background: none; cursor: pointer;'>";
+           body += "    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-trash-fill' viewBox='0 0 16 16' style='color: #c55325;'>";
+           body += "      <path d='M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0'/>";
+           body += "    </svg>";
+           body += "  </button>";
+           body += "</div>";
+        }
+        
+        body += "</div>";
         body += "</div>";
         body += "</div>";
     });
 
     $(".review-list").html(body);
     console.log(response);
-    $(".review-count b").html(response.list == "" ? "0" : response.list[0].totalReviewCount);
+    $(".review-count b").html(response.list[0].totalReviewCount);
     renderPagination(response.pi);
+}
+
+function ratingScore(response){
+	$(document).ready(function() {
+	    // 평균 점수와 각 점수의 리뷰 수를 템플릿 엔진에서 JavaScript로 전달
+	    var $ratingScoreElement = $('#rating-score');
+	    var avgRatingTotal = parseFloat($ratingScoreElement.attr("data-rating"));
+
+	    // 서버에서 전달된 값들을 받아와서 숫자로 변환
+	    var ratingAvg5 = parseInt(response.list[0].avgRating5, 10);
+	    var ratingAvg4 = parseInt(response.list[0].avgRating4, 10);
+	    var ratingAvg3 = parseInt(response.list[0].avgRating3, 10);
+	    var ratingAvg2 = parseInt(response.list[0].avgRating2, 10);
+	    var ratingAvg1 = parseInt(response.list[0].avgRating1, 10);
+	    var totalReviews = parseInt(response.list[0].avgRatingTotal, 10);
+	    var totalReviewCount = parseInt(response.list[0].totalReviewCount, 10);
+
+	    // 실제 데이터로 각 점수별 카운트 설정
+	    var ratingsCount = {
+	        5: ratingAvg5,
+	        4: ratingAvg4,
+	        3: ratingAvg3,
+	        2: ratingAvg2,
+	        1: ratingAvg1
+	    };
+
+	    console.log('Ratings Count:', ratingsCount);
+	    
+	    if (!isNaN(totalReviews) && totalReviews > 0) {
+	        $.each(ratingsCount, function(rating, count) {
+	            var percentage = (count / totalReviews) * 100;
+	            percentage = Math.min(percentage, 100);
+
+	            $('#bar-' + rating).css('width', percentage + '%');
+
+	            console.log('Rating ' + rating + ': ' + percentage + '%');
+	        });
+	    }
+	    
+	    // 평균 점수를 표시
+	    $ratingScoreElement.text(avgRatingTotal.toFixed(1));
+	    
+	    $(".review-count b").html(totalReviewCount);
+	});
 }
 
 // 페이징 버튼 렌더링
@@ -1007,7 +1410,7 @@ function renderPagination(pi) {
        }
 
        // 페이지 번호 버튼 렌더링
-       for (let i = 1; i <= pi.endPage; i++) {
+       for (let i = pi.startPage; i <= pi.endPage; i++) {
            if (i == pi.currentPage) {
                html += '<button class="page" disabled active>' + (i) + '</button>';
            } else {
@@ -1022,11 +1425,90 @@ function renderPagination(pi) {
            html +=  "<button class='page bt' onclick='loadPage(" + (pi.currentPage + 1) + ")'>다음</button>";
        }
 
-       $('.pagination').html(html);
+       $('.pagination').html("");
+       $('.pagination').append(html);
 		}else{
 			$('.pagination').html("");
 		}
    
+}
+
+function firstReview() {
+	let type = "first";
+    $.ajax({
+        url: "${contextPath}/product/writeReview.do",
+        type: "post",
+        data: {
+            rating: $("input[type='radio'][name='reviewStar']:checked").val(),
+            reviewContent: $("#firstReviewContent").val().trim(),
+            productNo: "${list.productNo}",
+            type:type
+        },
+        success: function(response) {
+            if(response.list.length > 0) {
+                alert("리뷰 등록이 완료되었습니다. 첫구매 1000포인트가 정상적으로 적립되었습니다.");
+                $(".review-prompt").css({"z-index": "-1", "display": "none"});
+                renderReviews(response);
+                location.reload();
+            } else {
+                console.log("리뷰 등록 실패");
+            }
+        },
+        error: function() {
+            console.log("AJAX 통신 실패");
+        }
+    });
+}
+
+
+function submitReview() {
+    $.ajax({
+        url: "${contextPath}/product/writeReview.do",
+        type: "post",
+        data: {
+            rating: $("input[type='radio'][name='reviewStar']:checked").val(),
+            reviewContent: $("#reviewContent").val().trim(),
+            productNo: "${list.productNo}"
+        },
+        success: function(response) {
+            if(response.list.length > 0) {
+                alert("리뷰 등록이 완료되었습니다.");
+                $(".review-prompt").css({"z-index": "-1", "display": "none"});
+                renderReviews(response);
+            } else {
+                console.log("리뷰 등록 실패");
+            }
+        },
+        error: function() {
+            console.log("AJAX 통신 실패");
+        }
+    });
+}
+
+//리뷰글 삭제 
+function deleteFunction(reviewNo){
+	let productNo = "${list.productNo}";
+	if(confirm("해당 리뷰글을 삭제하시겠습니까?")){
+		$.ajax({
+			url:"${contextPath}/product/ajaxReviewDel.do",
+			type:"get",
+			data:"reviewNo=" + reviewNo + "&productNo=" + productNo,
+			success:function(response){
+				
+				if(response.list.length > 0){
+					alert("리뷰 글이 정상적으로 삭제되었습니다.");
+					renderReviews(response);
+				}
+				
+			},
+			error:function(){
+				
+			}
+			
+			
+		})		
+	}
+
 }
 
 </script>

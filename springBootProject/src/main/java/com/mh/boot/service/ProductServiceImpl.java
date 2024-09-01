@@ -19,13 +19,13 @@ public class ProductServiceImpl implements ProductService {
 	private final ProductDao productDao;
 	
 	@Override
-	public int selectProductListCount(String type) {
-		return productDao.selectProductListCount(type);
+	public int selectProductListCount(String categoryType) {
+		return productDao.selectProductListCount(categoryType);
 	}
 	
 	@Override
-	public List<ProductDto> selectProductList(PageInfoDto pi, String type) {
-		return productDao.selectProductList(pi, type);
+	public List<ProductDto> selectProductList(PageInfoDto pi, Map<String, Object> map) {
+		return productDao.selectProductList(pi, map);
 	}
 
 	@Override
@@ -81,6 +81,51 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public int reviewListCount(int productNo) {
 		return productDao.reviewListCount(productNo);
+	}
+
+	@Override
+	public int ajaxReviewDel(String reviewNo) {
+		return productDao.ajaxReviewDel(reviewNo);
+	}
+
+	@Override
+	public int selectMyReviewCount(int userNo) {
+		return productDao.selectMyReviewCount(userNo);
+	}
+
+	@Override
+	public List<ReviewDto> selectMyReviewList(int userNo, PageInfoDto pi) {
+		return productDao.selectMyReviewList(userNo, pi);
+	}
+
+	@Override
+	public int insertReviewPoint(Map<String, Object> map) {
+		return productDao.insertReviewPoint(map);
+	}
+
+	@Override
+	public int selectFilterSearchCount(Map<String, Object> map) {
+		return productDao.selectFilterSearchCount(map);
+	}
+
+	@Override
+	public List<ProductDto> selectFilterSearchList(Map<String, Object> map, PageInfoDto pi) {
+		return productDao.selectFilterSearchList(map, pi);
+	}
+
+	@Override
+	public int selectSearchCount(Map<String, Object> map) {
+		return productDao.selectSearchCount(map);
+	}
+
+	@Override
+	public List<ProductDto> selectSearchList(Map<String, Object> map, PageInfoDto pi) {
+		return productDao.selectSearchList(map, pi);
+	}
+
+	@Override
+	public List<ProductDto> selectMainProduct(PageInfoDto pi) {
+		return productDao.selectMainProduct(pi);
 	}
 
 	

@@ -19,13 +19,13 @@ public class ProductDao {
   
   private final SqlSessionTemplate sqlSessionTemplate;
   
-  public int selectProductListCount(String type) {
-    return sqlSessionTemplate.selectOne("productMapper.selectProductListCount", type);
+  public int selectProductListCount(String categoryType) {
+    return sqlSessionTemplate.selectOne("productMapper.selectProductListCount", categoryType);
   }
 
-  public List<ProductDto> selectProductList(PageInfoDto pi, String type) {
+  public List<ProductDto> selectProductList(PageInfoDto pi, Map<String, Object> map) {
     RowBounds rowBounds = new RowBounds((pi.getCurrentPage() - 1) * pi.getBoardLimit(), pi.getBoardLimit());
-    return sqlSessionTemplate.selectList("productMapper.selectProductList", type, rowBounds);
+    return sqlSessionTemplate.selectList("productMapper.selectProductList", map, rowBounds);
   }
   
   public ProductDto selectProduct(Map<String, Object> map){
@@ -70,13 +70,48 @@ public class ProductDao {
 
   }
   
-  
   public int reviewListCount(int productNo) {
 	  return sqlSessionTemplate.selectOne("productMapper.reviewListCount", productNo);
   }
   
+  public int ajaxReviewDel(String reviewNo) {
+	  return sqlSessionTemplate.update("productMapper.ajaxReviewDel", reviewNo);
+  }
   
+  public int selectMyReviewCount(int userNo) {
+	  return sqlSessionTemplate.selectOne("productMapper.selectMyReviewCount", userNo);
+  }
   
+  public List<ReviewDto> selectMyReviewList(int userNo, PageInfoDto pi) {
+	  RowBounds rowBounds = new RowBounds((pi.getCurrentPage() - 1) * pi.getBoardLimit(), pi.getBoardLimit());
+	  return sqlSessionTemplate.selectList("productMapper.selectMyReviewList", userNo, rowBounds);
+  }
   
+  public int insertReviewPoint(Map<String, Object> map) {
+	  return sqlSessionTemplate.insert("productMapper.insertReviewPoint", map);
+  }
+
+	public int selectFilterSearchCount(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("productMapper.selectFilterSearchCount", map);
+	}
+	
+	public List<ProductDto> selectFilterSearchList(Map<String, Object> map, PageInfoDto pi) {
+		RowBounds rowBounds = new RowBounds((pi.getCurrentPage() - 1) * pi.getBoardLimit(), pi.getBoardLimit());
+		return sqlSessionTemplate.selectList("productMapper.selectFilterSearchList", map, rowBounds);
+	}
+  
+	public int selectSearchCount(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("productMapper.selectSearchCount", map);
+	}
+
+	public List<ProductDto> selectSearchList(Map<String, Object> map, PageInfoDto pi) {
+		RowBounds rowBounds = new RowBounds((pi.getCurrentPage() - 1) * pi.getBoardLimit(), pi.getBoardLimit());
+		return sqlSessionTemplate.selectList("productMapper.selectSearchList", map, rowBounds);	
+	}
+  
+	public List<ProductDto> selectMainProduct(PageInfoDto pi) {
+		RowBounds rowBounds = new RowBounds((pi.getCurrentPage() - 1) * pi.getBoardLimit(), pi.getBoardLimit());
+		return sqlSessionTemplate.selectList("productMapper.selectMainProduct", null, rowBounds);	
+	}
   
 }

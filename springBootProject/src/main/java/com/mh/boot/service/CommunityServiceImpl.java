@@ -30,7 +30,7 @@ public class CommunityServiceImpl implements CommunityService{
 			aResult = communityDao.insertAttachment(a);			
 		}
 		
-		return aResult == attachList.size() ? aResult : 0;
+		return aResult * result;
 	}
 
 	@Override
@@ -39,12 +39,12 @@ public class CommunityServiceImpl implements CommunityService{
 	}
 	
 	@Override
-	public List<CommunityDto> boardList(String type, PageInfoDto pi) {
-		return communityDao.boardList(type, pi);
+	public List<CommunityDto> boardList(Map<String, Object> map, PageInfoDto pi) {
+		return communityDao.boardList(map, pi);
 	}
 
 	@Override
-	public List<CommunityDto> detail(CommunityDto com) {
+	public CommunityDto detail(CommunityDto com) {
 		return communityDao.detail(com);
 	}
 
@@ -169,6 +169,84 @@ public class CommunityServiceImpl implements CommunityService{
 	public int selectRefOrder(Map<String, Object> map) {
 		return communityDao.selectRefOrder(map);
 	}
+
+	@Override
+	public int selectSearchCount(Map<String, Object> map) {
+		return communityDao.selectSearchCount(map);
+	}
+
+	@Override
+	public List<CommunityDto> selectSearchList(Map<String, Object> map, PageInfoDto pi) {
+		return communityDao.selectSearchList(map, pi);
+	}
+
+
+
+	@Override
+	public int deleteLike(Map<String, Object> map) {
+		return communityDao.deleteLike(map);
+	}
+
+	@Override
+	public int insertLike(Map<String, Object> map) {
+		return communityDao.insertLike(map);
+	}
+
+	@Override
+	public int selectLike(Map<String, Object> map) {
+		return communityDao.selectLike(map);
+	}
+
+	@Override
+	public int selectCheckLike(Map<String, Object> map) {
+		return communityDao.selectCheckLike(map);
+	}
+
+	@Override
+	public List<CommunityDto> communityLikeTopList(PageInfoDto pi) {
+		return communityDao.communityLikeTopList(pi);
+	}
+
+	@Override
+	public List<CommunityDto> selectBoardMerge(PageInfoDto pi) {
+		return communityDao.selectBoardMerge(pi);
+	}
+
+	
+
+	@Override
+	public int updateDeleteBoard(String type) {
+		return communityDao.updateDeleteBoard(type);
+	}
+
+	@Override
+	public int updateWriter(CommunityDto community, List<AttachDto> attachList, List<String> fileDelNo) {
+		int result = communityDao.updateWriter(community);
+		int aResult = 0;
+		if(result > 0) {
+			for(AttachDto a : attachList)
+			aResult = communityDao.insertAttachment(a);			
+		}
+		
+		int fResult = 0;
+		if(fileDelNo != null && !fileDelNo.isEmpty()) {
+			fResult = communityDao.deleteAttach(fileDelNo);
+		}
+		
+		return (result + aResult + fResult);
+	}
+
+	@Override
+	public List<AttachDto> selectDelFileList(List<String> list) {
+		return communityDao.selectDelFileList(list);
+	}
+
+	@Override
+	public List<Integer> selectLikeUser(int userNo) {
+		return communityDao.selectLikeUser(userNo);
+	}
+
+	
 	
 	
 

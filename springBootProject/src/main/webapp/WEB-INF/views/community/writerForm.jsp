@@ -6,6 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 <title>Insert title here</title>
 <style>
 body {
@@ -113,43 +114,179 @@ button:hover {
 <body>
 	<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
 	<div class="container">
-	<section class="post-form" style=" height: 700px;">
+	<section class="post-form" style=" height: auto;">
        <h2>새 게시글 작성</h2>
       <form id="postForm" method="post" action="${contextPath}/community/insertWriter.do" enctype="multipart/form-data">
-      		<input type="hidden" name="postType" value="J">
+      		<input type="hidden" name="postType" value="${type}">
           <input type="text" id="postTitle" name="postTitle" placeholder="제목" required style="width: 98%;">
-          <textarea id="postContent" name="postContent" placeholder="내용" rows="5" required style="width: 98%; resize: none; height: 300px;"></textarea>
-          <input type="file" name='uploadFiles' id="fileInput" onchange="readURL(this);" multiple accept="image/gif, image/jpeg, image/png">
-          <div id="filePreview" class="file-preview" style="display: flex; height: 130px;">
-          	<img id="previewImage" src="">
+          
+          <div id="postContent">
+          <!-- 에디터영역 -->
+
           </div>
-          <div style="display: flex;justify-content: flex-end;">
-          	<c:choose>
-	          	<c:when test="${ empty loginUser }">
-		          	<button onclick="loginForm();">게시하기</button>
-	          	</c:when>
-	          	<c:otherwise>
-		          	<button type="submit">게시하기</button>
-	          	</c:otherwise>
-          	</c:choose>
+          <input type="hidden" name="postContent">
+          <div>
+		        <input type="file" name='uploadFiles' id="fileInput" onchange="readURL(this);" multiple accept="image/gif, image/jpeg, image/png">
+		        <c:if test="${type eq 'G' }">
+		          <div>
+			          <input type="text" id="locationName" name="locationName" placeholder="추천 장소를 검색하세요." style="width: 400px;">
+			 					<div id="map" style="width: 400px; height: 300px;"></div>
+		          </div>
+	          </c:if>
           </div>
+	          
+          <div style="display: flex;justify-content: flex-end; margin-top: 27px;">
+		         <button type="button" id="writerForm" style="border-radius: 9px;">게시하기</button>
+          </div>
+          
       </form>
   </section>
+  
   </div>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f5fb251a62d19d3f09c42218629ae62d&libraries=services"></script> 
+<script>
+var place;
+$("#locationName").on("keypress", function(ev){
+    if (ev.which == 13) {  // Enter 키가 눌렸는지 확인
+        ps.keywordSearch($(this).val(), placesSearchCB); 
+    }
+});
+// 장소 검색 객체를 생성합니다
+var ps = new kakao.maps.services.Places(); 
+
+// 키워드로 장소를 검색합니다
 
 
-<Script>
+// 키워드 검색 완료 시 호출되는 콜백함수 입니다
+function placesSearchCB (data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
 
-function loginForm(){
-	$("#")
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+        // LatLngBounds 객체에 좌표를 추가합니다
+        var bounds = new kakao.maps.LatLngBounds();
+
+        for (var i=0; i<data.length; i++) {
+            displayMarker(data[i]);    
+            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+        }       
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+        map.setBounds(bounds);
+    } 
 }
+//마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
+var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = {
+        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };  
+
+// 지도를 생성합니다    
+var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+// 지도에 마커를 표시하는 함수입니다
+function displayMarker(place) {
+    
+// 마커를 생성하고 지도에 표시합니다
+var marker = new kakao.maps.Marker({
+    map: map,
+    position: new kakao.maps.LatLng(place.y, place.x) 
+});
+
+// 마커에 클릭이벤트를 등록합니다
+kakao.maps.event.addListener(marker, 'click', function() {
+    // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
+    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+    infowindow.open(map, marker);
+});
+
+}
+</script>
+ 
+<!-- TUI 에디터 JS CDN -->
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script>
+const editor = new toastui.Editor({
+    el: document.querySelector('#postContent'), // 에디터를 적용할 요소 (컨테이너)
+    height: '500px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
+    initialEditType: 'markdown',            // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+    //initialValue: '내용을 입력해 주세요.',     // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+    previewStyle: 'vertical',
+    hideModeSwitch: false,
+    hooks: {
+    	addImageBlobHook: (blob, callback) => {
+    		// blob : Java Script 파일 객체
+    		//console.log(blob);
+        let imageURL;
+    		const formData = new FormData();
+        formData.append('image', blob);
+        formData.append("uri", window.location.pathname);
+    	  
+   			$.ajax({
+           		url: '${contextPath}/community/editorImageUpload.do',
+           		type: 'POST',
+           		data: formData,
+         	    async: false,
+         	    processData: false,
+         	    contentType: false,
+           		success: function(data) {
+           		  imageURL = data.filePath + "/" + data.filesystemName;
+           			//console.log('ajax 이미지 업로드 성공');
+           			callback(imageURL, "");
+           		},
+           		error: function(e) {
+           			//console.log('ajax 이미지 업로드 실패');
+           			//console.log(e.abort([statusText]));
+           			
+           			callback('image_load_fail', '사진 대체 텍스트 입력');
+           		}
+           	});
+    	}
+    }
+    // editor.getHtml()을 사용해서 에디터 내용 수신
+    //document.querySelector('#contents').insertAdjacentHTML('afterbegin' ,editor.getHTML());
+    // 콘솔창에 표시
+    //console.log(editor.getHTML());
+    // 마크다운 프리뷰 스타일 (tab || vertical)
+});
+
+
+</script>
+<script>
+$(document).ready(function(){
+	console.log(editor.getHTML());
+	
+	
+	
+	
+	
+})
+</script>
+
+<script>
+$(document).on("click", "#writerForm", function(){
+	//console.log("EDiter: " + $("#postContent").find("."));
+	let postContent = editor.getHTML();
+	$("input[type='hidden'][name='postContent']").val(postContent);
+	$()
+	$("#postForm").submit();
+})
+
+
 
 function readURL(obj) {
+
+	console.log($("#postContent").find(".toastui-editor-contents").html());
+	console.log($("#postContent").find(".ProseMirror toastui-editor-contents").html());
+	/*
     // 파일 확장자 추출
     var file_kind = obj.value.lastIndexOf('.');
     var file_name = obj.value.substring(file_kind + 1, obj.value.length);
     var file_type = file_name.toLowerCase();
-
+		
+    console.log(obj.files.length);
     // 허용되는 이미지 파일 확장자 목록
     var check_file_type = ['jpg', 'gif', 'png', 'jpeg', 'bmp'];
 
@@ -162,18 +299,29 @@ function readURL(obj) {
         return false;
     }
 
+    let html = '';
     // 파일 입력이 있을 때
-    if (obj.files && obj.files[0]) {
+    if (obj.files && obj.files.length > 0) {
+    		for(let i=0; i<obj.files.length; i++){
+    			html += '<img id="previewImage' + (i + 1) + '" src="">';
+    		}	
+    		$("#previewImage").after(html);
         var reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById("previewImage").src = e.target.result;
+            for(let i=0; i<obj.files.length; i++){
+                document.getElementById("previewImage" + i).src = e.target.result;
+            }
         }
-        reader.readAsDataURL(obj.files[0]);
+        for(let i=0; i<obj.files.length; i++){
+            reader.readAsDataURL(obj.files[i]);
+        }
+        
     } else {
         document.getElementById("previewImage").src = "";
     }
+	*/
 }
 
-</Script>
+</script>
 </body>
 </html>

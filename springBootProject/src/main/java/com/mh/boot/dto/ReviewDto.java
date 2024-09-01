@@ -23,6 +23,7 @@ public class ReviewDto {
 	private String reviewPostDt;
 	private String reviewAttachPath;
 	private String nickName;
+	private String reviewStatus; //dafault => 'Y'(삭제x)
 	
 	private int avgRating5;
 	private int avgRating4;

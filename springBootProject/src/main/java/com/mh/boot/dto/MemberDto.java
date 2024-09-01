@@ -32,7 +32,7 @@ public class MemberDto {
 	private String modifyDate;
 	private String userType;
 	private String userStatus;
-	private String userPath;
+	private String userPath; //프로필 이미지
 	private String streetAddress;
 	private String otherAddress;
 	private int point; //default => 0

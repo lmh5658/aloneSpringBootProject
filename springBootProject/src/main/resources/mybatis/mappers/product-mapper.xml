@@ -10,13 +10,19 @@
     <result column="PRODUCT_PRICE" property="productPrice"/>
     <result column="PRO_STATUS" property="proStatus"/>
     <result column="PRO_AMOUNT" property="proAmount"/>
-    <result column="RPO_SALE_STATUS" property="pSaleStatus"/>
-    <result column="PRO_SALE_PRICE" property="pSalePrice"/>
+    <result column="RPO_SALE_STATUS" property="productSaleStatus"/>
+    <result column="PRO_SALE_PRICE" property="productSalePrice"/>
     <result column="PRO_THUMBNAIL_PATH" property="productThumbnailPath"/>
     <result column="PRO_DETAIL_PATH" property="pDatailPath"/>
     <result column="ORDER_CHECK" property="orderCheck"/>
     <result column="REVIEW_CHECK" property="reviewCheck"/>
     <result column="COUNT" property="count"/>
+    <result column="AVG_RATING" property="avgRating"/>
+    <result column="FILTER_WEIGHT" property="filterWeight"/>
+    <result column="FILTER_SIZE" property="filtersize"/>
+    <result column="FILTER_FUNCTIONAL" property="filterfunctional"/>
+    <result column="FILTER_SALARY_TARGET" property="filtersalaryTarget"/>
+    <result column="RN" property="rowNumber"/>
   </resultMap>
   
   <resultMap id="reviewResult" type="ReviewDto">
@@ -28,39 +34,69 @@
     <result column="REVIEW_POST_DATE" property="reviewPostDt"/>
     <result column="REVIEW_ATTACHMENT_PATH" property="reviewAttachPath"/>
     <result column="REVIEW_NICKNAME" property="nickName"/>
+    <result column="REVIEW_STATUS" property="reviewStatus"/>
   </resultMap>
   
 
   
   
-  <!-- 상품리스트 -->
+  <!-- 상품리스트 S -->
   <select id="selectProductListCount" resultType="_int">
     SELECT COUNT(*)
       FROM TB_PRODUCT
-     WHERE CATEGORY_TYPE = #{type}
-       AND PRO_STATUS = 'Y'
-      
+      WHERE PRO_STATUS = 'Y'
+     		<choose>
+			   	<when test="categoryType != null and !categoryType.equals('')">
+				      AND CATEGORY_TYPE = #{categoryType}
+			   	</when>
+			   	<otherwise>
+			   	 		AND CATEGORY_TYPE IN ('D', 'C')
+			   	</otherwise>
+			   </choose>
   </select>
   
   <select id="selectProductList" resultMap="productResult">
-    SELECT 
-           PRODUCT_NO
-         , CATEGORY_TYPE
-         , PRODUCT_NAME
-         , PRODUCT_PRICE
-         , PRO_STATUS
-         , PRO_AMOUNT
-         , RPO_SALE_STATUS
-         , PRO_SALE_PRICE
-         , PRO_THUMBNAIL_PATH
-         , PRO_DETAIL_PATH
-      FROM TB_PRODUCT
-     WHERE CATEGORY_TYPE = #{type}
-       AND PRO_STATUS = 'Y'
-     ORDER
-     	  BY PRODUCT_NO DESC
+		SELECT 
+	           PRODUCT_NO
+	         , CATEGORY_TYPE
+	         , PRODUCT_NAME
+	         , PRODUCT_PRICE
+	         , PRO_STATUS
+				   , PRO_STATUS
+				   , PRO_AMOUNT
+				   , RPO_SALE_STATUS
+				   , PRO_SALE_PRICE
+	         , PRO_THUMBNAIL_PATH
+	         , PRO_DETAIL_PATH
+	         , (SELECT AVG(RATING)
+	              FROM TB_REVIEW R
+	             WHERE P.PRODUCT_NO =  R.PRODUCT_NO
+	           GROUP BY PRODUCT_NO) AVG_RATING         
+      FROM TB_PRODUCT P
+     WHERE PRO_STATUS = 'Y'
+      
+     		<choose>
+			   	<when test="categoryType != null and !categoryType.equals('')">
+				      AND CATEGORY_TYPE = #{categoryType}
+			   	</when>
+			   	<otherwise>
+			   	 		AND CATEGORY_TYPE IN ('D', 'C')
+			   	</otherwise>
+			   </choose>
+			   
+       <choose>
+	       <when test="productNo != null and !productNo.equals('')">
+	      AND PRODUCT_NO != #{productNo}
+	   ORDER
+	     	  BY AVG_RATING ASC
+	       </when>
+	       <otherwise>
+	   ORDER
+	     	  BY PRODUCT_NO DESC
+	       </otherwise>
+       </choose>
   </select>
-  <!-- 상품리스트 -->
+  <!-- 상품리스트 E -->
   
   <!-- 상품 상세 -->
   <select id="selectProduct" resultMap="productResult">
@@ -78,13 +114,13 @@
          <if test="userNo != null and !userNo.equals('')">
 	         , (SELECT COUNT(*) 
 	              FROM TB_REVIEW
-	            WHERE PRODUCT_NO = PRODUCT_NO
+	            WHERE PRODUCT_NO = #{productNo}
 	              AND MEMBER_NO = #{userNo}
 	            ) REVIEW_CHECK  
 	         , (SELECT COUNT(*)
 	              FROM TB_ORDER
 	              JOIN TB_PRODUCT_ORDER USING(ORDER_NO)
-	              WHERE ORDER_PRODUCT_NO = PRODUCT_NO
+	              WHERE ORDER_PRODUCT_NO = #{productNo}
 	               AND ORDER_MEMBER_NO = #{userNo}
 	           ) ORDER_CHECK
            </if>
@@ -105,7 +141,15 @@
   
   <update id="updateCart">
   	UPDATE TB_CART
-  	   SET COUNT = COUNT + 1
+  	   SET 
+  	  <choose>
+	  	  <when test="count != null and !count.equals('')">
+	  	   COUNT = COUNT + #{count}
+	  	  </when>
+	  	  <otherwise>
+	  	   COUNT = COUNT + 1
+  	  </otherwise>
+  	  </choose>
 		 WHERE USER_NO = #{userNo}
 			 AND PRODUCT_NO = #{productNo}
   </update>
@@ -123,7 +167,14 @@
   		 (
   		   #{userNo}
   		 , #{productNo}
-  		 , 1
+  	  <choose>
+	  	  <when test="count != null and !count.equals('')">
+	  	 , #{count}
+	  	  </when>
+	  	  <otherwise>
+	  	 , 1
+  	  </otherwise>
+  	  </choose>
   		 )
   </insert>
   
@@ -145,7 +196,6 @@
 		WHERE PRODUCT_NO IN (SELECT PRODUCT_NO
 		                       FROM TB_CART
                     			 WHERE USER_NO = #{userNo})
-  
   </select>
   
   <!-- 장바구니 상품 삭제 -->
@@ -199,40 +249,60 @@
   	SELECT
 		     REVIEW_NO
 		   , RATING
+		   , MEMBER_NO
 		   , REVIEW_CONTENT
 		   , REVIEW_NICKNAME
 		   , TO_CHAR(REVIEW_POST_DATE, 'YYYY/MM/DD') REVIEW_POST_DATE
 		   
 		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
 		       FROM TB_REVIEW
-		      WHERE PRODUCT_NO = #{productNo} AND RATING = 5) AS avgRating5
+		      WHERE PRODUCT_NO = #{productNo} 
+			      AND RATING = 5
+			      AND REVIEW_STATUS = 'Y'
+		      ) AS avgRating5
+		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
+		       FROM TB_REVIEW
+		      WHERE PRODUCT_NO = #{productNo} 
+			      AND RATING = 4
+			      AND REVIEW_STATUS = 'Y'
+		      ) AS avgRating4
 		      
 		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
 		       FROM TB_REVIEW
-		      WHERE PRODUCT_NO = #{productNo} AND RATING = 4) AS avgRating4
+		      WHERE PRODUCT_NO = #{productNo} 
+			      AND RATING = 3
+			      AND REVIEW_STATUS = 'Y'
+		      ) AS avgRating3
 		      
 		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
 		       FROM TB_REVIEW
-		      WHERE PRODUCT_NO = #{productNo} AND RATING = 3) AS avgRating3
+		      WHERE PRODUCT_NO = #{productNo} 
+			      AND RATING = 2
+			      AND REVIEW_STATUS = 'Y'
+		      ) AS avgRating2
 		      
 		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
 		       FROM TB_REVIEW
-		      WHERE PRODUCT_NO = #{productNo} AND RATING = 2) AS avgRating2
+		      WHERE PRODUCT_NO = #{productNo} 
+			      AND RATING = 1
+			      AND REVIEW_STATUS = 'Y'
+		      ) AS avgRating1
 		      
 		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
 		       FROM TB_REVIEW
-		      WHERE PRODUCT_NO = #{productNo} AND RATING = 1) AS avgRating1
-		      
-		   , (SELECT NVL(ROUND(AVG(RATING),2),0)
-		       FROM TB_REVIEW
-		      WHERE PRODUCT_NO = #{productNo}) AS avgRatingTotal
+		      WHERE PRODUCT_NO = #{productNo}
+		        AND REVIEW_STATUS = 'Y'
+		      ) AS avgRatingTotal
 		      
 		   , (SELECT COUNT(RATING)
 		       FROM TB_REVIEW
-		      WHERE PRODUCT_NO = #{productNo}) AS totalReviewCount
+		      WHERE PRODUCT_NO = #{productNo}
+		        AND REVIEW_STATUS = 'Y'
+		      ) AS totalReviewCount
 		      
 		FROM TB_REVIEW
 		WHERE PRODUCT_NO = #{productNo}
+		 AND REVIEW_STATUS = 'Y'
 		ORDER 
 		   BY REVIEW_NO DESC
   </select>
@@ -242,9 +312,294 @@
   	SELECT COUNT(*)
 			FROM TB_REVIEW
 		 WHERE PRODUCT_NO = #{productNo}
+		  AND REVIEW_STATUS = 'Y'
+  </select>
+  <!-- 리뷰 글상태 업데이트(글상태 N으로) -->
+  <update id="ajaxReviewDel">
+  	UPDATE TB_REVIEW
+  	 	 SET REVIEW_STATUS = 'N'
+  	 WHERE REVIEW_NO = #{reviewNo}
+  </update>
+  
+  <!-- 마이페이지 리뷰 조회 -->
+  <select id="selectMyReviewCount" resultType="_int">
+	  SELECT COUNT(*)
+	    FROM TB_REVIEW
+	   WHERE REVIEW_STATUS = 'Y'
+			 AND MEMBER_NO = ${userNo}
   </select>
   
+   <select id="selectMyReviewList" resultMap="reviewResult">
+		SELECT
+					 REVIEW_NO
+					,PRODUCT_NO
+					,RATING
+					,REVIEW_CONTENT
+					,TO_CHAR(REVIEW_POST_DATE, 'YY/MM/DD(DY)') AS REVIEW_POST_DATE
+					,REVIEW_NICKNAME
+			FROM TB_REVIEW
+			WHERE REVIEW_STATUS = 'Y'
+			  AND MEMBER_NO = ${userNo}
+  </select>
   
+  <select id="insertReviewPoint">
+  INSERT
+  		INTO
+  		  TB_POINT
+  		  (
+  		  POINT_NO
+			,	USER_NO
+			,	POINT_EXPIRY_DATE
+			,	PRODUCT_NO
+			,	REVIEW_WRITER_POINT
+  		  )
+  		 VALUES
+  		 (
+  		  SEQ_POINO.NEXTVAL
+  		, #{userNo}
+  		, SYSDATE + 12
+  		, #{productNo}
+  		, 1000
+  		 )
+  </select>
+  
+  <!-- 필터검색 리스트 -->
+  <select id="selectFilterSearchCount" resultType="_int">
+		WITH PRODUCT_RATING AS (
+			    SELECT
+			        p.PRODUCT_NO,
+			        p.CATEGORY_TYPE,
+			        p.PRODUCT_NAME,
+			        p.PRODUCT_PRICE,
+			        p.PRO_SALE_PRICE,
+			        p.PRO_STATUS,
+			        p.PRO_AMOUNT,
+			        p.RPO_SALE_STATUS,
+			        p.PRO_THUMBNAIL_PATH,
+			        p.PRO_DETAIL_PATH,
+			        (SELECT ROUND(AVG(r.RATING), 1)
+			         FROM TB_REVIEW r
+			         WHERE r.PRODUCT_NO = p.PRODUCT_NO
+			        ) AS AVG_RATING,
+			        p.FILTER_WEIGHT,
+			        p.FILTER_SIZE,
+			        p.FILTER_FUNCTIONAL,
+			        p.FILTER_SALARY_TARGET
+			    FROM TB_PRODUCT p
+			    WHERE p.PRO_STATUS = 'Y'
+			   <choose>
+			   	<when test="type != null and !type.equals('')">
+				      AND p.CATEGORY_TYPE = #{type}
+			   	</when>
+			   	<otherwise>
+			   	 		AND p.CATEGORY_TYPE IN ('D', 'C')
+			   	</otherwise>
+			   </choose>
+			)
+			SELECT COUNT(*)
+			FROM PRODUCT_RATING
+			WHERE 1=1
+			<if test="weight != null and !weight.isEmpty()">
+			    AND FILTER_WEIGHT IN
+			    <foreach collection="weight" item="item" open="(" separator="," close=")">
+			        #{item}
+			    </foreach>
+			</if>
+			<if test="size != null and !size.isEmpty()">
+			    AND FILTER_SIZE IN
+           <foreach collection="size" item="item" open="(" separator="," close=")">
+               #{item}
+           </foreach>
+			</if>
+			<if test="functional != null and !functional.isEmpty()">
+				    AND FILTER_FUNCTIONAL IN
+	            <foreach collection="functional" item="item" open="(" separator="," close=")">
+	                #{item}
+	            </foreach>
+				</if>
+				<if test="priceList != null and !priceList.isEmpty()">
+					    AND 
+					    <foreach collection="priceList" item="map" open="(" separator=" OR " close=")">
+					        <choose>
+					            <when test="map.lastPrice != null">
+					                PRODUCT_PRICE BETWEEN #{map.firstPrice} AND #{map.lastPrice}
+					            </when>
+					            <otherwise>
+					                PRODUCT_PRICE >= #{map.firstPrice}
+					            </otherwise>
+					        </choose>
+					    </foreach>
+					</if>
+			  <if test="rating != null and !rating.isEmpty()">
+			      AND (
+			      <foreach collection="rating" item="item" open="(" separator=" OR " close=")">
+			          AVG_RATING >= #{item}
+			      </foreach>
+			      )
+			  </if>
+			  <if test="salaryTarget != null and !salaryTarget.isEmpty()">
+			    AND FILTER_SALARY_TARGET IN
+           <foreach collection="salaryTarget" item="item" open="(" separator="," close=")">
+               #{item}
+           </foreach>
+				</if>
+  </select>
+  
+  <select id="selectFilterSearchList" resultMap="productResult">
+			 WITH PRODUCT_RATING AS (
+			    SELECT
+			        p.PRODUCT_NO,
+			        p.CATEGORY_TYPE,
+			        p.PRODUCT_NAME,
+			        p.PRODUCT_PRICE,
+			        p.PRO_SALE_PRICE,
+			        p.PRO_STATUS,
+			        p.PRO_AMOUNT,
+			        p.RPO_SALE_STATUS,
+			        p.PRO_THUMBNAIL_PATH,
+			        p.PRO_DETAIL_PATH,
+			        (SELECT ROUND(AVG(r.RATING), 1)
+			         FROM TB_REVIEW r
+			         WHERE r.PRODUCT_NO = p.PRODUCT_NO
+			        ) AS AVG_RATING,
+			        p.FILTER_WEIGHT,
+			        p.FILTER_SIZE,
+			        p.FILTER_FUNCTIONAL,
+			        p.FILTER_SALARY_TARGET
+			    FROM TB_PRODUCT p
+			    WHERE p.PRO_STATUS = 'Y'
+			   <choose>
+			   	<when test="type != null and !type.equals('')">
+				      AND p.CATEGORY_TYPE = #{type}
+			   	</when>
+			   	<otherwise>
+			   	 		AND p.CATEGORY_TYPE IN ('D', 'C')
+			   	</otherwise>
+			   </choose>
+			)
+			SELECT *
+			FROM PRODUCT_RATING
+			WHERE 1=1
+			<if test="weight != null and !weight.isEmpty()">
+			    AND FILTER_WEIGHT IN
+			    <foreach collection="weight" item="item" open="(" separator="," close=")">
+			        #{item}
+			    </foreach>
+			</if>
+			<if test="size != null and !size.isEmpty()">
+			    AND FILTER_SIZE IN
+           <foreach collection="size" item="item" open="(" separator="," close=")">
+               #{item}
+           </foreach>
+			</if>
+			<if test="functional != null and !functional.isEmpty()">
+				    AND FILTER_FUNCTIONAL IN
+	            <foreach collection="functional" item="item" open="(" separator="," close=")">
+	                #{item}
+	            </foreach>
+				</if>
+				<if test="priceList != null and !priceList.isEmpty()">
+					    AND 
+					    <foreach collection="priceList" item="map" open="(" separator=" OR " close=")">
+					        <choose>
+					            <when test="map.lastPrice != null">
+					                PRODUCT_PRICE BETWEEN #{map.firstPrice} AND #{map.lastPrice}
+					            </when>
+					            <otherwise>
+					                PRODUCT_PRICE >= #{map.firstPrice}
+					            </otherwise>
+					        </choose>
+					    </foreach>
+					</if>
+			  <if test="rating != null and !rating.isEmpty()">
+			      AND (
+			      <foreach collection="rating" item="item" open="(" separator=" OR " close=")">
+			          AVG_RATING >= #{item}
+			      </foreach>
+			      )
+			  </if>
+			  <if test="salaryTarget != null and !salaryTarget.isEmpty()">
+			    AND FILTER_SALARY_TARGET IN
+           <foreach collection="salaryTarget" item="item" open="(" separator="," close=")">
+               #{item}
+           </foreach>
+				</if>
+		</select>
+			
+		<select id="selectSearchCount" resultType="_int">
+			SELECT COUNT(*)  
+	      FROM TB_PRODUCT P
+	     WHERE PRO_STATUS = 'Y'
+	     <choose>
+		   	<when test="type != null and !type.equals('')">
+			      AND CATEGORY_TYPE = #{type}
+		   	</when>
+		   	<otherwise>
+		   	 		AND CATEGORY_TYPE IN ('D', 'C')
+		   	</otherwise>
+		   </choose>
+	       AND (PRODUCT_NAME LIKE '%' || #{search} || '%' OR 
+	       			PRODUCT_PRICE LIKE '%' || #{search} || '%' )
+		</select>
+			
+		<select id="selectSearchList" resultMap="productResult">
+		SELECT 
+           PRODUCT_NO
+         , CATEGORY_TYPE
+         , PRODUCT_NAME
+         , PRODUCT_PRICE
+         , PRO_STATUS
+			   , PRO_STATUS
+			   , PRO_AMOUNT
+			   , RPO_SALE_STATUS
+			   , PRO_SALE_PRICE
+         , PRO_THUMBNAIL_PATH      
+      FROM TB_PRODUCT P
+     WHERE PRO_STATUS = 'Y'
+     	 <choose>
+		   	<when test="type != null and !type.equals('')">
+			      AND CATEGORY_TYPE = #{type}
+		   	</when>
+		   	<otherwise>
+		   	 		AND CATEGORY_TYPE IN ('D', 'C')
+		   	</otherwise>
+		   </choose>
+       AND (PRODUCT_NAME LIKE '%' || #{search} || '%' OR 
+      			  PRODUCT_PRICE LIKE '%' || #{search} || '%' )
+		</select>
+		
+		<select id="selectMainProduct" resultMap="productResult">
+		<![CDATA[
+			SELECT Z.* 
+							FROM (
+							        SELECT ROWNUM AS RN, A.*
+							          FROM (	
+															SELECT
+															    PRODUCT_NO,
+															    PRODUCT_NAME,
+															    PRODUCT_PRICE,
+															    PRO_SALE_PRICE,
+															    RPO_SALE_STATUS,
+															    PRO_THUMBNAIL_PATH
+															FROM TB_PRODUCT
+															WHERE PRODUCT_NO IN (SELECT ORDER_PRODUCT_NO
+															                       FROM (SELECT ORDER_PRODUCT_NO, COUNT(ORDER_PRODUCT_AMOUNT) AS ORDER_COUNT
+															                            FROM TB_PRODUCT_ORDER
+															                            GROUP BY ORDER_PRODUCT_NO
+															                            ORDER BY ORDER_COUNT DESC
+															                        )
+															                    WHERE ROWNUM <= 10)
+							        ) A
+							    ) Z
+							WHERE Z.RN BETWEEN 1 AND 10
+			]]>			
+		</select>
+		
+	
+
+			
+  
+
   
   
   

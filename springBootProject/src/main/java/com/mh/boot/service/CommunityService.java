@@ -16,9 +16,9 @@ public interface CommunityService {
 	
 	int selectBoardListCount(String type);
 	
-	List<CommunityDto> boardList(String type, PageInfoDto pi);
+	List<CommunityDto> boardList(Map<String, Object> map, PageInfoDto pi);
 	
-	List<CommunityDto> detail(CommunityDto com);
+	CommunityDto detail(CommunityDto com);
 	
 	int updateIncreaseCount(CommunityDto com);
 	
@@ -67,5 +67,39 @@ public interface CommunityService {
 	int updateNextRefGroupId(List<Integer> list);
 	
 	int selectRefOrder(Map<String, Object>map);
+	
+	
+	//게시판 검색
+	int selectSearchCount(Map<String, Object> map);
+	List<CommunityDto> selectSearchList(Map<String, Object> map, PageInfoDto pi);
+	
+	
+	//게시글 좋아요테이블 insert
+	int insertLike(Map<String, Object> map);
+	
+	//게시글 좋아요 삭제
+	int deleteLike(Map<String, Object> map);
+	
+	//게시글 좋아요 조회
+	int selectLike(Map<String, Object> map);
+	
+	//게시글 좋아요했는지 체크
+	int selectCheckLike(Map<String, Object> map);
+	
+	//커뮤니티 좋아요 top3 게시글 조회
+	List<CommunityDto> communityLikeTopList(PageInfoDto pi);
+	
+	//자유게시판(공지사항포함한 게시글)조회
+	List<CommunityDto> selectBoardMerge(PageInfoDto pi);
+	
+	
+	int updateDeleteBoard(String type);
+	
+	List<AttachDto> selectDelFileList(List<String> list);
+	
+	int updateWriter(CommunityDto community, List<AttachDto> attachList, List<String> fileDelNo);
+	
+	List<Integer> selectLikeUser(int userNo);
+	
 	
 }

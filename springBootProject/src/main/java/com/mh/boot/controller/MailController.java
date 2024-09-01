@@ -27,12 +27,13 @@ public class MailController {
 	// 인증 이메일 전송
     @ResponseBody
 	@PostMapping("/mailSend.do")
-    public HashMap<String, Object> mailSend(String mail) {
+    public HashMap<String, Object> mailSend(@RequestParam String mail, @RequestParam(required=false) String type
+    									  , @RequestParam(required=false) String distinction) {
     	log.debug("mail : {}", mail);
         HashMap<String, Object> map = new HashMap<>();
 
         try {
-            number = mailService.sendMail(mail);
+            number = mailService.sendMail(mail, distinction);
             String num = String.valueOf(number);
 
             map.put("success", Boolean.TRUE);

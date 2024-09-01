@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mh.boot.dto.AttachDto;
 import com.mh.boot.dto.BoardDto;
+import com.mh.boot.dto.CommunityDto;
 import com.mh.boot.dto.PageInfoDto;
 import com.mh.boot.dto.ReplyDto;
 
@@ -87,6 +88,13 @@ public class BoardDao {
 		return sqlSessionTemplate.delete("boardMapper.deleteReplyCompletely");
 	}
 	
+	public int updateWriter(CommunityDto community) {
+		return sqlSessionTemplate.update("boardMapper.updateWriter", community);
+	}
+	
+	public List<AttachDto> selectDelFileList(List<String> list) {
+		return sqlSessionTemplate.selectList("boardMapper.selectDelFileList", list);
+	}
 	
 	
 }

@@ -193,13 +193,13 @@
 				            <span class="a">@</span>
 				            <input type="text" name="email" required>
 				            <select name="mailslc" id="mailSelect">
-				                <option id="self" value="" selected>직접입력</option>
+				                <option id="self" value="">직접입력</option>
 				                <option value="naver.com">naver.com</option>
 				                <option value="gmail.com">gmail.com</option>
 				                <option value="daum.com">daum.com</option>
 				                <option value="yahoo.com">yahoo.com</option>
 				            </select>
-				              <button type="button" class="btn btn-primary" id="myBtn2">인증하기</button>
+				            <button type="button" class="btn btn-primary" id="myBtn2">인증하기</button>
 				        </td>
 				    </tr>
 				     <tr>
@@ -258,7 +258,7 @@
       
     </div>
   </div>
- <!-- ------------------------------------이메일 인증 스크립트------------------------------ -->
+<!-- ------------------------------------이메일 인증 스크립트------------------------------ -->
 <script>
 $(document).on("click", "#myBtn2", function(event){
 	
@@ -278,7 +278,7 @@ $(document).on("click", "#myBtn2", function(event){
 		$.ajax({
 			url:"${contextPath}/mail/mailSend.do",
 			type:"post",
-			data:"mail=" + mails,
+			data:"mail=" + mails + "&distinction=sign",
 			success:function(response){
 				console.log("ajax통신 성공");
 			},
@@ -315,6 +315,8 @@ $(document).on("click", "#checkBtn", function(){
 					 $("#mailSelect").attr("disabled", "true");
 					 alert("이메일 인증이 완료되었습니다.");
 					 $("#myModal2").modal('hide');
+					 $("#but4").css("disabled", "block");
+					 
 				}else{
 					alert("인증 번호가 틀립니다. 다시 입력해주세요.");
 				}

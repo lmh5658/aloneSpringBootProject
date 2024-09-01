@@ -13,6 +13,9 @@
     <result column="FILE_STATUS" property="fileStatus"/>
     <result column="POST_STATUS" property="postStatus"/>
     <result column="POST_COUNT" property="postCount"/>
+    <result column="POST_LIKE" property="postLike"/>
+    <result column="LOCATION_NAME" property="locationName"/>
+    <result column="USER_PATH" property="userPath"/>
     
     <collection resultMap="attachResult" property="attachList" />
   </resultMap>
@@ -70,6 +73,7 @@
 			,	WRITER_NO
 			,	WRITER_NICKNAME
 			,	POST_TYPE
+			, LOCATION_NAME
 				)
 				VALUES
 				(
@@ -79,6 +83,7 @@
 			, #{writerNo}
 			, #{writerNickName}
 			, #{postType}
+			, #{locationName}
 				)
 	</insert>
 	
@@ -102,7 +107,14 @@
 			, #{filesystemName}
 			, #{originalName}
 			, #{refType}
+			<choose>
+				<when test="refNo == 0">
 			, SEQ_COMNO.CURRVAL
+				</when>
+				<otherwise>
+			, ${refNo}
+				</otherwise>
+			</choose>
 				)
 	</insert>
 	
@@ -119,42 +131,112 @@
 		 SELECT 
 					 POST_NO
 					,POST_TITLE
+					,POST_CONTENT
 					,WRITER_NO
 					,WRITER_NICKNAME
-					,POST_UPLOAD_DATE
+					,TO_CHAR(POST_UPLOAD_DATE,'YY/MM/DD(DY)') AS POST_UPLOAD_DATE
 					,(SELECT COUNT(*)
 					    FROM TB_ATTACHMENT
 					  WHERE REF_NO = POST_NO) FILE_STATUS
 					,POST_COUNT
+					,POST_TYPE
+					, (SELECT USER_PATH
+               FROM TB_MEMBER M
+               WHERE C.WRITER_NO = M.USER_NO) AS USER_PATH
+					, (SELECT COUNT(*)
+               FROM TB_LIKE L 
+              WHERE C.POST_NO = L.POST_NO) AS POST_LIKE
 	    FROM 
-	        TB_COMMUNITY
+	        TB_COMMUNITY C
 		 WHERE 
 		     POST_TYPE = #{type}
-		 ORDER
-		    BY POST_NO DESC   
+		 <choose>
+		 	<when test="select != null and !select.equals('') ">
+		  ORDER
+		     BY ${select} DESC  
+		 	</when>
+		 	<otherwise>
+		  ORDER
+		     BY POST_NO DESC 
+		 	</otherwise>
+		 </choose>
+ 
+	</select>
+	
+	<!-- 자유게시판(공지사항최근게시글포함) 조회 -->
+	<select id="selectBoardMerge" resultMap="communityResult">
+	<![CDATA[
+		WITH RecentPosts AS (
+				    SELECT POST_NO
+				         ,POST_TITLE
+				         ,WRITER_NO
+				         ,WRITER_NICKNAME
+				         ,TO_CHAR(POST_UPLOAD_DATE, 'YY/MM/DD(DY)') AS POST_UPLOAD_DATE
+				         ,(SELECT COUNT(*)
+				           FROM TB_ATTACHMENT
+				           WHERE REF_NO = TB_COMMUNITY.POST_NO) AS FILE_STATUS
+				         ,POST_COUNT
+				         ,ROW_NUMBER() OVER (ORDER BY POST_UPLOAD_DATE DESC) AS RN
+				         ,POST_TYPE
+				    FROM TB_COMMUNITY
+				    WHERE POST_TYPE = 'G'
+				)
+				SELECT POST_NO
+				     ,POST_TITLE
+				     ,WRITER_NO
+				     ,WRITER_NICKNAME
+				     ,POST_UPLOAD_DATE
+				     ,FILE_STATUS
+				     ,POST_COUNT
+				     ,POST_TYPE
+				FROM RecentPosts
+				WHERE RN <= 3
+				
+				UNION ALL
+				
+				SELECT POST_NO
+				     ,POST_TITLE
+				     ,WRITER_NO
+				     ,WRITER_NICKNAME
+				     ,TO_CHAR(POST_UPLOAD_DATE, 'YY/MM/DD(DY)') AS POST_UPLOAD_DATE
+				     ,(SELECT COUNT(*)
+				       FROM TB_ATTACHMENT
+				       WHERE REF_NO = TB_COMMUNITY.POST_NO) AS FILE_STATUS
+				     ,POST_COUNT
+				     ,POST_TYPE
+				FROM TB_COMMUNITY
+				WHERE POST_TYPE = 'J'
+				ORDER BY POST_TYPE ASC
+        			 , POST_NO DESC
+			]]>	
 	</select>
 	
 	<select id="detail" resultMap="communityResult">
-			 SELECT 
-						  POST_NO
-						, POST_TITLE
-						, POST_CONTENT
-						, WRITER_NO
-						, WRITER_NICKNAME
-						, POST_UPLOAD_DATE
-						, POST_COUNT
-	          , FILE_NO
-	          , FILE_PATH
-	          , FILESYSTEM_NAME
-	          , ORIGINAL_NAME
-	          , UPLOAD_DATE
-	          , FILE_TYPE
-	    FROM 
-	         TB_COMMUNITY
-      JOIN 
-           TB_ATTACHMENT ON(FILE_TYPE = #{postType} AND POST_NO = REF_NO)
-		  WHERE REF_NO = #{postNo}
-		    AND POST_STATUS = 'Y' 
+		SELECT 
+			    C.POST_NO,
+			    C.POST_TYPE,
+			    C.POST_TITLE,
+			    C.POST_CONTENT,
+			    C.WRITER_NO,
+			    C.WRITER_NICKNAME,
+			    TO_CHAR(C.POST_UPLOAD_DATE, 'YY/MM/DD(DY)') AS POST_UPLOAD_DATE,
+			    C.POST_COUNT,
+			    LOCATION_NAME,
+			    A.FILE_NO,
+			    A.FILE_PATH,
+			    A.FILESYSTEM_NAME,
+			    A.ORIGINAL_NAME,
+			    TO_CHAR(A.UPLOAD_DATE, 'YY/MM/DD(DY)') AS UPLOAD_DATE,
+			    A.FILE_TYPE,
+			    (SELECT COUNT(*)
+              FROM TB_LIKE
+             WHERE POST_NO = #{postNo}) AS POST_LIKE
+			FROM 
+			    TB_COMMUNITY C
+			LEFT JOIN 
+			    TB_ATTACHMENT A ON (C.POST_NO = A.REF_NO AND A.FILE_TYPE = #{postType})
+			WHERE C.POST_NO = #{postNo}
+			  AND C.POST_STATUS = 'Y'
 	</select>
 	
 	<update id="updateIncreaseCount">
@@ -312,24 +394,6 @@
 	</update>
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
 	<!-- comment 페이지 갯수 -->
 	<select id="selectCommentCount" resultType="_int">
 		SELECT COUNT(*)
@@ -379,52 +443,211 @@
 	</select>
 	 -->
 	 
-	 <select id="ajaxSelectMessageList" resultMap="messageResult">
-	 SELECT
-				   MESSAGE_NO
-				 , SEND_ID
-				 , RECEIVE_ID
-				 , TITLE
-				 , CONTENT
-				 , DATE_SEND
-				 , DATE_READ
-				 , SEND_NICKNAME
+<select id="ajaxSelectMessageList" resultMap="messageResult">
+    SELECT
+           MESSAGE_NO
+         , SEND_ID
+         , RECEIVE_ID
+         , TITLE
+         , CONTENT
+         , DATE_SEND
+         , DATE_READ
+         , SEND_NICKNAME
          , (SELECT NICKNAME
-             FROM TB_MEMBER
-            WHERE RECEIVE_ID = USER_ID) RECEIVE_NICKNAME
+            FROM TB_MEMBER
+           WHERE USER_ID = RECEIVE_ID) AS RECEIVE_NICKNAME
          , MESSAGE_COLLECT
-		FROM TB_MESSAGE_BOX
-		 <choose>
-		 	<when test="receive != null and receive.equals('receive')">
-		 	WHERE RECEIVE_ID = #{userId}
-		 	  AND RECEIVE_DEL_STATUS = 'N'
-		 	  AND CUSTODY = 'N' 
-		 	  AND MESSAGE_COLLECT = 'N'
-		 	</when>
-		 	<when test="send != null and send.equals('send')">
-		 	WHERE SEND_ID = #{userId}
-		 	  AND SEND_DEL_STATUS = 'N'
-		 	  AND CUSTODY = 'N'
-		 	</when>
-		 	<otherwise>
-      WHERE CUSTODY = 'Y' 
-        AND (SEND_ID = #{userId} OR RECEIVE_ID = #{userId})
-		 	</otherwise>
-		 </choose>
-		 ORDER
-		    BY MESSAGE_NO DESC
-	 </select>
+    FROM TB_MESSAGE_BOX
+    <where>
+        <choose>
+            <when test="receive != null and receive.equals('receive')">
+                RECEIVE_ID = #{userId}
+                AND RECEIVE_DEL_STATUS = 'N'
+                AND CUSTODY = 'N'
+                AND MESSAGE_COLLECT = 'N'
+            </when>
+            <when test="send != null and send.equals('send')">
+                SEND_ID = #{userId}
+                AND SEND_DEL_STATUS = 'N'
+                AND CUSTODY = 'N'
+            </when>
+            <otherwise>
+                CUSTODY = 'Y'
+                AND (SEND_ID = #{userId} OR RECEIVE_ID = #{userId})
+            </otherwise>
+        </choose>
+    </where>
+    ORDER BY MESSAGE_NO DESC
+</select>
+
 	 
 	 <select id="selectNoReadCount" resultType="_int">
 	   SELECT COUNT(*)
 		   FROM TB_MESSAGE_BOX 
 		  WHERE RECEIVE_ID = #{userId}
         AND DATE_READ IS NULL
+        AND MESSAGE_COLLECT != 'Y'
 	 </select>
-
 	 
 	 
-
+	 <!-- 커뮤니티 검색기능 -->
+	 <select id="selectSearchCount" resultType="_int">
+	 		SELECT COUNT(*)
+		    FROM 
+		        TB_COMMUNITY
+			 WHERE 
+			     POST_TYPE = #{type}
+			 <choose>
+			 	<when test="category != null and category.equals('TOTAL')">
+			 		AND (POST_TITLE LIKE '%' || #{search} || '%' OR
+			 				 WRITER_NICKNAME LIKE '%' || #{search} || '%')
+			 	</when>
+			 	<otherwise>
+					 AND ${category} LIKE  '%' || #{search} || '%'   
+			 	</otherwise>
+			 </choose>
+	 </select>
+	 <select id="selectSearchList" resultMap="communityResult">
+		  SELECT 
+						 POST_NO
+						,POST_TITLE
+						,WRITER_NO
+						,WRITER_NICKNAME
+						,POST_UPLOAD_DATE
+						,(SELECT COUNT(*)
+						    FROM TB_ATTACHMENT
+						  WHERE REF_NO = POST_NO) FILE_STATUS
+						,POST_COUNT
+		    FROM 
+		        TB_COMMUNITY
+			 WHERE 
+			     POST_TYPE = #{type}
+			 <choose>
+			 	<when test="category != null and category.equals('TOTAL')">
+			 		AND (POST_TITLE LIKE '%' || #{search} || '%' OR
+			 				 WRITER_NICKNAME LIKE '%' || #{search} || '%')
+			 	</when>
+			 	<otherwise>
+					 AND ${category} LIKE  '%' || #{search} || '%'   
+			 	</otherwise>
+			 </choose>
+			 ORDER
+		    BY POST_NO DESC   
+	 </select>
+	 
+		<!-- 게시글 좋아요 -->
+		<insert id="insertLike">
+			INSERT
+					INTO
+						TB_LIKE
+						(
+						POST_NO
+					, USER_NO
+						)
+					VALUES
+						(
+						#{postNo}
+					,	#{userNo}
+						)
+		</insert>
+		
+		<delete id="deleteLike">
+			DELETE FROM TB_LIKE
+			WHERE USER_NO = #{userNo}
+			 AND POST_NO = #{postNo}
+		</delete>
+		
+		<select id="selectLike" resultType="_int">
+			SELECT COUNT(*)
+				FROM TB_LIKE
+			WHERE POST_NO = #{postNo}
+		</select>
+	 
+	 	<select id="selectCheckLike" resultType="_int">
+			SELECT COUNT(*)
+				FROM TB_LIKE
+			 WHERE POST_NO = #{postNo}
+			   AND USER_NO = #{userNo}
+		</select>
+		
+			<select id="communityLikeTopList" resultMap="communityResult">
+			 SELECT A.*
+		     FROM (
+			        SELECT
+			             CM.POST_NO AS POST_NO 
+			           , POST_CONTENT
+			           , POST_TITLE
+			           , WRITER_NO
+			           , WRITER_NICKNAME
+			           , POST_TYPE
+			           , POST_UPLOAD_DATE
+			           , POST_STATUS
+			           , (SELECT COUNT(L.POST_NO)
+			                FROM TB_LIKE L
+			                WHERE L.POST_NO = CM.POST_NO
+			            ) AS POST_LIKE
+			        FROM TB_COMMUNITY CM
+			    ) A
+				    ORDER BY POST_LIKE DESC
+		</select>
+		
+		<!-- 삭제할 파일 조회 -->
+	<select id="selectDelFileList" resultMap="attachResult">
+		SELECT
+				  FILE_NO
+				, FILE_PATH
+				, FILESYSTEM_NAME
+				, ORIGINAL_NAME
+		 FROM TB_ATTACHMENT
+		 <where>
+		 	<foreach item="item" collection="list"
+		 			open="FILE_NO IN (" separator="," close=")">
+		 		#{item}
+		 	</foreach>
+		 </where>
+	</select>
+	
+	<update id="updateWriter">
+		UPDATE TB_COMMUNITY
+		   SET POST_MODIFY_DATE = SYSDATE
+		     , POST_CONTENT = #{postContent}
+				 , POST_TITLE = #{postTitle}
+				 , WRITER_NICKNAME = #{writerNickName}
+				 , LOCATION_NAME = #{locationName}
+		WHERE POST_NO = #{postNo} 
+	</update>
+	
+	<!-- 파일 삭제 -->
+	<delete id="deleteAttach">
+		DELETE FROM TB_ATTACHMENT
+		 <where>
+		 	<foreach item="item" collection="list"
+		 			open="FILE_NO IN (" separator="," close=")">
+		 		#{item}
+		 	</foreach>
+		 </where>
+	</delete>
+	
+	
+	<!-- 게시글 삭제 -->
+	<update id="updateDeleteBoard">
+		UPDATE TB_COMMUNITY
+		   SET POST_STATUS = 'N'
+		 WHERE POST_NO = #{postNo}
+	</update>
+	
+	
+		<select id="selectLikeUser" resultType="java.lang.Integer">
+        SELECT POST_NO
+        FROM TB_LIKE
+        WHERE USER_NO = #{userNo}
+    </select>
+	
+	
+	
+	
+	
+	
 	
   
 

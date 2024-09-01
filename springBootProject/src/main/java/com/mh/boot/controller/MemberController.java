@@ -1,20 +1,21 @@
 package com.mh.boot.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mh.boot.dto.MemberDto;
@@ -41,13 +42,81 @@ public class MemberController {
 	private final FileUtil fileUtil;
 	
 	// * 로그인관련 --------------------------------------
+	@GetMapping("/loginPage.page")
+	public void loginPage() {
+		
+	}
+	
+	@GetMapping(value="/findLogin.do")
+	public void findLogin(String type, Model model) {
+		model.addAttribute("type", type);
+	}
+	
+	@ResponseBody
+    @PostMapping("/findUser.do")
+	 public ResponseEntity<Map<String, Object>> findUserId(MemberDto member, String type) {
+		
+		MemberDto members = memberService.selectFindUserId(member);
+		int idCheck = (members != null) ? 1 : 0;
+        log.debug("idCheck : {}", idCheck);
+        Map<String, Object> response = new HashMap<>();
+        response.put("idCheck", idCheck);
+        response.put("userId", members.getUserId());
+        response.put("enrollDt", members.getEnrollDate());
+
+        return ResponseEntity.ok(response);
+    }
+	
+	@ResponseBody
+	@PostMapping("/findPwdChange.do")
+	public int findPwdChange(MemberDto member, String type, String changePwd){
+		log.debug(changePwd);
+		Map<String, Object> map = new HashMap<>();
+		map.put("userId", member.getUserId());
+		map.put("userName", member.getUserName());
+		map.put("email", member.getEmail());
+		// 암호화로 변경 후 
+		String distinctionPwd = bcryptPwdEncoder.encode(changePwd);
+		map.put("changePwd", distinctionPwd);
+		int result = memberService.findPwdChange(map);
+		log.debug(distinctionPwd);
+		
+		return result;
+	}
+	
+	/**
+	 * > Ajax 로그인
+	 */
+	@ResponseBody
+	@PostMapping("/loginSignin.do")
+	public Map<String, Object> loginSignin(MemberDto m
+					 , HttpServletRequest request
+					 , HttpServletResponse response) throws IOException {
+		
+		MemberDto loginUser = memberService.selectMember(m);
+
+		
+		Map<String, Object> responses = new HashMap<>();
+		if (loginUser != null && bcryptPwdEncoder.matches(m.getUserPwd(), loginUser.getUserPwd())) {
+		    request.getSession().setAttribute("loginUser", loginUser);
+		    responses.put("success", true);
+		    responses.put("nickName", loginUser.getNickName());
+		}else {
+			responses.put("success", false);
+		}
+		return responses;
+	}
+	
+	
+	
 	@PostMapping("/signin.do")
 	public void signin(MemberDto m
 					 , HttpServletRequest request
 					 , HttpServletResponse response) throws IOException {
 		
 		log.debug("m: {}", m);
-		MemberDto loginUser = memberService.selectMember(m); 
+		MemberDto loginUser = memberService.selectMember(m);
+		
 		// 암호화전 : 아이디와 비밀번호 가지고 조회된 회원객체
 		// 암호화후 : 오로지 아이디만을 가지고 조회된 회원객체 (=> 후에 비밀번호 확인해야됨)
 		//		   loginUser.getUserPwd() => DB에 저장되어있는 암호문
@@ -60,26 +129,68 @@ public class MemberController {
 		response.setContentType("text/html; charset=utf-8");
 		PrintWriter out = response.getWriter();
 		
-		out.println("<script>");
-		//if(loginUser != null) { // 암호화전 로그인성공에 대한 조건
-		if(loginUser != null && bcryptPwdEncoder.matches(m.getUserPwd(), loginUser.getUserPwd())) { // 암호화후 로그인성공에 대한 조건
-			request.getSession().setAttribute("loginUser", loginUser);
-			out.println("alert('" + loginUser.getNickName() + "님 환영합니다~');");
-			//out.println("location.href = '" + request.getContextPath() + "';");
-			out.println("location.href = '" + request.getHeader("referer") + "';"); // 이전에보던페이지 재요청
-			
-		}else {
-			out.println("alert('로그인 실패하였습니다. 아이디 및 비밀번호를 다시 확인해주세요.');");
-			out.println("history.back();");
+		
+		String uri = request.getHeader("Referer");
+		log.debug("uri : {}", uri);
+		if (uri != null && !uri.contains("/signin")) {
+			request.getSession().setAttribute("prevPage", uri);
 		}
-		out.println("</script>");
+		
+		
+		
+		//if(loginUser != null) { // 암호화전 로그인성공에 대한 조건
+		// 로그인 성공 시 처리
+		if (loginUser != null && bcryptPwdEncoder.matches(m.getUserPwd(), loginUser.getUserPwd())) {
+		    // 세션에 로그인 사용자 정보 저장
+		    request.getSession().setAttribute("loginUser", loginUser);
+		    
+		    // 자바스크립트 코드 생성
+		    out.println("<script>");
+		    out.println("alert('" + loginUser.getNickName() + "님 환영합니다~');");
+		    
+		    // 이전 페이지 URL 가져오기
+		    HttpSession session = request.getSession();
+		    String prevPage = (String) session.getAttribute("prevPage");
+		    
+		    if (prevPage != null) {
+		        // 이전 페이지로 리디렉션
+		        out.println("window.location.href = '" + prevPage + "';");
+		        // 세션에서 이전 페이지 URL 제거
+		        //session.removeAttribute("prevPage");
+		    }else {
+		        // 기본 페이지로 리디렉션 (예: 홈 페이지)
+		        out.println("location.href = '" + request.getContextPath() + "';");
+		    }
+		    
+		    out.println("</script>");
+		} else {
+		    // 로그인 실패 시 처리
+		    out.println("<script>");
+		    out.println("alert('로그인 실패하였습니다. 아이디 및 비밀번호를 다시 확인해주세요.');");
+		    out.println("history.back();"); // 로그인 페이지로 돌아가기
+		    out.println("</script>");
+		}
 		
 	}
 	
+	
 	@RequestMapping("/signout.do")
 	public String signout(HttpSession session) {
+		
 		session.invalidate();
 		return "redirect:/";
+	}
+	
+	@RequestMapping("/comunitySignout.do")
+	public String comunitySignout(HttpSession session, HttpServletRequest request) {
+		String uri = request.getHeader("Referer");
+		
+		if (uri != null) {
+			request.getSession().setAttribute("prevPage", uri);
+		}
+		String prevPage = (String) session.getAttribute("prevPage");
+		session.invalidate();
+		return "redirect:" + prevPage;
 	}
 	
 	// * 회원가입 관련 ---------------------------------------
@@ -131,8 +242,20 @@ public class MemberController {
 		
 		member.setUserPwd(  bcryptPwdEncoder.encode(member.getUserPwd()) );
 		
-		int result = memberService.insertMember(member);
 		
+		
+		int result = memberService.insertMember(member);
+		int pkMemberNo = member.getUserNo(); //pk userNo 조회
+		
+		String couponSerialNumber = "CPW001"; // 가입시 10%할인 쿠폰 일련번호
+		Map<String, Object> map = new HashMap<>();
+		map.put("userNo", pkMemberNo);
+		map.put("couponSerialNumber", couponSerialNumber);
+		map.put("couponName", "가입축하쿠폰10%");
+		if(result > 0) {
+			memberService.insertCoupon(map);			
+		}
+
 		if(result > 0) {
 			redirectAttributes.addFlashAttribute("alertMsg", "성공적으로 회원가입 되었습니다.");
 			redirectAttributes.addFlashAttribute("NickName", member.getNickName());
@@ -146,11 +269,6 @@ public class MemberController {
 		
 	}
 	
-	// * 마이페이지 관련 ------------------------------------
-	@GetMapping("/myinfo.page")
-	public String myinfo() {
-		return "member/myinfo";
-	}
 	/*
 	@ResponseBody
 	@PostMapping("/modifyProfile.do")
@@ -199,6 +317,7 @@ public class MemberController {
 		return "redirect:/member/myinfo.page";
 	}
 	
+	/*
 	@PostMapping("/leave.do")
 	public String leave(String userPwd,
 						HttpSession session,
@@ -221,7 +340,7 @@ public class MemberController {
 		return "redirect:/";
 		
 	}
-	
+	*/
 	
 	/**
 	 * > 쪽지 데이터 저장
@@ -254,7 +373,7 @@ public class MemberController {
 	
 
 	/**
-	 * 쪽지 업데이트
+	 * > 쪽지 업데이트
 	 */
 	@ResponseBody
 	@GetMapping("/updateMessage.do")
@@ -287,5 +406,139 @@ public class MemberController {
 		}
 		
 	}
+	
+	/**
+	 * > 마이페이지
+	 */
+	@GetMapping("/myPage.page")
+	public void myPage() {
+		
+	}
+	
+	
+	@ResponseBody
+	@PostMapping("/checkPassword.do")
+	public int checkPassword(String passwordCheck, @SessionAttribute("loginUser") MemberDto member) {
+		
+		String password = memberService.selectLoginUserPwd(member.getUserId());
+		
+		if(password != null && bcryptPwdEncoder.matches(passwordCheck, password)) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	
+	/**
+	 * > 프로필 이미지만 따로 수정
+	 */
+	@ResponseBody
+	@PostMapping("/userModifyProfileImg.do")
+	public Map<String, Object> userModifyProfileImg(MultipartFile uploadFile, @SessionAttribute("loginUser") MemberDto member
+									 , HttpSession session) {
+		
+		
+		String originalProfileURL = member.getUserPath();
+		//파일업로드
+		MemberDto m = new MemberDto();
+		Map<String, String> map = fileUtil.fileUpload(uploadFile, "profile");
+		m.setUserPath((map.get("filePath") + "/" + map.get("filesystemName"))) ;
+		m.setUserId(member.getUserId());
+		
+		int result = memberService.updateProfileImg(m);
+		MemberDto memberDto = memberService.selectMember(member);
+		
+		if(result > 0) {
+			session.setAttribute("loginUser", memberDto);
+			if(originalProfileURL != null) {
+				new File(originalProfileURL).delete();
+			}
+			Map<String, Object> response = new HashMap<>();
+			response.put("memberDto", memberDto);
+			response.put("success", true);
+			return response;
+		}else {
+			
+			new File(map.get("filePath") + "/" + map.get("filesystemName")).delete();
+			Map<String, Object> response = new HashMap<>();
+			response.put("success", false);
+			return response;
+		}
+		
+	}
+	
+	/**
+	 * > 프로필 정보 수정
+	 */
+	@ResponseBody
+	@PostMapping("/userModifyProfile.do")
+	public MemberDto userModifyProfileImg(MemberDto m, @SessionAttribute("loginUser") MemberDto member, HttpSession session) {
+		
+		String userMail = m.getMail().concat("@" + m.getEmail());
+		m.setEmail(userMail);
+		m.setUserId(member.getUserId());
+		
+		int updateUserinfo = memberService.updateUserModifyProfile(m);
+		MemberDto loginUser = memberService.selectMember(member);
+		session.setAttribute("loginUser", loginUser);
+		
+		
+		return loginUser;
+	}
+
+	
+	@ResponseBody
+	@PostMapping("/updatePassword.do")
+	public int updatePassword(String currentPwd, String modifyPwd
+							, HttpSession session) {
+		
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		
+		String password = memberService.selectLoginUserPwd(member.getUserId());
+		
+		//비밀번호 확인 후 비밀번호 변경
+		if(password != null && bcryptPwdEncoder.matches(currentPwd, password)) {
+			
+			Map<String, Object> map = new HashMap<>();
+			map.put("modifyPwd", bcryptPwdEncoder.encode(modifyPwd));
+			map.put("userId", member.getUserId());
+			
+			int result = memberService.updatePassword(map);
+			MemberDto loginUser = memberService.selectMember(member);
+			session.setAttribute("loginUser", loginUser);
+			
+			return result; //비밀번호 변경 성공시 1
+			
+		}else {
+			return 0;
+		}
+		
+	}
+	
+	@ResponseBody
+	@PostMapping("/accountDeletion.do")
+	public int accountDeletion(String pwd, HttpSession session) {
+		
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		
+		String password = memberService.selectLoginUserPwd(member.getUserId());
+		
+		if(password != null && bcryptPwdEncoder.matches(pwd, password)) {
+			
+			int result = memberService.deleteMember(member.getUserId());
+			session.invalidate();
+			return result; //회원 탈퇴 성공시 1
+			
+		}else {
+			return 0;
+		}
+		
+	}
+		
+		
+	
+	
+	
+	
 
 }

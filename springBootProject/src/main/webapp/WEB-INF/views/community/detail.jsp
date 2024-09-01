@@ -26,13 +26,12 @@ body {
 
 /* 게시글 스타일 */
 .post {
-    max-width: 800px;
+    max-width: 1176px;
     margin: 20px auto;
-    padding: 20px;
+    padding: 41px;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 .post-title {
     font-size: 2em;
@@ -40,7 +39,7 @@ body {
     color: #333;
 }
 .post-meta {
-    font-size: 0.9em;
+    font-size: 19px;
     color: #666;
     margin-bottom: 15px;
 }
@@ -50,6 +49,7 @@ body {
 .post-content {
     font-size: 1.1em;
     color: #444;
+    min-height: 150px;
 }
 .post-image {
     margin: 20px 0;
@@ -165,15 +165,7 @@ body {
     font-size: 14px;
 }
 
-.submit-edit {
-    background-color: #fb8ce89e;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-size: 14px;
-}
+
 
 .submit-reply:hover {
     background-color: #218838;
@@ -315,6 +307,73 @@ body {
 	  font-size: 18px; /* 글자 크기 조정 */
     color: black;
 }
+.submit-reply-reply{
+	color:black;
+}
+
+#grate{
+display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+#greate{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d3cbcb;
+    padding: 7px;
+    border-radius: 10px;
+    width: 77px;
+}
+.submit-reply{
+background: #84b5e9;
+}
+.submit-reply-reply{
+	border:none;
+	background: #84b5e9;
+	color: black;
+	padding: 8px;
+  border-radius: 8px;
+  width: 52px;
+}
+#modify_button{
+    border: none;
+    background: #84b5e9;
+    padding: 10px 20px;
+    border-radius: 17px;
+    color: white;
+}
+#delete_button{
+    border: none;
+    background: #e98484;
+    padding: 10px 20px;
+    border-radius: 17px;
+    color: white;
+}
+
+#modify_button:hover{
+    background: #84b5e9ad;
+}
+#delete_button:hover{
+    background: #e98484b0;
+}
+#attach_div{
+border: 1px solid #ced4da;
+    padding: 10px;
+    border-radius: 10px;
+    width: 500px;
+    margin-top: 54px;
+}
+
+.submit-edit-edit, .submit-edit{
+    border: none;
+    width: 49px;
+    padding: 7px;
+    border-radius: 10px;
+    background: pink;
+}
 
 </style>
 </head>
@@ -327,18 +386,60 @@ body {
 
         <!-- 게시글 S-->
          <div class="post">
-		        <h1 class="post-title">${ board[0].postTitle }</h1>
+		        <h1 class="post-title">제목: ${ board.postTitle }</h1>
 		        <div class="post-meta">
-		            <span>작성일: ${ board[0].postUploadDt }</span>
-		            <span>닉네임: ${ board[0].writerNickName }</span>
+		            <span>닉네임: ${ board.writerNickName }</span><br>
+		            <span>작성일: ${ board.postUploadDt }</span>
 		        </div>
 		        <div class="post-image">
+		        	<c:if test="${ not empty attachList }">
 		        		<c:forEach var="item" items="${ attachList }">
-		            	<img src="${item.filePath}/${item.filesystemName}" alt="게시글 이미지">
-		            </c:forEach>
+		            	<img src="${item.filePath}/${item.filesystemName}">
+			            </c:forEach>
+		        	</c:if>
 		        </div>
-		        <p class="post-content">${ board[0].postContent }</p>
+		        <div class="post-content">
+		        	 <c:out value="${board.postContent}" escapeXml="false" />
+		        </div>
+		        <c:if test="${not empty board.locationName and board.postType eq 'G' }">
+			        <div id="map" style="width: 400px; height: 300px;"></div>
+		        </c:if>
+		        <div id="grate">
+		        		<div id="greate">
+		        			<div>
+										<svg id="like_button" style="cursor: pointer; ${checkLike == 1 ? 'color:rgba(255, 7, 7, 0.57)' : 'rgb(51, 51, 51)'}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
+										  <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a10 10 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733q.086.18.138.363c.077.27.113.567.113.856s-.036.586-.113.856c-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.2 3.2 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.8 4.8 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/>
+										</svg>
+		        			</div>
+		        			<div>
+										좋아요&nbsp;<strong style="font-weight: bold;" id="likeCounter">${ board.postLike == 0 ? "" : board.postLike }</strong>
+		        			</div>
+		        		</div>
+		        </div>
+		        <div id="attach_div">
+			          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder2-open" viewBox="0 0 16 16">
+			          	<path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/>
+	              </svg><c:if test="${ empty board.attachList }">  첨부파일없음</c:if><br>
+			        	<c:forEach var="at" items="${ board.attachList }">
+				        	<a href="${contextPath}${at.filePath}/${at.filesystemName}" download="${ at.originalName }">${ at.originalName }</a><br>
+			        	</c:forEach>
+		        </div>
 			    </div>
+	    		<div>
+						<button type="button" id="history_button" style="border: none;background: #f9f9f9;"> ←뒤로가기</button>
+					</div>
+			    <c:if test="${ loginUser.userNo == board.writerNo }">
+						<div style="display: flex;justify-content: flex-end;gap: 23px;">
+							<button type="button" id="modify_button">수정</button>
+							<button type="button" id="delete_button" onclick="location.href='${contextPath}/community/deleteBoard.do?postNo=${board.postNo}&postType=${board.postType}'">삭제</button>
+						</div>
+			    </c:if>
+			    
+			    <script>
+			    	$("#modify_button").on("click", function(){
+			    		location.href="${contextPath}/community/modifyForm.page?postNo=${board.postNo}&postType=${board.postType}";
+			    	})
+			    </script>
 				<!-- 게시글 E-->
 				
         <!-- 댓글 목록 S -->
@@ -364,11 +465,121 @@ body {
             <h2>댓글 작성</h2>
             <form class="comment-form">
                 <textarea id="commentContent" placeholder="댓글을 입력하세요." rows="4"></textarea>
-                <button type="submit" class="submit-comment">등록</button>
+                <button type="button" class="submit-comment" style="background: #84b5e9;">등록</button>
             </form>
         </div>
         <!-- 댓글 작성 폼 E -->
 </div>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f5fb251a62d19d3f09c42218629ae62d&libraries=services"></script> 
+<script>
+// 장소 검색 객체를 생성합니다
+var ps = new kakao.maps.services.Places(); 
+
+// 키워드로 장소를 검색합니다
+$(document).ready(function(){
+	let search = "${board.locationName}";
+ps.keywordSearch(search, placesSearchCB); 	
+})
+
+// 키워드 검색 완료 시 호출되는 콜백함수 입니다
+function placesSearchCB (data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+        // LatLngBounds 객체에 좌표를 추가합니다
+        var bounds = new kakao.maps.LatLngBounds();
+
+        for (var i=0; i<data.length; i++) {
+            displayMarker(data[i]);    
+            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+        }       
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+        map.setBounds(bounds);
+    } 
+}
+//마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
+var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = {
+        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };  
+
+// 지도를 생성합니다    
+var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+// 지도에 마커를 표시하는 함수입니다
+function displayMarker(place) {
+    
+// 마커를 생성하고 지도에 표시합니다
+var marker = new kakao.maps.Marker({
+    map: map,
+    position: new kakao.maps.LatLng(place.y, place.x) 
+});
+
+// 마커에 클릭이벤트를 등록합니다
+kakao.maps.event.addListener(marker, 'click', function() {
+    // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
+    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+    infowindow.open(map, marker);
+});
+
+}
+</script>
+<script>
+$("#history_button").on("click", function() {
+    history.back();
+});
+
+$("#like_button").on("click", function(){
+	console.log($("#like_button").css("color"));
+	
+	if("${loginUser}" == ""){
+		$("#myMoal").modal("show");
+	}else{
+		
+		console.log( $(this).css("color"));
+		let postNo = "${board.postNo}";
+		
+		if($("#like_button").css("color") == "rgb(51, 51, 51)"){
+			$.ajax({
+ 			url:"${contextPath}/community/udpateLike.do",
+ 			type:"post",
+ 			data:{postNo:postNo},
+ 			success:function(response){
+ 				$("#like_button").css("color", "rgba(255, 7, 7, 0.57)");
+ 				
+ 				let likeCount = response;
+ 				$("#likeCounter").html(likeCount == 0 ? "" : likeCount);
+ 				
+ 			},
+ 			error:function(){
+ 				
+ 			}
+ 		})
+		}else if($("#like_button").css("color") == "rgba(255, 7, 7, 0.57)"){
+			$.ajax({
+ 			url:"${contextPath}/community/delteLike.do",
+ 			type:"post",
+ 			data:{postNo:postNo},
+ 			success:function(response){
+ 				$("#like_button").css("color", "rgb(51, 51, 51)");
+ 				
+ 				let likeCount = response;
+ 				$("#likeCounter").html(likeCount == 0 ? "" : likeCount);
+ 			},
+ 			error:function(){
+ 				
+ 			}
+ 		})
+		}
+		
+	}
+	
+})
+</script>
 
 <script>
 var arrKey = [];
@@ -388,7 +599,7 @@ function loadPage(page){
         url: "${contextPath}/community/ajaxCommentSelect.do",
         type: "get",
         data: {
-            boardNo: "${board[0].postNo}",
+            boardNo: "${board.postNo}",
             page:page
         },
         success: function(response) {
@@ -414,10 +625,10 @@ $(document).on('click', '.submit-comment', function(e) {
     
     let content = $("#commentContent").val().trim();
     //로그인체크
-    let loginCheck = "${ loginUser == "" }";
-    if(loginCheck == true){
+   
+    if("${ loginUser}" == ""){
     	
-    	$("#myModal").modal("show");
+    	$("#myModal").modal('show');
     	
     }else{
     	
@@ -433,7 +644,7 @@ $(document).on('click', '.submit-comment', function(e) {
  	                    refOrder: 0,
  	                    step: 0,
  	                    parentNum: 0,
- 	                    boardNo: "${board[0].postNo}",
+ 	                    boardNo: "${board.postNo}",
  	                    reply: "부모댓글"
  	                },
  	                success: function(response) {
@@ -467,37 +678,41 @@ $(document).on('click', '.submit-reply', function(e) {
     let id = $(this).closest(".reply-form").find(".reply-form-content").data("id");
     
     
-    let loginCheck = "${ loginUser == "" }";
-    
+    let loginCheck = ("${loginUser}" == "");
+    if(loginCheck == false){
     	 if (content === '') {
-    	        alert('대댓글을 입력하세요.');
-  	    } else {
-  	        $.ajax({
-  	            url: "${contextPath}/community/insertComment.do",
-  	            type: "post",
-  	            data: {
-  	                id: id,
-  	                boardNo: "${board[0].postNo}",
-  	                refGroup: refGroup,
-  	                content: content,
-  	                reply: "대댓글"
-  	            },
-  	            success: function(response) {
-  	            	
-  	            	if(response != null){
-  	            		 console.log('대댓글 등록:', response);
-  	            		 
-  		                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
-  		                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
-  		                renderComments(response); // 전체 댓글 다시 렌더링
-  	            	}
-  	               
-  	            },
-  	            error: function() {
-  	                console.log("AJAX 통신 실패");
-  	            }
-  	        });
-  	    }
+ 	        alert('대댓글을 입력하세요.');
+	    } else {
+	        $.ajax({
+	            url: "${contextPath}/community/insertComment.do",
+	            type: "post",
+	            data: {
+	                id: id,
+	                boardNo: "${board.postNo}",
+	                refGroup: refGroup,
+	                content: content,
+	                reply: "대댓글"
+	            },
+	            success: function(response) {
+	            	
+	            	if(response != null){
+	            		 console.log('대댓글 등록:', response);
+	            		 
+		                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
+		                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
+		                renderComments(response); // 전체 댓글 다시 렌더링
+	            	}
+	               
+	            },
+	            error: function() {
+	                console.log("AJAX 통신 실패");
+	            }
+	        });
+	    }
+    }else{
+    	$("#myModal").modal('show');
+    }
+    	
    
    
 });
@@ -524,7 +739,7 @@ $(document).on('click', '.submit-reply-reply', function(e) {
                dataType:"json",
                data: {
                    id: id,
-                   boardNo: "${board[0].postNo}",
+                   boardNo: "${board.postNo}",
                    refGroup: refGroup,
                    content: content,
                    reply: "대대대댓글",
@@ -556,19 +771,15 @@ $(document).on('click', '.submit-reply-reply', function(e) {
 
 //-----------------------버튼 스크립트 S----------------------------------
 $(document).on('click', '.reply-button', function() {
-		let toName1 = "┖─" + $(this).closest(".comment").find(".user-nickname").text();
-		let toName2 = "┖─" + $(this).closest(".replies").find(".user-nickname").text();
+		let toName1 = "@" + $(this).closest(".comment").find(".user-nickname").text();
+		let toName2 = "@" + $(this).closest(".replies").find(".user-nickname").text();
     console.log("toName : >>" + toName2);
     
-	
-    // 현재 클릭한 버튼이 속한 댓글/대댓글에서 reply-form, reply-form-form 선택
     var $currentForm = $(this).closest('.comment, .replies').find('.reply-form, .reply-form-form');
 
-    // 동일한 댓글/대댓글 내에서만 폼이 토글되도록 수정
     if ($currentForm.is(":visible")) {
-        $currentForm.hide(); // 이미 열려 있으면 숨기기
+        $currentForm.hide(); 
     } else {
-        // 현재 댓글/대댓글 내에서 모든 폼을 숨기고 선택된 폼만 보이기
         $(this).closest('.comment, .replies').find('.reply-form, .reply-form-form').hide();
         $currentForm.show();
         $(this).closest('.comment').find('.replyContent').val(toName1);
@@ -578,15 +789,14 @@ $(document).on('click', '.reply-button', function() {
 
 // 댓글 수정 버튼 클릭 시
 $(document).on("click", ".edit-comment", function() {
-		let toName = "┖─" + $(this).closest(".comment").find(".user-nickname").text();
+		let toName = "@" + $(this).closest(".comment").find(".user-nickname").text();
     console.log("toName : >>" + toName);
 	
     var $editForms = $(this).closest('.comment').find('.edit-form');
     
     if ($editForms.is(":visible")) {
-        $editForms.hide(); // 이미 열려 있으면 숨깁니다.
+        $editForms.hide(); 
     } else {
-        // 현재 댓글 내에서만 모든 폼 숨기고 선택된 폼만 보이기
         $(this).closest('.comment').find('.reply-form, .reply-form-form, .edit-form').hide();
         $editForms.show();
         $(this).closest('.comment').find('.replyContent').val(toName);
@@ -597,13 +807,12 @@ $(document).on("click", ".edit-comment", function() {
 
 // 대댓글 수정 버튼 클릭 시
 $(document).on("click", ".edit-reply", function() {
-		let toName = "┖" + $(this).closest(".replies").find(".user-nickname").text();
+		let toName = "@" + $(this).closest(".replies").find(".user-nickname").text();
     var $editForm = $(this).closest('.replies').find('.edit-form-form');
     
     if ($editForm.is(":visible")) {
-        $editForm.hide(); // 이미 열려 있으면 숨깁니다.
+        $editForm.hide();
     } else {
-        // 현재 대댓글 내에서만 모든 폼 숨기고 선택된 폼만 보이기
         $(this).closest('.replies').find('.reply-form, .reply-form-form, .edit-form-form').hide();
         $editForm.show();
         $(this).closest('.replies').find('.replyContent').val(toName);
@@ -611,7 +820,6 @@ $(document).on("click", ".edit-reply", function() {
 });
 
 //-------------------------버튼스크립트 E-----------------------------------
-
 
 // 댓글과 대댓글을 렌더링하는 함수
 function renderComments(comment) {
@@ -634,16 +842,16 @@ function renderComments(comment) {
             html += '    <strong class="user-nickname">' + comments[i].userNickName + '</strong>';
             html += '    <p class="comment-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>")  + '</p>';
             html += '    <span class="comment-date">' + timeForToday(comments[i].registDt) + '</span>';
-            html += '    <div ' + (buttonStyle ? "" : "style='display:none;'") +' class="comment-actions"' +  style + '>';
+            html += '    <div ' + (buttonStyle ? "" : "style='display:none;'") +' class="comment-actions">';
             html += '      <button class="reply-button">답글쓰기</button>';
-            html += '      <button class="edit-comment">수정</button>';
-            html += '      <button class="delete-comment">삭제</button>';
+            html += '      <button class="edit-comment"' +  style + '>수정</button>';
+            html += '      <button class="delete-comment"' +  style + '>삭제</button>';
             html += '    </div>';
             
             html += '  <div class="edit-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
             html += '    <form class="edit-form-content" data-id="' + comments[i].id + '">';
             html += '      <textarea placeholder="댓글을 수정하세요." rows="4" class="replyContent"></textarea>';
-            html += '      <button type="submit" class="submit-edit">수정</button>';
+            html += '      <button type="submit" class="submit-edit"' +  style + '>수정</button>';
             html += '    </form>';
             html += '  </div>';
             
@@ -666,10 +874,10 @@ function renderComments(comment) {
             html += '        <strong class="user-nickname" data-step="' + comments[i].step  + '">' + comments[i].userNickName + '</strong>';
             html += '        <p class="reply-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>")  + '</p>';
             html += '        <span class="reply-date">' + timeForToday(comments[i].registDt) + '</span>';
-            html += '        <div ' + (buttonStyle ? "" : "style='display:none;'") + 'class="reply-actions" ' +  style + '>';
+            html += '        <div ' + (buttonStyle ? "" : "style='display:none;'") + 'class="reply-actions">';
             html += '          <button class="reply-button">답글쓰기</button>';
-            html += '          <button class="edit-reply">수정</button>';
-            html += '          <button class="delete-reply">삭제</button>';
+            html += '          <button class="edit-reply" ' +  style + '>수정</button>';
+            html += '          <button class="delete-reply" ' +  style + '>삭제</button>';
             html += '        </div>';
             html += '      </div>';
             html += '    </div>';
@@ -677,7 +885,7 @@ function renderComments(comment) {
             html += '  <div class="edit-form-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
             html += '    <form class="edit-form-content" data-id="' + comments[i].id + '">';
             html += '      <textarea placeholder="댓글을 수정하세요." rows="4" class="replyContent"></textarea>';
-            html += '      <button type="submit" class="submit-edit-edit">수정</button>';
+            html += '      <button type="submit" class="submit-edit-edit" ' +  style + '>수정</button>';
             html += '    </form>';
             html += '  </div>';
             
@@ -763,7 +971,7 @@ $(document).on('click', '.submit-edit', function(e) {
     			data:{
     				id:id,
     				content:$content,
-    				boardNo:"${board[0].postNo}"
+    				boardNo:"${board.postNo}"
     			},
     			success:function(response){
     				
@@ -796,7 +1004,7 @@ $(document).on('click', '.delete-comment', function() {
         $.ajax({
         	url:"${contextPath}/community/updateDeleteComment.do",
         	type:"get",
-        	data:"id=" + id + "&boardNo=" + "${board[0].postNo}",
+        	data:"id=" + id + "&boardNo=" + "${board.postNo}",
         	success:function(response){
         		if(response != ""){
 							alert("댓글이 정상적으로 삭제되었습니다.");
@@ -835,7 +1043,7 @@ $(document).on('click', '.submit-edit-edit', function(e) {
 					data:{
 						id: id,
 						content: content,
-						boardNo: "${board[0].postNo}" 
+						boardNo: "${board.postNo}" 
 					},
 					success:function(response){
 						
@@ -869,7 +1077,7 @@ $(document).on('click', '.delete-reply', function() {
         $.ajax({
         	url:"${contextPath}/community/updateDeleteComment.do",
         	type:"get",
-        	data:"id=" + id + "&boardNo=" + "${board[0].postNo}",
+        	data:"id=" + id + "&boardNo=" + "${board.postNo}",
         	success:function(response){
         		if(response != ""){
 							alert("댓글이 정상적으로 삭제되었습니다.");

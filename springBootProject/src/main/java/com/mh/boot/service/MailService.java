@@ -20,14 +20,15 @@ public class MailService {
         number = (int)(Math.random() * (90000)) + 100000; //(int) Math.random() * (최댓값-최소값+1) + 최소값
     }
 
-    public MimeMessage CreateMail(String mail) {
+    public MimeMessage CreateMail(String mail, String distinction) {
         createNumber();
         MimeMessage message = javaMailSender.createMimeMessage();
         try {
             message.setFrom(senderEmail);
             message.addRecipients(MimeMessage.RecipientType.TO, mail);
-            message.setSubject("이메일 인증");
-            String body = "";
+            message.setSubject("안녕하세요 도란입니다.");
+            String body = "";            
+            body += "<h3>" + "안녕하세요 도란입니다." + "</h3>";
             body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
             body += "<h1>" + number + "</h1>";
             body += "<h3>" + "감사합니다." + "</h3>";
@@ -35,14 +36,30 @@ public class MailService {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+        
+        MimeMessage messagePwd = javaMailSender.createMimeMessage();
+        try {
+        	messagePwd.setFrom(senderEmail);
+        	messagePwd.addRecipients(MimeMessage.RecipientType.TO, mail);
+        	messagePwd.setSubject("안녕하세요 도란입니다. 임시비밀번호 안내 이메일 입니다.");
+            String body = "";            
+            body += "<h3>" + "안녕하세요 도란입니다." + "</h3>";
+            body += "<h3>" + "요청하신 임시 비밀번호 입니다." + "</h3>";
+            body += "<h3>" + "임시비밀번호로 로그인하신 후 반드시 비밀번호 변경을 해주세요." + "</h3>";
+            body += "<h1>" + number + "</h1>";
+            body += "<h3>" + "감사합니다." + "</h3>";
+            messagePwd.setText(body,"UTF-8", "html");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
-        return message;
+        return (distinction.equals("id") || distinction.equals("sign")) ? message : messagePwd;
     }
 
-    public int sendMail(String mail) {
-        MimeMessage message = CreateMail(mail);
-       
-        javaMailSender.send(message);
+    public int sendMail(String mail, String distinction) {
+    	
+		MimeMessage message = CreateMail(mail, distinction);
+		javaMailSender.send(message);
 
         return number;
     }

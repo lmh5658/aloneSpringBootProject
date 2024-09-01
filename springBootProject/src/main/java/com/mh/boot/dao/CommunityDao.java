@@ -33,13 +33,13 @@ public class CommunityDao {
 		return sqlSessionTemplate.selectOne("communityMapper.selectBoardListCount", type);
 	}
 	
-	public List<CommunityDto> boardList(String type, PageInfoDto pi) {
+	public List<CommunityDto> boardList(Map<String, Object> map, PageInfoDto pi) {
 		RowBounds rowBounds = new RowBounds((pi.getCurrentPage()-1) * pi.getBoardLimit(), pi.getBoardLimit());
-		return sqlSessionTemplate.selectList("communityMapper.boardList", type, rowBounds);
+		return sqlSessionTemplate.selectList("communityMapper.boardList", map, rowBounds);
 	}
 	
-	public List<CommunityDto> detail(CommunityDto com) {
-		return sqlSessionTemplate.selectList("communityMapper.detail", com);
+	public CommunityDto detail(CommunityDto com) {
+		return sqlSessionTemplate.selectOne("communityMapper.detail", com);
 	}
 	
 	public int updateIncreaseCount(CommunityDto com) {
@@ -142,6 +142,63 @@ public class CommunityDao {
 	public int selectRefOrder(Map<String, Object> map) {
 		return sqlSessionTemplate.selectOne("communityMapper.selectRefOrder", map);
 	}
+	
+	public int selectSearchCount(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectSearchCount", map);
+	}
+
+	public List<CommunityDto> selectSearchList(Map<String, Object> map, PageInfoDto pi) {
+		RowBounds rowBounds = new RowBounds((pi.getCurrentPage()-1) * pi.getBoardLimit(), pi.getBoardLimit());
+		return sqlSessionTemplate.selectList("communityMapper.selectSearchList", map, rowBounds);
+	}
+	
+	public int insertLike(Map<String, Object> map) {
+		return sqlSessionTemplate.insert("communityMapper.insertLike", map);
+	}
+	
+	public int deleteLike(Map<String, Object> map) {
+		return sqlSessionTemplate.delete("communityMapper.deleteLike", map);
+	}
+	
+	public int selectLike(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectLike", map);
+	}
+	
+	public int selectCheckLike(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectCheckLike", map);
+	}
+	
+	public List<CommunityDto> communityLikeTopList(PageInfoDto pi) {
+		RowBounds rowBounds = new RowBounds((pi.getCurrentPage()-1) * pi.getBoardLimit(), pi.getBoardLimit());
+		return sqlSessionTemplate.selectList("communityMapper.communityLikeTopList", null, rowBounds);
+	}
+	
+	public List<CommunityDto> selectBoardMerge(PageInfoDto pi) {
+		RowBounds rowBounds = new RowBounds((pi.getCurrentPage()-1) * pi.getBoardLimit(), pi.getBoardLimit());
+		return sqlSessionTemplate.selectList("communityMapper.selectBoardMerge", null, rowBounds);
+	}
+	
+	public int updateDeleteBoard(String type) {
+		return sqlSessionTemplate.update("communityMapper.updateDeleteBoard", type);
+	}
+	
+	public int updateWriter(CommunityDto community) {
+		return sqlSessionTemplate.update("communityMapper.updateWriter", community);
+	}
+	
+	public List<AttachDto> selectDelFileList(List<String> list) {
+		return sqlSessionTemplate.selectList("communityMapper.selectDelFileList", list);
+	}
+	
+	
+	public int deleteAttach(List<String> fileDelNo) {
+		return sqlSessionTemplate.delete("communityMapper.deleteAttach", fileDelNo);
+	}
+	
+	public List<Integer> selectLikeUser(int userNo) {
+		return sqlSessionTemplate.selectList("communityMapper.selectLikeUser", userNo);
+	}
+	
 	
 	
 }

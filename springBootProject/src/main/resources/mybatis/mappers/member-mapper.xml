@@ -73,44 +73,13 @@
 				, STREET_ADDRESS
 			  , OTHER_ADDERSS
 			  , PHONE
+			  , USER_TYPE
+			  , USER_PATH
 		FROM TB_MEMBER
-	 WHERE USER_STATUS = 'N'
+	 WHERE USER_STATUS = 'Y'
 	   AND USER_TYPE IN ('M', 'E')
 	   AND USER_ID = #{userId}
 	</select>
-	
-	
-	
-	
-	<!-- 프로필이미지만 따로 변경용 -->
-	<update id="updateProfileImg">
-		update
-					 member
-			 set profile_url = #{profileURL}
-			   , modify_date = sysdate
-		 where user_id = #{userId}
-	</update>
-	
-	<!-- 회원정보수정용 -->
-	<update id="updateMember">
-		update
-					 member
-			 set user_name = #{userName}
-			   , email = #{email}
-			   , phone = #{phone}
-			   , address = #{address}
-			   , gender = #{gender}
-			   , modify_date = sysdate
-		 where user_id = #{userId}
-	</update>
-	
-	<!-- 회원탈퇴용 -->
-	<update id="deleteMember">
-		update
-					 member
-			 set status = 'N'
-		 where user_id = #{userId}
-	</update>
 
 	<!-- 닉네임 중복 체크용 -->
   <select id="selectNickNamecount" resultType="_int">
@@ -159,8 +128,57 @@
   		, #{streetAddress}
   		, #{otherAddress}
   			)
+  	<selectKey keyProperty="userNo" resultType="int" order="AFTER">
+        SELECT SEQ_MNO.CURRVAL AS USER_NO FROM DUAL
+    </selectKey>
   </insert>
   
+  <!-- 쿠폰 발급 -->
+  <insert id="insertCoupon">
+  	INSERT
+  	    INTO
+  	     TB_COUPON
+  	     (
+					COUPON_NO
+				,	COUPON_SERIAL_NUM
+				,	USER_NO
+				,	COUPON_NAME
+				,	COUPON_EXPRIY_DATE
+  	     )
+  	    VALUES
+  	    (
+  	     SEQ_COUNO.NEXTVAL
+  	   , #{couponSerialNumber}
+  	   , #{userNo}
+  	   , #{couponName}
+  	   , SYSDATE + 30
+  	    )
+  </insert>
+  
+  <!-- 아이디 찾기 -->
+  <select id="selectFindUserId" resultMap="memberResult">
+  	SELECT USER_ID
+  			 , ENROLL_DATE
+  	  FROM TB_MEMBER
+  	 WHERE USER_NAME = #{userName}
+  	   AND EMAIL = #{email}
+  	 <if test="userId != null and !userId.equals('')">
+			 AND USER_ID = #{userId}
+  	 </if>
+  </select>
+  
+  <!-- 임시비밀번호로 비밀번호 변경 -->
+  <update id="findPwdChange">
+  	UPDATE TB_MEMBER
+  	  SET USER_PWD = #{changePwd}
+  	WHERE USER_ID = #{userId}
+  	  AND USER_NAME = #{userName}
+  	  AND EMAIL = #{email}
+  </update>
+  
+  
+  
+  <!-- =================== websocket 쪽지 ================= -->
   <insert id="insertSend" parameterType="com.mh.boot.dto.MessageBoxDto" useGeneratedKeys="true" keyProperty="messageNo">
   	INSERT
   			INTO
@@ -187,6 +205,7 @@
     </selectKey>
   </insert>
    
+   
 	 <select id="selectMessage" resultMap="messageResult">
 	 	SELECT
 				   MESSAGE_NO
@@ -204,39 +223,81 @@
 	 </select>
   
   <update id="updateMessage">
- 	UPDATE TB_MESSAGE_BOX
- 	<choose>
- 		<when test="type != null and type.equals('read')">
- 		 SET DATE_READ = SYSDATE
- 	 WHERE
- 		</when>
- 		<when test="type != null and type.equals('receive')">
- 		 SET RECEIVE_DEL_STATUS = 'Y'
- 	 WHERE
- 		</when>
- 		<when test="type != null and type.equals('send')">
- 		 SET SEND_DEL_STATUS = 'Y'
- 	 WHERE 
- 		</when>
- 		<when test="type != null and type.equals('collect')">
- 			SET MESSAGE_COLLECT = 'Y'
- 	  WHERE 
- 		</when>
- 		<when test="type != null and type.equals('deleteCustody')">
- 			SET CUSTODY = 'N'
- 			  , RECEIVE_DEL_STATUS = 'Y'
- 			  , SEND_DEL_STATUS = 'Y'
- 		WHERE (SEND_ID = #{userId} OR RECEIVE_ID = #{userId})
- 		  AND
- 		</when>
- 		<otherwise>
- 			SET CUSTODY = 'Y'
- 		WHERE 
- 		</otherwise>
- 	</choose>
-   	MESSAGE_NO = #{messageNo}
- </update>
+    UPDATE TB_MESSAGE_BOX
+    <set>
+        <choose>
+            <when test="type != null and type.equals('read')">
+                DATE_READ = SYSDATE
+            </when>
+            <when test="type != null and type.equals('receive')">
+                RECEIVE_DEL_STATUS = 'Y'
+            </when>
+            <when test="type != null and type.equals('send')">
+                SEND_DEL_STATUS = 'Y'
+            </when>
+            <when test="type != null and type.equals('collect')">
+                MESSAGE_COLLECT = 'Y'
+            </when>
+            <when test="type != null and type.equals('deleteCustody')">
+                CUSTODY = 'N',
+                RECEIVE_DEL_STATUS = 'Y',
+                SEND_DEL_STATUS = 'Y'
+            </when>
+            <otherwise>
+                CUSTODY = 'Y'
+            </otherwise>
+        </choose>
+    </set>
+    WHERE MESSAGE_NO = #{messageNo}
+    <if test="type != null and type.equals('deleteCustody')">
+        AND (SEND_ID = #{userId} OR RECEIVE_ID = #{userId})
+    </if>
+</update>
 
+ 
+ 
+ <select id="selectLoginUserPwd" resultType="string">
+ 	SELECT USER_PWD
+ 	  FROM TB_MEMBER
+ 	 WHERE USER_ID = #{userId}
+ </select>
+
+
+	<update id="updateUserModifyProfile">
+		UPDATE TB_MEMBER
+		   SET USER_NAME = #{userName}
+			   , BIRTH_DATE = #{birthDate}
+			   , NICKNAME = #{nickName}
+			   , PHONE = #{phone}
+			   , EMAIL = #{email}
+			   , ADDRESS = #{address}
+			   , ADDRESS_DETAIL = #{addressDatail}
+			   , STREET_ADDRESS = #{streetAddress}
+			   , OTHER_ADDERSS = #{otherAddress}
+		WHERE USER_ID = #{userId}
+	</update>
+	
+	
+	<update id="updateProfileImg">
+		UPDATE TB_MEMBER
+		  SET USER_PATH = #{userPath}
+		    , MODIFY_DATE = SYSDATE
+		WHERE USER_ID = #{userId}
+	</update>
+
+	<!-- 비밀번호 변경 -->
+	<update id="updatePassword">
+		UPDATE TB_MEMBER
+		   SET USER_PWD = #{modifyPwd}
+		 WHERE USER_ID = #{userId}
+	</update>
+
+	<!-- 회원탈퇴용 -->
+	<update id="deleteMember">
+		UPDATE TB_MEMBER
+			SET USER_STATUS = 'N'
+		WHERE USER_ID = #{userId}
+	</update>
 
  
 

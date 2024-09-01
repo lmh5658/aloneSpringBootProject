@@ -1,5 +1,6 @@
 package com.mh.boot.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,24 +103,54 @@ public class CommunityController {
 	
 	
 	/**
-	 * > 도란도란 커뮤니티 게시판 리스트 출력
+	 * > 커뮤니티 게시판 리스트 출력
 	 * 
 	 */
 	@GetMapping("/doranMain.page")
-	public void doranList() {
+	public String doranList(@RequestParam(value="page", defaultValue="1") int currentPage, Model model) {
+		
+		//커뮤니티 메인페이지(자유게시판 최신글)조회
+		Map<String, Object> param = new HashMap<>();
+		param.put("type", "J");
+		PageInfoDto bpi = pagingUtil.getPageInfoDto(9, currentPage, 5, 9);
+		List<CommunityDto> boardList = communityService.boardList(param, bpi);
+		
+		//커뮤니티 메인페이지(공지사항 최신글)조회
+		Map<String, Object> noticeParam = new HashMap<>();
+		noticeParam.put("type", "G");
+		PageInfoDto npi = pagingUtil.getPageInfoDto(9, currentPage, 5, 9);
+		List<CommunityDto> noticeList = communityService.boardList(noticeParam, npi);
+		
+		//커뮤니티 메인페이지(강아지정보 최신글)조회
+		Map<String, Object> infoParam = new HashMap<>();
+		noticeParam.put("type", "I");
+		PageInfoDto pi = pagingUtil.getPageInfoDto(9, currentPage, 5, 9);
+		List<CommunityDto> infoList = communityService.boardList(infoParam, pi);
+		
+		//커뮤니티 인기글 top3 게시글 조회
+		PageInfoDto likePi = pagingUtil.getPageInfoDto(3, currentPage, 1, 3);
+		List<CommunityDto> likeList = communityService.communityLikeTopList(likePi);
+		
+		model.addAttribute("boardList", boardList);
+		model.addAttribute("noticeList", noticeList);
+		model.addAttribute("infoList", infoList);
+		model.addAttribute("likeList", likeList);
+		
+		return "community/doranMain";		
 		
 	}
 	
 	/**
-	 * > 자유게시판 페이지
+	 * > 자유게시판 게시판
 	 */
 	@GetMapping("/board.do")
-	public String boardList(@RequestParam(value="page", defaultValue="1") int currentPage, String type, Model model) {
+	public String boardList(@RequestParam(value="page", defaultValue="1") int currentPage, Model model) {
 		
+		String type = "J";
 		int listCount = communityService.selectBoardListCount(type);
-		PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 10);
+		PageInfoDto pi = pagingUtil.getPageInfoDto(listCount + 3, currentPage, 5, 10);
 		
-		model.addAttribute("list", communityService.boardList(type, pi));
+		model.addAttribute("list", communityService.selectBoardMerge(pi));
 		model.addAttribute("pi", pi);
 		model.addAttribute("type", type);
 		
@@ -127,11 +158,137 @@ public class CommunityController {
 	}
 	
 	/**
+	 * > 공지사항 게시판
+	 */
+	@GetMapping("/noticeBoard.do")
+	public String noticeBoard(@RequestParam(value="page", defaultValue="1") int currentPage, Model model) {
+		
+		Map<String, Object> param = new HashMap<>();
+		param.put("type", "G");
+		String type = "G";
+		int listCount = communityService.selectBoardListCount(type);
+		PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 10);
+		
+		model.addAttribute("list", communityService.boardList(param, pi));
+		model.addAttribute("pi", pi);
+		model.addAttribute("type", type);
+		
+		return "community/noticeBoard";
+	}
+	
+	/**
+	 * > 게시글 강아지정보
+	 */
+	@GetMapping("/infoBoard.do")
+	public String infoBoard(@RequestParam(value="page", defaultValue="1") int currentPage, Model model) {
+		
+		String type = "I";
+		model.addAttribute("type", type);
+		return "community/infoBoard";
+	}
+	
+	@ResponseBody
+	@GetMapping("/ajaxInfoBoard.do")
+	public Map<String, Object> ajaxInfoBoard(@RequestParam(value="page", defaultValue="1") int currentPage, Model model, HttpSession session) {
+		
+		Map<String, Object> param = new HashMap<>();
+		param.put("type", "I");
+		String type = "I";
+		int listCount = communityService.selectBoardListCount(type);
+		PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 8);
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("list", communityService.boardList(param, pi));
+		if(member != null) {
+			List<Integer> likeList = communityService.selectLikeUser(member.getUserNo());			
+			response.put("likeList", likeList);
+		}
+		response.put("pi", pi);
+		response.put("type", type);
+		
+		return response;
+	}
+	
+	/**
+	 * > Ajax 검색
+	 */
+	@ResponseBody
+	@PostMapping("/selectSearch.do")
+	public Map<String, Object> selectSearch(@RequestParam(value="page", defaultValue="1") int currentPage, String search, String category, String type) {
+		
+		
+		Map<String, Object> param = new HashMap<>();
+		param.put("category", category);
+		param.put("search", search);
+		param.put("type", type);
+		
+		int listCount = communityService.selectSearchCount(param);
+		PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 10);
+		
+		List<CommunityDto> list = communityService.selectSearchList(param, pi);
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("list", list);
+		response.put("pi", pi);
+		
+		return response;
+		
+	}
+	
+	/**
+	 * > 강아지 정보 Ajax카테고리 검색
+	 */
+	@ResponseBody
+	@GetMapping("/selectOption.do")
+	public Map<String, Object> selectOption(@RequestParam(value="page", defaultValue="1") int currentPage, String select, String type, HttpSession session) {
+		
+		
+		Map<String, Object> param = new HashMap<>();
+		param.put("type", type);
+		param.put("select", select);
+		
+		int listCount = communityService.selectBoardListCount(type);
+		PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 8);
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		
+		List<CommunityDto> list = communityService.boardList(param, pi);
+		Map<String, Object> response = new HashMap<>();
+		response.put("list", list);
+		if(member != null) {
+			List<Integer> likeList = communityService.selectLikeUser(member.getUserNo());			
+			response.put("likeList", likeList);
+		}
+		response.put("pi", pi);
+		
+		return response;
+		
+	}
+	
+	/**
+	 * >에디터 이미지파일 따로 저장
+	 */
+	@ResponseBody
+	@PostMapping("/editorImageUpload.do")
+	public AttachDto editorImageUpload(@RequestParam("image") MultipartFile uploadFile) {
+		
+		AttachDto at = new AttachDto();
+		if(uploadFile != null && !uploadFile.isEmpty()) {
+			Map<String, String> map = fileUtil.fileUpload(uploadFile, "editorImage");
+			at.setFilePath(map.get("filePath"));
+			at.setOriginalName(map.get("originalName"));			
+			at.setFilesystemName(map.get("filesystemName"));	
+		}
+		
+		return at;
+	}
+
+	/**
 	 * > 게시판 글쓰기 Form
 	 */
 	@GetMapping("/writerForm.page")
-	public void writeForm() {
-		
+	public void writeForm(String type, Model model) {
+		model.addAttribute("type", type);
 	}
 	
 	/**
@@ -151,7 +308,8 @@ public class CommunityController {
 										 .filePath(map.get("filePath"))
 										 .filesystemName(map.get("filesystemName"))
 										 .originalName(map.get("originalName"))
-										 .refType("J")
+										 .refType(com.getPostType())
+										 .refNo(com.getPostNo())
 										 .build() );
 			}
 		}
@@ -166,9 +324,13 @@ public class CommunityController {
 			
 			int result = communityService.insertBoards(com, attachList);
 			
-			if(result == attachList.size()) {
+			if(result > 0) {
 				if ("J".equals(com.getPostType())) {
-					redirectAttributes.addFlashAttribute("alert", "자유 게시글 등록 성공!");
+					redirectAttributes.addFlashAttribute("alertMsg", "자유 게시글 등록 성공!");
+				}else if("G".equals(com.getPostType())){
+					redirectAttributes.addFlashAttribute("alertMsg", "공지사항 게시글 등록 성공!");
+				}else {
+					redirectAttributes.addFlashAttribute("alertMsg", "정보 게시판글 등록 성공!");
 				}
 			}
 			
@@ -178,13 +340,118 @@ public class CommunityController {
 		}
 		
 		
-		return "redirect:/community/board.do?type=" + com.getPostType();
+		return com.getPostType().equals("J") ? "redirect:/community/board.do" : com.getPostType().equals("G") ? "redirect:/community/noticeBoard.do" : "redirect:/community/infoBoard.do";
 		
 	}
+	
+	
+	
+	/**
+	 * > 게시글 수정폼으로 데이터 조회후
+	 *  성공시 => return (board + attachList)데이터 
+	 */
+	@GetMapping("/modifyForm.page")
+	public String modifyForm(CommunityDto community, Model model) {
+		
+		model.addAttribute("board", communityService.detail(community));
+		log.debug("수정하기 리스트 : {}>>>", communityService.detail(community));
+		
+		return "community/modifyForm";
+	}
+	
+	/**
+	 * > 게시글 수정
+	 */
+	
+	@PostMapping("/updateWriter.do")
+	public String updateWriter(CommunityDto community, Model model, List<MultipartFile> uploadFiles
+							 , @RequestParam(required=false) List<String> fileDelNo
+							 , RedirectAttributes redirectAttribute) {
+		log.debug("fileDelNo : {}", fileDelNo);
+		//기존 삭제 파일이 있을 경우 리스트 정보 알아내기(불필요한 파일이므로 삭제)
+		List<AttachDto> list = new ArrayList<>();
+		if(fileDelNo != null && !fileDelNo.isEmpty()) {
+			list = communityService.selectDelFileList(fileDelNo);
+		}
+		
+		//새로운 파일이 넘어왔을 경우 
+		List<AttachDto> attachList = new ArrayList<>();
+		for(MultipartFile uploadFile : uploadFiles) {
+			if(uploadFile != null && !uploadFile.isEmpty()) {
+				Map<String, String> map = fileUtil.fileUpload(uploadFile, "board");
+				
+				attachList.add(AttachDto.builder().filePath(map.get("filePath"))
+												  .filesystemName(map.get("filesystemName"))
+												  .originalName(map.get("originalName"))
+												  .refType(community.getPostType())
+												  .refNo(community.getPostNo())
+												  .build()
+												  );
+			}
+		}
+		//게시글 업데이트 + 파일업로드(있을경우에만)
+		int result = communityService.updateWriter(community, attachList, fileDelNo);
+		
+		if(result > 0) {
+			for(AttachDto at : list) {
+				new File(at.getFilePath() + "/" +  at.getFilesystemName()).delete();
+			}
+			redirectAttribute.addFlashAttribute("alertMsg", community.getPostType().equals("J") ? "자유 게시판의 게시글 수정이 완료되었습니다." 
+														  : community.getPostType().equals("G") ? "공지사항 게시판의 게시글 수정이 완료되었습니다." : "정보 게시판의 게시글 수정이 완료되었습니다.");
+		}else {
+			redirectAttribute.addFlashAttribute("alertMsg", "게시글 수정실패");
+		}
+		
+		return "redirect:/community/detail.page?postNo=" + community.getPostNo() + "&postType=" + community.getPostType();
+	}
+	
+	
+	
+	/**
+	 * > 게시글 삭제('Y' -> 'N')업데이트
+	 * 성공시 => return 1
+	 * 실패시 => return 0
+	 */
+	@GetMapping("/deleteBoard.do")
+	public String deleteBoard(String type, RedirectAttributes redirectAttribute) {
+		
+		int result = communityService.updateDeleteBoard(type);
+		if(result > 0) {
+			redirectAttribute.addFlashAttribute("alertMsg", type.equals("J") ? "자유 게시판 게시글 삭제가 완료되었습니다." 
+																	 : "공지사항 게시판 게시글 삭제가 완료되었습니다.");
+		}
+		return "redirect:/community/board.do";
+	}
+	
+	/**
+	 * > 게시글 좋아요
+	 */
+	@ResponseBody
+	@PostMapping("/udpateLike.do")
+	public int updateLike(String postNo, @SessionAttribute("loginUser") MemberDto member) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("postNo", postNo);
+		param.put("userNo", member.getUserNo());		
+		return communityService.insertLike(param) == 1 ? communityService.selectLike(param) : 0;
+	}
+	
+	/**
+	 * > 게시글 좋아요 취소
+	 */
+	@ResponseBody
+	@PostMapping("/delteLike.do")
+	public int delteLike(String postNo, @SessionAttribute("loginUser") MemberDto member) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("postNo", postNo);
+		param.put("userNo", member.getUserNo());	
+		
+		return communityService.deleteLike(param) == 1 ? communityService.selectLike(param) : 0;
+	} 
+	
 	/**
 	 * > 게시글 조회수 증가 => redirect:/ 게시글 상세페이지 (게시글 작성자가 아닌 사용자만 COUNT + 1)
 	 */
-	@GetMapping("/increase.do") // 조회수 증가용 (내글이 아닌 게시글 클릭시에만 호출)
+	@GetMapping("/increase.do")
 	public String increase(CommunityDto com) {
 		// 조회수 증가
 		communityService.updateIncreaseCount(com);
@@ -197,7 +464,7 @@ public class CommunityController {
 	 */
 	@GetMapping("/detail.page")
 	public void detail(CommunityDto com, @RequestParam(value = "page", defaultValue = "1") int currentPage
-					 , Model model) {
+					 , Model model, HttpSession session) {
 		//comment list 갯수
 		
 		CommentDto comment = new CommentDto();
@@ -206,6 +473,13 @@ public class CommunityController {
 	    int listCount = communityService.selectCommentCount(comment.getBoardNo());
 		PageInfoDto pi = (PageInfoDto)pagingUtil.getPageInfoDto(listCount, currentPage, 5, 20);
 	    
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		if(member != null) {
+			Map<String, Object> param = new HashMap<>();
+			param.put("postNo", com.getPostNo());
+			param.put("userNo", member.getUserNo());			
+			model.addAttribute("checkLike",communityService.selectCheckLike(param));
+		}
 		
 	    model.addAttribute("board",communityService.detail(com));
 		model.addAttribute("commentList", communityService.ajaxCommentSelect(comment, pi));
@@ -380,6 +654,7 @@ public class CommunityController {
 		return ResponseEntity.ok(map);
 		
 	}
+	
 	
 	
 	

@@ -21,6 +21,17 @@ public class OrderProductDto {
 	private String orderProductName;
 	private int orderProductNo;
 	private int orderProductAmount;
+	private String productPrice;
+	private String productThumbnailPath;
+	
+	private String orderDate;
+	private String paymentDate;
+	private int orderState;
+	private int orderType;
+	private String orderTotalPrice;
+	
+	
+	
 	
 	private int userNo;
 	

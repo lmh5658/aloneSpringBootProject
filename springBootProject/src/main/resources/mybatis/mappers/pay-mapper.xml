@@ -15,17 +15,14 @@
 		<result column="ORDER_DATE" property="orderDate"/>	
 		<result column="PAYMENT_DATE" property="paymentDate"/>	
 		<result column="PAYMENT_STATUS" property="paymentStatus"/>	
-		<result column="ORDER_PRODUCT_NO" property="productNo"/>	
-		<result column="ORDER_PRODUCT_NAME" property="productName"/>	
-		<result column="ORDER_PRODUCT_AMOUNT" property="productAmount"/>	
+		<result column="ORDER_STATE" property="orderState"/>	
 		
-		 <collection property="orderProduct" ofType="OrderProductDto">
-				<result column="ORDER_NO" property="orderNo" />
-				<result column="ORDER_PRODUCT_NAME" property="orderProductName"/>
-				<result column="ORDER_PRODUCT_NO" property="orderProductNo" />			
-				<result column="ORDER_PRODUCT_AMOUNT" property="orderProductAmount" />
-		 </collection>
-		 
+		<result column="ORDER_PRODUCT_NAME" property="orderProductName"/>	
+		<result column="ORDER_PRODUCT_NO" property="orderProductNo"/>	
+		<result column="ORDER_PRODUCT_AMOUNT" property="orderProductAmount"/>	
+		<result column="PRODUCT_PRICE" property="productPrice"/>	
+		<result column="PRO_THUMBNAIL_PATH" property="productThumbnailPath"/>
+		
 	</resultMap>
 	
 	<resultMap id="orderProductResult" type="OrderProductDto">
@@ -33,7 +30,68 @@
 		<result column="ORDER_PRODUCT_NAME" property="orderProductName"/>	
 		<result column="ORDER_PRODUCT_NO" property="orderProductNo"/>	
 		<result column="ORDER_PRODUCT_AMOUNT" property="orderProductAmount"/>	
+		<result column="PRODUCT_PRICE" property="productPrice"/>	
+		<result column="PRO_THUMBNAIL_PATH" property="productThumbnailPath"/>
+		
+		<result column="ORDER_TOTAL_PRICE" property="orderTotalPrice"/>
+		<result column="ORDER_DATE" property="orderDate"/>
+		<result column="PAYMENT_DATE" property="paymentDate"/>
+		<result column="ORDER_STATE" property="orderState"/>
+		<result column="ORDER_TYPE" property="orderType"/>
 	</resultMap>
+	
+	
+	
+	<resultMap id="productResult" type="ProductDto">
+    <id column="PRODUCT_NO" property="productNo"/>
+    <result column="CATEGORY_TYPE" property="categoryType"/>
+    <result column="PRODUCT_NAME" property="proName"/>
+    <result column="PRODUCT_PRICE" property="productPrice"/>
+    <result column="PRO_STATUS" property="proStatus"/>
+    <result column="PRO_AMOUNT" property="proAmount"/>
+    <result column="RPO_SALE_STATUS" property="productSaleStatus"/>
+    <result column="PRO_SALE_PRICE" property="productSalePrice"/>
+    <result column="PRO_THUMBNAIL_PATH" property="productThumbnailPath"/>
+    <result column="PRO_DETAIL_PATH" property="pDatailPath"/>
+    <result column="ORDER_CHECK" property="orderCheck"/>
+    <result column="REVIEW_CHECK" property="reviewCheck"/>
+    <result column="COUNT" property="count"/>
+    <result column="ORDER_PRODUCT_AMOUNT" property="orderProductAmount" /> 
+  </resultMap>
+  
+  <resultMap id="pointResult" type="PointDto">
+    <id column="POINT_NO" property="pointNo"/>
+    <result column="USER_NO" property="userNo"/>
+    <result column="POINT_ISSUE_DATE" property="pointIssueDt"/>
+    <result column="POINT_EXPIRY_DATE" property="pointExpiryDt"/>
+    <result column="PRODUCT_NO" property="productNo"/>
+    <result column="EARN_POINT" property="earnPoint"/>
+    <result column="REVIEW_WRITER_POINT" property="reviewWriterPoint"/>
+    <result column="NET_POINT" property="netPoint"/>
+    <result column="POINT_MINUS_AMOUNT" property="pointMinusAmount"/>
+    <result column="PRODUCT_NAME" property="proName"/>
+    <result column="POINT_USAGE_DATE" property="pointUsageDt"/>
+  </resultMap>
+  
+  <resultMap id="pointRecordResult" type="PointRecordDto">
+    <id column="POINT_RECORD_NO" property="pointRecordNo"/>
+    <result column="POINT_USAGE_DATE" property="pointUsageDt"/>
+    <result column="POINT_MINUS_AMOUNT" property="pointMinusAmount"/>
+    <result column="USER_NO" property="userNo"/>
+    <result column="POINT_NO" property="pointNo"/>
+  </resultMap>
+  
+   <resultMap id="couponResult" type="CouponDto">
+    <id column="COUPON_NO" property="couponNo"/>
+    <result column="COUPON_SERIAL_NUM" property="couponSerialNumber"/>
+    <result column="USER_NO" property="userNo"/>
+    <result column="COUPON_USAGE_DATE" property="couponUsageDt"/>
+    <result column="COUPON_NAME" property="couponName"/>
+    <result column="COUPON_ISSUE_DATE" property="couponIssueDt"/>
+    <result column="COUPON_EXPRIY_DATE" property="couponExprityDt"/>
+    <result column="COUPON_STATUS" property="couponStatus"/>
+  </resultMap>
+ 
 	
 	
 	<!-- 상품 주문 (구매) -->
@@ -68,6 +126,9 @@
 				, SYSDATE
 				, #{paymentStatus}
 					)
+	  <selectKey keyProperty="orderNo" resultType="int" order="AFTER">
+        SELECT SEQ_ORNO.CURRVAL AS ORDER_NO FROM DUAL
+    </selectKey>
 	</insert>
 	
 	<!-- 구매 상품 정보(주문번호,상품이름,상품번호,상품수량) -->
@@ -92,16 +153,377 @@
 	</insert>
 	
 	<delete id="deleteCartList">
-	    DELETE FROM TB_CART
-	    WHERE USER_NO = #{userNo}
-	      AND PRODUCT_NO IN
-	    <foreach item="item" index="index" collection="list"
-      					open="(" separator="," close=")">
-        #{item}
-  		</foreach>
+		DELETE FROM TB_CART
+    WHERE USER_NO = #{userNo} 
+		  AND PRODUCT_NO IN 
+    <foreach collection="orderList" item="productNo" index="index" open="(" separator="," close=")">
+        ${productNo}
+    </foreach>
 	</delete>
 	
+	<select id="selectCartPayList" resultMap="productResult">
+			SELECT
+			      PRODUCT_NO
+			    , PRODUCT_NAME
+			    , PRODUCT_PRICE
+			    , PRO_SALE_PRICE
+			    , PRO_THUMBNAIL_PATH
+			    , (SELECT DISTINCT C.COUNT 
+			         FROM TB_CART C
+			        WHERE P.PRODUCT_NO = C.PRODUCT_NO
+			          AND USER_NO = #{userNo}
+			       ) COUNT
+			FROM TB_PRODUCT P
+			WHERE PRODUCT_NO IN (SELECT PRODUCT_NO
+		                       FROM TB_CART
+                    			 WHERE USER_NO = #{userNo}
+                    			  AND PRODUCT_NO IN
+                    			  <foreach collection="productNoArray" item="productNo" index="index" open="(" separator="," close=")">
+	                    			   #{productNo}  			  
+                    			  </foreach>
+                    			  )
+	</select>
 	
+	<select id="selectDirectPayList" resultMap="productResult">
+			SELECT
+			      PRODUCT_NO
+			    , PRODUCT_NAME
+			    , PRODUCT_PRICE
+			    , PRO_SALE_PRICE
+			    , PRO_THUMBNAIL_PATH
+			FROM TB_PRODUCT P
+			WHERE PRODUCT_NO = #{productNo}
+	</select>
+	
+	
+	<select id="selectOrderProducts" resultMap="orderProductResult">
+		SELECT  
+					  ORDER_NO
+					, ORDER_PRODUCT_NO
+					, ORDER_PRODUCT_NAME
+					, ORDER_PRODUCT_AMOUNT
+          , (SELECT PRO_THUMBNAIL_PATH
+	             FROM TB_PRODUCT
+	            WHERE PRODUCT_NO = ORDER_PRODUCT_NO) PRO_THUMBNAIL_PATH
+          , (SELECT PRODUCT_PRICE - NVL(PRO_SALE_PRICE,0)
+               FROM TB_PRODUCT P
+              WHERE OP.ORDER_PRODUCT_NO = P.PRODUCT_NO) PRODUCT_PRICE
+		  FROM TB_PRODUCT_ORDER OP
+		  WHERE ORDER_NO = #{orderNo}
+	</select>
+	
+	<select id="selectOrderInfo" resultMap="orderResult">
+		SELECT 
+						ORDER_NO
+					,	PAYMENT_METHOD
+					,	ORDER_TOTAL_PRICE
+					,	ORDER_DATE
+					,	PAYMENT_DATE
+			FROM TB_ORDER
+			WHERE ORDER_NO = #{orderNo}
+	</select>
+	
+	<select id="selectProductList" resultMap="orderProductResult">
+			SELECT  
+					  ORDER_NO
+					, ORDER_PRODUCT_NO
+					, ORDER_PRODUCT_NAME
+					, ORDER_PRODUCT_AMOUNT
+          , (SELECT PRODUCT_PRICE - NVL(PRO_SALE_PRICE,0)
+               FROM TB_PRODUCT P
+              WHERE OP.ORDER_PRODUCT_NO = P.PRODUCT_NO) PRODUCT_PRICE
+		  FROM TB_PRODUCT_ORDER OP
+		  WHERE ORDER_NO = #{orderNo}
+	</select>
+	
+	<insert id="insertPayPoint" parameterType="java.util.Map">
+    INSERT INTO TB_POINT (POINT_NO, USER_NO, POINT_EXPIRY_DATE, PRODUCT_NO, EARN_POINT)
+    SELECT SEQ_POINO.NEXTVAL, #{userNo}, A.* 
+      FROM(
+    <foreach item="item" collection="productOrderList" separator="UNION ALL " >
+        select 
+  						SYSDATE + 12 AS POINT_EXPIRY_DATE
+           , #{item.orderProductNo} AS PRODUCT_NO
+           , #{item.productPrice} * #{item.orderProductAmount} * 0.015 AS EARN_POINT
+        FROM DUAL
+    </foreach>) A
+	</insert>
+	
+		<!-- 포인트 차감 insert -->
+	<insert id="insertPointRecord">
+		INSERT
+		    INTO
+		      TB_POINT_RECORD
+		      (
+		      POINT_RECORD_NO
+				, POINT_MINUS_AMOUNT
+				, USER_NO
+				, POINT_NO
+		      )
+		     VALUES
+		     (
+		      SEQ_COURNO.NEXTVAL
+		    , #{minusPoint}
+		    , #{userNo}
+		    , SEQ_POINO.CURRVAL
+		     )
+	</insert>
+
+	
+	<select id="selectMyPoint" resultMap="pointResult">
+			 SELECT
+				    (SELECT NVL(SUM(EARN_POINT), 0)
+				     FROM TB_POINT
+				     WHERE USER_NO = #{userNo}) AS EARN_POINT,
+				    (SELECT NVL(SUM(REVIEW_WRITER_POINT), 0)
+				     FROM TB_POINT
+				     WHERE USER_NO = #{userNo}) AS REVIEW_WRITER_POINT, 
+				    (SELECT NVL(SUM(POINT_MINUS_AMOUNT), 0)
+				     FROM TB_POINT_RECORD
+				     WHERE USER_NO = #{userNo}) AS POINT_MINUS_AMOUNT
+				FROM DUAL
+	</select>
+	
+	<!-- 사용할 수 있는 쿠폰 리스트 조회 -->
+	<select id="selectMyUsageCoupon" resultMap="couponResult">
+		SELECT
+				  COUPON_NO
+				, COUPON_SERIAL_NUM
+				, USER_NO
+				, COUPON_USAGE_DATE
+				, COUPON_NAME
+				, COUPON_ISSUE_DATE
+				, COUPON_EXPRIY_DATE
+			FROM TB_COUPON
+			WHERE USER_NO = #{userNo}
+			 AND COUPON_STATUS = 'Y'
+	</select>
+	
+	<!-- 모든 쿠폰 조회(사용한 쿠폰 포함) -->
+		<select id="selectMyCoupon" resultMap="couponResult">
+		SELECT
+				  COUPON_NO
+				, COUPON_SERIAL_NUM
+				, USER_NO
+				, COUPON_USAGE_DATE
+				, COUPON_NAME
+				, TO_CHAR(COUPON_ISSUE_DATE, 'YY/MM/DD(DY)') AS COUPON_ISSUE_DATE
+				, TO_CHAR(COUPON_EXPRIY_DATE, 'YY/MM/DD(DY)') AS COUPON_EXPRIY_DATE
+				, COUPON_STATUS
+			FROM TB_COUPON
+			WHERE USER_NO = #{userNo}
+	</select>
+	
+	<!-- 쿠폰 갯수 조회 -->
+	<select id="selectCouponCount" resultType="_int">
+		SELECT COUNT(*)
+			FROM TB_COUPON
+	   WHERE USER_NO = #{userNo}
+	</select>
+	
+	
+	
+
+	<!-- 쿠폰 차감 update -->
+	<update id="updateCoupon">
+		UPDATE TB_COUPON
+		   SET COUPON_USAGE_DATE = SYSDATE
+		     , COUPON_STATUS - 'N'
+		 WHERE USER_NO = #{userNo}
+		   AND COUPON_SERIAL_NUM = #{couponSerialNumber}
+	</update>
+	
+	
+	<!-- 나의 포인트 내역 -->
+	
+	<select id="selectMyUsagePoint" resultMap="pointResult">
+			SELECT
+	    POINT_RECORD_NO AS POINT_NO,
+	    NULL AS POINT_ISSUE_DATE,
+	    PRODUCT_NAME,
+	    POINT_MINUS_AMOUNT AS EARN_POINT,
+	    NULL AS REVIEW_WRITER_POINT,
+	    TO_CHAR(POINT_USAGE_DATE, 'YY/MM/DD(DY)') AS POINT_USAGE_DATE
+	FROM TB_POINT_RECORD pr
+	JOIN TB_POINT USING(POINT_NO)
+	JOIN TB_PRODUCT USING(PRODUCT_NO)
+	WHERE pr.USER_NO = #{userNo}
+	UNION
+	SELECT
+	    POINT_NO,
+	    TO_CHAR(POINT_ISSUE_DATE, 'YY/MM/DD(DY)') AS POINT_ISSUE_DATE,
+	    PRODUCT_NAME,
+	    EARN_POINT,
+	    REVIEW_WRITER_POINT,
+	    NULL AS POINT_USAGE_DATE
+	FROM TB_POINT p
+	JOIN TB_PRODUCT pr USING(PRODUCT_NO)
+	WHERE p.USER_NO = #{userNo}
+	ORDER BY POINT_ISSUE_DATE DESC,
+	          POINT_NO DESC,
+	          POINT_USAGE_DATE DESC
+	</select>
+	
+		<!-- 포인트 내역 갯수 -->
+	<select id="selectPointUsageCount" resultType="_int">
+		 SELECT (SELECT COUNT(*) 
+		           FROM TB_POINT 
+		           WHERE USER_NO = #{userNo}) + (SELECT COUNT(*) 
+		                                     FROM TB_POINT_RECORD 
+		                                    WHERE USER_NO = #{userNo}) 
+	       FROM DUAL
+	</select>
+	
+	<!-- 마이페이지 주문관리 리스트 조회 -->
+	<select id="selectMyOrderInfoCount" resultType="_int">
+	    SELECT COUNT(*)
+	    FROM TB_ORDER
+	    WHERE ORDER_MEMBER_NO = #{userNo}
+	</select>
+	
+	<select id="selectMyOrderList" resultMap="orderProductResult">
+    SELECT
+			    ORDER_NO,
+			    TO_CHAR(MAX(ORDER_DATE), 'YY/MM/DD(DY)') AS ORDER_DATE,
+			    TO_CHAR(MAX(PAYMENT_DATE), 'YY/MM/DD(DY)') AS PAYMENT_DATE,
+			    MAX(ORDER_STATE) AS ORDER_STATE,
+			    MAX(ORDER_TOTAL_PRICE) AS ORDER_TOTAL_PRICE,
+			    MAX(ORDER_PRODUCT_NAME) AS ORDER_PRODUCT_NAME,
+			    MAX(ORDER_PRODUCT_NO) AS ORDER_PRODUCT_NO,
+			    MAX(ORDER_PRODUCT_AMOUNT) AS ORDER_PRODUCT_AMOUNT,
+			    MAX(PRO_THUMBNAIL_PATH) AS PRO_THUMBNAIL_PATH,
+			    CASE 
+			        WHEN COUNT(ORDER_NO) > 1 THEN COUNT(*)
+			        ELSE COUNT(*)
+			    END AS ORDER_TYPE
+			FROM TB_ORDER
+			JOIN TB_PRODUCT_ORDER USING (ORDER_NO)
+			JOIN TB_PRODUCT ON PRODUCT_NO = ORDER_PRODUCT_NO
+			WHERE ORDER_MEMBER_NO = #{userNo}
+			GROUP BY ORDER_NO
+			ORDER BY ORDER_NO DESC
+</select>
+
+	<select id="selectOrderDetail" resultMap="orderResult">
+		SELECT
+					  ORDER_NO
+					, ORDER_NAME
+					, ORDER_PHONE
+					, ORDER_EMAIL
+					, ORDER_DETAIL
+					, ORDER_REQUEST
+					, PAYMENT_METHOD
+					, ORDER_TOTAL_PRICE
+					, TO_CHAR(PAYMENT_DATE, 'YY/MM/DD(DY)') AS PAYMENT_DATE
+					, ORDER_PRODUCT_NAME
+					, ORDER_PRODUCT_AMOUNT
+					, ORDER_PRODUCT_NO
+					, PRODUCT_PRICE - NVL(PRO_SALE_PRICE,0) AS PRODUCT_PRICE
+					, PRO_THUMBNAIL_PATH
+			FROM TB_ORDER o
+			JOIN TB_PRODUCT_ORDER po USING(ORDER_NO)
+			JOIN TB_PRODUCT p ON(po.ORDER_PRODUCT_NO = p.PRODUCT_NO)
+			WHERE ORDER_MEMBER_NO = #{userNo}
+			  AND ORDER_NO = #{orderNo}
+	</select>
+	
+	<select id="selectDaysCount" resultType="_int">
+	    SELECT COUNT(*)
+	    FROM TB_ORDER
+	    WHERE ORDER_MEMBER_NO = #{userNo}
+		 <choose>
+			    <when test="type != null and type.equals('today')">
+			        AND ORDER_DATE = TRUNC(SYSDATE)
+			    </when>
+			    <when test="type != null and type.equals('1month')">
+			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '1' MONTH AND SYSDATE
+			    </when>
+			    <when test="type != null and type.equals('3months')">
+			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '3' MONTH AND SYSDATE
+			    </when>
+			    <when test="type != null and type.equals('6months')">
+			        AND ORDER_DATE BETWEEN TO_DATE(SYSDATE, 'YYYY-MM-DD') - INTERVAL '6' MONTH AND SYSDATE
+			    </when>
+			    <otherwise>
+			        AND ORDER_DATE BETWEEN #{startDate} AND #{endDate}
+			    </otherwise>
+			</choose>    
+	</select>
+
+	<select id="selectDaysList" resultMap="orderProductResult">
+			SELECT
+			    ORDER_NO,
+			    TO_CHAR(MAX(ORDER_DATE), 'YY/MM/DD(DY)') AS ORDER_DATE,
+			    TO_CHAR(MAX(PAYMENT_DATE), 'YY/MM/DD(DY)') AS PAYMENT_DATE,
+			    MAX(ORDER_STATE) AS ORDER_STATE,
+			    MAX(ORDER_TOTAL_PRICE) AS ORDER_TOTAL_PRICE,
+			    MAX(ORDER_PRODUCT_NAME) AS ORDER_PRODUCT_NAME,
+			    MAX(ORDER_PRODUCT_NO) AS ORDER_PRODUCT_NO,
+			    MAX(ORDER_PRODUCT_AMOUNT) AS ORDER_PRODUCT_AMOUNT,
+			    MAX(PRO_THUMBNAIL_PATH) AS PRO_THUMBNAIL_PATH,
+			    CASE 
+			        WHEN COUNT(ORDER_NO) > 1 THEN COUNT(*)
+			        ELSE COUNT(*)
+			    END AS ORDER_TYPE
+			FROM TB_ORDER
+			JOIN TB_PRODUCT_ORDER USING (ORDER_NO)
+			JOIN TB_PRODUCT ON PRODUCT_NO = ORDER_PRODUCT_NO
+			WHERE ORDER_MEMBER_NO = #{userNo}
+		 <choose>
+			    <when test="type != null and type.equals('today')">
+			        AND ORDER_DATE = TRUNC(SYSDATE)
+			    </when>
+			    <when test="type != null and type.equals('1month')">
+			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '30' DAY AND SYSDATE
+			    </when>
+			    <when test="type != null and type.equals('3months')">
+			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '90' DAY AND SYSDATE
+			    </when>
+			    <when test="type != null and type.equals('6months')">
+			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '180' DAY AND SYSDATE
+			    </when>
+			    <otherwise>
+			        AND ORDER_DATE BETWEEN #{startDate} AND #{endDate}
+			    </otherwise>
+			</choose>
+
+			GROUP BY ORDER_NO
+			ORDER BY ORDER_NO DESC 
+	</select>
+	
+	
+	<select id="selectOrderStateCount" resultType="map">
+			SELECT 
+			     SUM(CASE WHEN ORDER_STATE = 1 THEN 1 ELSE 0 END) AS PAYMENT_COMPLETED
+			   , SUM(CASE WHEN ORDER_STATE = 2 THEN 1 ELSE 0 END) AS ORDER_DELIVERY
+			   , SUM(CASE WHEN ORDER_STATE = 3 THEN 1 ELSE 0 END) AS ORDER_SHIPPING
+			   , SUM(CASE WHEN ORDER_STATE = 4 THEN 1 ELSE 0 END) AS ORDER_COMPLETED
+		FROM TB_ORDER
+		WHERE ORDER_MEMBER_NO = #{userNo}
+	</select>
+	
+	  <!-- 리뷰 포인트 적립 리스트 조회 -->
+  <select id="selectMyReviewPointCount" resultType="_int">
+	  SELECT COUNT(*)
+	  	FROM TB_POINT
+			WHERE USER_NO = #{userNo}
+			  AND REVIEW_WRITER_POINT IS NOT NULL
+  </select>
+  <select id="selectMyReviewPointList" resultMap="pointResult">
+	  SELECT
+					  POINT_NO
+					, PRODUCT_NAME
+					, PRODUCT_NO
+					, REVIEW_WRITER_POINT
+					, TO_CHAR(POINT_ISSUE_DATE, 'YY/MM/DD(DY)') POINT_ISSUE_DATE
+					, TO_CHAR(POINT_EXPIRY_DATE, 'YY/MM/DD(DY)') POINT_EXPIRY_DATE
+			FROM TB_POINT
+			JOIN TB_PRODUCT USING(PRODUCT_NO)
+			WHERE USER_NO = #{userNo}
+			  AND REVIEW_WRITER_POINT IS NOT NULL
+  </select>
+
+
 </mapper>
 
 

@@ -82,17 +82,19 @@ button.remove {
     					<c:when test="${ not empty cartList }">
     						<table>
 		                <thead>
-		                    <tr>
+		                    <tr>	
+		                    		<th><input type="checkbox" checked id="check_box"></th>
 		                        <th>상품명</th>
-		                        <th>수량</th>
+		                        <th style="width: 128px;">수량</th>
 		                        <th>가격</th>
-		                        <th>총액</th>
+		                        <th style="width: 150px;">총액</th>
 		                        <th>삭제</th>
 		                    </tr>
 		                </thead>
 		                <tbody>
 		                    <c:forEach var="item" items="${ cartList }">
 		                        <tr class="item">
+		                        		<td><input type="checkbox" class="listCheckbox" data-no="${ item.productNo }" checked></td>
 		                            <td><div></div><image src="${contextPath}${item.productThumbnailPath}" style="width: 100px;"><div>${ item.proName }</td>
 		                            <td>
 		                            		<input type="button" value=" - " class="minus"> 
@@ -100,8 +102,8 @@ button.remove {
 						                   			<input type="button" value=" + " class="add">
 		                                
 		                            </td>
-		                            <td class="price">${ item.productPrice }</td>
-		                            <td class="total">${ item.count * item.productPrice }</td>
+		                            <td class="price">${ item.productPrice - item.productSalePrice }</td>
+		                            <td class="total">${ item.count * (item.productPrice - item.productSalePrice) }</td>
 		                            <td>
 		                            	<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash garbage" viewBox="0 0 16 16">
 																	  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
@@ -139,14 +141,86 @@ button.remove {
     				</c:choose>
     </div>
 <script>
+$("#checkoutButton").on("click", function() {
+    let arr = [];
+    let hasCheckedItems = false;
 
-$("#checkoutButton").on("click", function(){
+    $(".item").each(function() {
+        let checkedBoxes = $(this).find("input[type='checkbox']:checked");
+        // 체크된 체크박스가 있는 경우
+        if (checkedBoxes.length > 0) {
+            hasCheckedItems = true;
+            checkedBoxes.each(function() {
+                arr.push($(this).data("no"));
+                
+            });
+        }
+    });
+    
+    // 체크된 상품이 없는 경우
+    if (!hasCheckedItems) {
+        alert("체크된 상품이 없습니다.");
+        return; // 함수를 종료
+    }
+
+    if (confirm("결제화면으로 이동하시겠습니까?")) {
+    	
+        let totalPrice = $("#totalAmountValue").text();
+        let productNoList = arr.join(",");
+
+        // 페이지를 이동합니다.
+        location.href = "${contextPath}/pay/pay.page?totalPrice=" + totalPrice + "&productNo=" + productNoList;
+        
+    }
+    
+   
+});
+
+$(".listCheckbox").on("change", function() {
 	
-	if(confirm("결제화면으로 이동하시겠습니까?")){
-		location.href="${contextPath}/pay/pay.page?totalPrice=" + $("#totalAmountValue").text();
-	}
+    let isChecked = $(this).is(":checked");
+    let totalPriceText = $("#totalAmountValue").text().replace(/,/g, '');
+    let totalPrice = parseFloat(totalPriceText);
+    
+    let itemTotalText = $(this).closest('.item').find(".total").text().trim().replace(/,/g, '');
+    let itemTotal = parseFloat(itemTotalText);
+
+    if (isChecked) {
+        totalPrice += itemTotal;
+    } else {
+        totalPrice -= itemTotal;
+    }
+
+    $("#totalAmountValue").text(totalPrice.toLocaleString("ko-KR"));
+});
+
+$("#check_box").on("change", function() {
 	
-})
+    let isChecked = $(this).is(":checked");
+    
+    // 전체 체크박스 상태를 변경
+    $(".item").each(function() {
+        $(this).find("input[type='checkbox']").prop("checked", isChecked);
+    });
+    
+    // 총합계 계산
+    let sum = 0;
+    $(".item").each(function() {
+        if ($(this).find("input[type='checkbox']").is(":checked")) {
+            let totalPriceText = $(this).find(".total").text().trim();
+            let totalPrice = parseFloat(totalPriceText.replace(/,/g, ''));
+            
+            sum += totalPrice;
+        }
+    });
+
+    let formattedSum = sum.toLocaleString("ko-KR");
+
+    $("#totalAmountValue").text("");
+    $("#totalAmountValue").text(formattedSum == 0 ? 0 : formattedSum);
+});
+
+
 
 
 $(document).ready(function(){
@@ -157,6 +231,7 @@ $(document).ready(function(){
 
 // 가격 및 총 가격을 한국어 형식으로 변환하는 함수
 function formatPrices() {
+	
     $(".price, .total").each(function() {
         var text = $(this).text().replace(/,/g, ''); // 쉼표 제거
         var value = parseFloat(text); // 실수로 변환
@@ -164,6 +239,8 @@ function formatPrices() {
             $(this).text(value.toLocaleString('ko-KR')); // 한국어 형식으로 변환
         }
     });
+    
+    
 }
 
 // 총 금액 계산 및 업데이트 함수

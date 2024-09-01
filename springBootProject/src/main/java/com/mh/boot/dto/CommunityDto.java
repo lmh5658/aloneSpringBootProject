@@ -28,6 +28,9 @@ public class CommunityDto {
 	private int fileStatus;
 	private String postStatus;
 	private int postCount;
+	private int postLike;
+	private String locationName;
+	private String userPath;
 	
 	List<AttachDto> attachList;
 	
