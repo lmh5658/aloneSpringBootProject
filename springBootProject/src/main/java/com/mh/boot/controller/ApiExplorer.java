@@ -12,6 +12,7 @@ import java.util.Date;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,7 +28,11 @@ public class ApiExplorer {
 	
 	private String category;
     private JSONObject weather;
-	
+    @Value("${kakao-api-key}")
+	private String kakoKey;	
+    
+    
+    
    @ResponseBody
    @GetMapping("/apiWeather.do")
    public StringBuilder apiweather() throws IOException, ParseException  {
@@ -35,7 +40,7 @@ public class ApiExplorer {
 	   
 	// 변수 설정
        String apiURL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
-       String authKey = ""; // 본인 서비스 키
+       String authKey = kakoKey; // 본인 서비스 키
 
 		// 구하고자 하는 시간과 좌표 대입
        String nx = "56";
@@ -73,12 +78,12 @@ public class ApiExplorer {
        String dataType = "JSON";
 
        StringBuilder urlBuilder = new StringBuilder(apiURL); /*URL*/
-       urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "KE4D%2BwN4LH9zrMM%2BGX6CHkYyNyzfpA6YmfwU%2BMd3dBPsCB6kx1fjKypeesiHzxPT9CklE094IW0wYGnweBf%2F6Q%3D%3D"); /*Service Key*/
+       urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + authKey); /*Service Key*/
        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("20", "UTF-8")); /*한 페이지 결과 수*/
        urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode(dataType, "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
        urlBuilder.append("&" + URLEncoder.encode("base_date","UTF-8") + "=" + URLEncoder.encode(baseDate, "UTF-8")); /*‘21년 6월 28일 발표*/
-       urlBuilder.append("&" + URLEncoder.encode("base_time","UTF-8") + "=" + URLEncoder.encode(baseTime, "UTF-8")); /*06시 발표(정시단위) */
+       urlBuilder.append("&" + URLEncoder.encode("base_time","UTF-8") + "=" + URLEncoder.encode("0500", "UTF-8")); /*06시 발표(정시단위) */
        urlBuilder.append("&" + URLEncoder.encode("nx","UTF-8") + "=" + URLEncoder.encode("55", "UTF-8")); /*예보지점의 X 좌표값*/
        urlBuilder.append("&" + URLEncoder.encode("ny","UTF-8") + "=" + URLEncoder.encode("124", "UTF-8")); /*예보지점의 Y 좌표값*/
        

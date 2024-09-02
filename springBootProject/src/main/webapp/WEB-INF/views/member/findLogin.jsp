@@ -159,8 +159,8 @@ h1 {
 	                 </div>
                 </div>
             		<div class="input-group check_mail" style="display: none;">
-	                  <input type="email" id="mailNumberId" required placeholder="인증번호를 입력하세요." >
-	                  <button class="submit-btn verifyCode">확인</button>
+	                  <input type="email" id="mailNumberId" required placeholder="인증번호를 입력하세요." style="width: 297px;">
+	                  <button class="submit-btn verifyCode" style="width: 86px;">확인</button>
                 </div>
                 <div class="input-group find_id" style="display: none;">
                 		<label for="id_user">

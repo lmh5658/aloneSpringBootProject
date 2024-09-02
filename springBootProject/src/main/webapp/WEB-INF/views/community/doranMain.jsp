@@ -70,7 +70,7 @@ display: flex;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
     margin-bottom: 20px; /* 아래쪽 여백 */
     flex: 1; /* Flexbox로 균등하게 배치 */
-   
+    width: 30%;
 }
 
 /* 섹션 헤더 스타일 */
@@ -79,6 +79,7 @@ display: flex;
     margin-bottom: 15px;
     color: #333; /* 헤더 텍스트 색상 */
 }
+
 
 /* 최신 게시글 목록 스타일 */
 .latest-posts ul {
@@ -93,7 +94,7 @@ display: flex;
 
 .latest-posts a {
     text-decoration: none;
-    color: #00796b; /* 링크 색상 */
+    color: #353535; /* 링크 색상 */
     font-size: 1em;
 }
 
@@ -101,6 +102,7 @@ display: flex;
     text-decoration: underline;
     color: #004d40; /* 링크 호버 색상 */
 }
+
 
 </style>
 </head>
@@ -123,7 +125,7 @@ display: flex;
             </div>
         </div>
 
-        <div style="display: flex;height: 500px;gap: 29px;flex-wrap: nowrap;flex-direction: column;">
+        <div style="    display: flex;height: 500px;gap: 37px;flex-wrap: wrap;flex-direction: column;">
             <div class="section">
                 <h2>공지사항</h2>
                 <div class="latest-posts" style=" height: 298px;">
@@ -158,6 +160,7 @@ display: flex;
     </div>
 </body>
 <script>
+/*
 $.ajax({
 	url:"${contextPath}/weather/apiWeather.do",
 	type:"get",
@@ -206,6 +209,15 @@ $.ajax({
 		
 	}
 })
+*/
+</script>
+<script>
+const date = new Date();
+const year = date.getFullYear();
+const month = String(date.getMonth() + 1).padStart(2, '0');
+const day = String(date.getDate()).padStart(2, '0');
+let today = year + month + day;
+console.log(today);
 </script>
 <script>
 $(document).ready(function(){

@@ -1,7 +1,6 @@
 package com.mh.boot.handler;
 
 
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -87,7 +86,6 @@ public class EchoHandler extends TextWebSocketHandler{
 	
 	// 로그 메시지
 	private void log(String logmsg) {
-		System.out.println(new Date() + " : " + logmsg);
 	}
 	
 	// 웹소켓에 id 가져오기

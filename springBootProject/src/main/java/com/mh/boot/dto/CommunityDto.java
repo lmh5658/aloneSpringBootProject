@@ -31,6 +31,7 @@ public class CommunityDto {
 	private int postLike;
 	private String locationName;
 	private String userPath;
+	private int postComment;
 	
 	List<AttachDto> attachList;
 	

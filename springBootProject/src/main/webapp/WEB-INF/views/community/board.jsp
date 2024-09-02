@@ -235,9 +235,12 @@ button:hover {
 	                				html += '    </td>';
 	                				html += '</tr>';
                 				})
-												
-                				$("#postsTableBody").html(html);
-                				communitySearch(pi);
+												if(list.length > 0){
+	                				$("#postsTableBody").html(html);
+	                				communitySearch(pi);													
+												}else{
+													$("#postsTableBody").html('<td colspan="6">검색한 목록이 없습니다.</td>');
+												}
                 				
                 			},
                 			error:function(){

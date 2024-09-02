@@ -328,7 +328,7 @@
 	<update id="updateCoupon">
 		UPDATE TB_COUPON
 		   SET COUPON_USAGE_DATE = SYSDATE
-		     , COUPON_STATUS - 'N'
+		     , COUPON_STATUS = 'N'
 		 WHERE USER_NO = #{userNo}
 		   AND COUPON_SERIAL_NUM = #{couponSerialNumber}
 	</update>

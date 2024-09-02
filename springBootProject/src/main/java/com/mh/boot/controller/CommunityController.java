@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.mh.boot.dto.AlarmDto;
 import com.mh.boot.dto.AttachDto;
 import com.mh.boot.dto.CommentDto;
 import com.mh.boot.dto.CommunityDto;
@@ -36,12 +40,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Controller
 @Slf4j
+//@PropertySource("classpath:application-API-KEY.prorperties")
 public class CommunityController {
 	
 	
 	private final FileUtil fileUtil;
 	private final CommunityService communityService;
 	private final PagingUtil pagingUtil;
+	@Value("${weather-api-key}")
+	private String weatherKey;
+	@Value("${kakao-api-key}")
+	private String kakaoKey;
 	
 
 	/**
@@ -49,8 +58,12 @@ public class CommunityController {
 	 */
 	@ResponseBody
 	@GetMapping("/ajaxSelectMessage.do")
-	public ResponseEntity<?> ajaxSelectMessageList(@SessionAttribute("loginUser") MemberDto member
+	public ResponseEntity<?> ajaxSelectMessageList(HttpSession session
 											 , @RequestParam(value = "page", defaultValue = "1") int currentPage){
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		
+		Map<String, Object> map = new HashMap<>();
+		if(member != null) {
 		Map<String, Object> sendMap = new HashMap<>();
 		sendMap.put("userId", member.getUserId());
 		sendMap.put("send", "send");
@@ -82,11 +95,12 @@ public class CommunityController {
 		//읽지 않은 메세지함 갯수 조회
 		int readCount = communityService.selectNoReadCount(member.getUserId());
 		
+		
 		log.debug("sendList :>>>>>>>>> {}", sendList);
 		log.debug("receiveList :>>>>>>>>> {}", receiveList);
 		log.debug("collectList :>>>>>>>>> {}", collectList);
 		
-		Map<String, Object> map = new HashMap<>();
+		
 		map.put("piSend", piSend);
 		map.put("sendList", sendList);
 		
@@ -97,6 +111,7 @@ public class CommunityController {
 		map.put("collectList", collectList);
 		
 		map.put("readCount", readCount); //읽지 않은 메시지 갯수
+		}
 		
 		return ResponseEntity.ok(map);
 	}
@@ -123,7 +138,7 @@ public class CommunityController {
 		
 		//커뮤니티 메인페이지(강아지정보 최신글)조회
 		Map<String, Object> infoParam = new HashMap<>();
-		noticeParam.put("type", "I");
+		infoParam.put("type", "I");
 		PageInfoDto pi = pagingUtil.getPageInfoDto(9, currentPage, 5, 9);
 		List<CommunityDto> infoList = communityService.boardList(infoParam, pi);
 		
@@ -135,6 +150,7 @@ public class CommunityController {
 		model.addAttribute("noticeList", noticeList);
 		model.addAttribute("infoList", infoList);
 		model.addAttribute("likeList", likeList);
+		model.addAttribute("weatherKey", weatherKey);
 		
 		return "community/doranMain";		
 		
@@ -288,6 +304,7 @@ public class CommunityController {
 	 */
 	@GetMapping("/writerForm.page")
 	public void writeForm(String type, Model model) {
+		model.addAttribute("kakaoKey",kakaoKey);
 		model.addAttribute("type", type);
 	}
 	
@@ -354,8 +371,7 @@ public class CommunityController {
 	public String modifyForm(CommunityDto community, Model model) {
 		
 		model.addAttribute("board", communityService.detail(community));
-		log.debug("수정하기 리스트 : {}>>>", communityService.detail(community));
-		
+		model.addAttribute("kakaoKey",kakaoKey);
 		return "community/modifyForm";
 	}
 	
@@ -481,6 +497,7 @@ public class CommunityController {
 			model.addAttribute("checkLike",communityService.selectCheckLike(param));
 		}
 		
+		model.addAttribute("kakaoKey",kakaoKey);
 	    model.addAttribute("board",communityService.detail(com));
 		model.addAttribute("commentList", communityService.ajaxCommentSelect(comment, pi));
 	}
@@ -655,8 +672,74 @@ public class CommunityController {
 		
 	}
 	
+	/**
+	 * > 알람 메세지 조회
+	 */
+	@ResponseBody
+	@GetMapping("/selectAlarmMessage.do")
+	public Map<String, Object> selectAlarmMessage(HttpSession session) {
+		
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		List<AlarmDto> list = null;
+		int count = 0;
+		if(member != null) {
+			count = communityService.selectAlarmCount(member.getUserId());
+			list = communityService.selectAlarmMessage(member.getUserId());
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("count", count);
+		map.put("list", list);
+		
+		return map;
+		
+	}
+	
+	/**
+	 * > 알람 메세지 삭제
+	 */
+	@ResponseBody
+	@GetMapping("/deleteAlarmMessage.do")
+	public Map<String, Object> deleteAlarmMessage(int alarmNo, HttpSession session) {
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		int count = 0;
+		if(member != null) {
+			count = communityService.selectAlarmCount(member.getUserId());
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("success", communityService.deleteAlarmMessage(alarmNo));
+		map.put("count", count);
+		
+		return map;
+	}
+	
+	/**
+	 * > 커뮤니티 강아지 정보 검색 Ajax
+	 */
+	@ResponseBody
+	@GetMapping("/selectInfoSearch.do")
+	public Map<String, Object> selectInfoSearch(@RequestParam(value="page", defaultValue="1") int currentPage, String search, HttpSession session) {
+	
+		int listCount = communityService.selectInfoCount(search);
+		PageInfoDto pi = (PageInfoDto)pagingUtil.getPageInfoDto(listCount, currentPage, 5, 20);
+		
+		List<CommunityDto> list = communityService.selectInfoSearch(search, pi);
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		Map<String, Object> map = new HashMap<>();
+		if(member != null) {
+			List<Integer> likeList = communityService.selectLikeUser(member.getUserNo());			
+			map.put("likeList", likeList);
+		}
+		map.put("list", list);
+		map.put("pi", pi);
+		
+		return map;
+	}
 	
 	
 	
-
+	
+	
+	
+	
+	
 }

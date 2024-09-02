@@ -7,6 +7,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.mh.boot.dto.AlarmDto;
 import com.mh.boot.dto.AttachDto;
 import com.mh.boot.dto.CommentDto;
 import com.mh.boot.dto.CommunityDto;
@@ -199,6 +200,28 @@ public class CommunityDao {
 		return sqlSessionTemplate.selectList("communityMapper.selectLikeUser", userNo);
 	}
 	
+	public int insertAlarmMessage(AlarmDto alarm) {
+		return sqlSessionTemplate.insert("communityMapper.insertAlarmMessage", alarm);
+	}
 	
+	public List<AlarmDto> selectAlarmMessage(String userId) {
+		return sqlSessionTemplate.selectList("communityMapper.selectAlarmMessage", userId);
+	}
 	
+	public int deleteAlarmMessage(int postNo) {
+		return sqlSessionTemplate.delete("communityMapper.deleteAlarmMessage", postNo);
+	}
+	
+	public int selectInfoCount(String search) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectInfoCount", search);
+	}
+	
+	public List<CommunityDto> selectInfoSearch(String search, PageInfoDto pi) {
+		RowBounds rowBounds = new RowBounds((pi.getCurrentPage()-1) * pi.getBoardLimit(), pi.getBoardLimit());
+		return sqlSessionTemplate.selectList("communityMapper.selectInfoSearch", search, rowBounds);
+	}
+	
+	public int selectAlarmCount(String userId) {
+		return sqlSessionTemplate.selectOne("communityMapper.selectAlarmCount", userId);
+	}
 }

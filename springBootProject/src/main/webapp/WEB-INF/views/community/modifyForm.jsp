@@ -157,7 +157,7 @@ button:hover {
   </section>
   </div>
   
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f5fb251a62d19d3f09c42218629ae62d&libraries=services"></script> 
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services"></script> 
 <script>
 var place;
 $("#locationName").on("keypress", function(ev){

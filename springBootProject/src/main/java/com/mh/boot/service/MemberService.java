@@ -49,5 +49,12 @@ public interface MemberService {
 	int updateUserModifyProfile(MemberDto m);
 	
 	int updatePassword(Map<String, Object> map);
-
+	
+	//유저 닉네임 찾기
+	MemberDto userSearch(Map<String, Object> map); 
+	
+	//이메일 중복체크
+	int selectEmailCheck(String mails);
+	
+	
 }

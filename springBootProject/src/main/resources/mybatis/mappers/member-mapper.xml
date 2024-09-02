@@ -299,7 +299,27 @@
 		WHERE USER_ID = #{userId}
 	</update>
 
- 
+ 	<select id="userSearch" resultMap="memberResult">
+ 		SELECT  USER_ID
+ 					, NICKNAME
+ 		 FROM TB_MEMBER
+ 		 <where>
+ 		 	<choose>
+ 		 		<when test="userNo != null and !userNo.equals('')">
+ 		 		USER_NO = #{userNo}
+ 		 		</when>
+ 		 		<otherwise>
+ 		 		NICKNAME = #{nickName}
+ 		 		</otherwise>
+ 		 	</choose>
+ 		 </where>
+ 	</select>
+ 	
+ 	<select id="selectEmailCheck" resultType="_int">
+ 		SELECT COUNT(*)
+ 		  FROM TB_MEMBER
+ 		 WHERE EMAIL = #{mails}
+ 	</select>
 
   
 

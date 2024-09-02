@@ -95,6 +95,18 @@ public class MemberServiceImpl implements MemberService {
 	public int updatePassword(Map<String, Object> map) {
 		return memberDao.updatePassword(map);
 	}
+
+	@Override
+	public MemberDto userSearch(Map<String, Object> map) {
+		return memberDao.userSearch(map);
+	}
+
+	@Override
+	public int selectEmailCheck(String mails) {
+		return memberDao.selectEmailCheck(mails);
+	}
+
+	
 	
 	
 	

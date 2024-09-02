@@ -176,22 +176,26 @@ display: flex;
 .like_button, .bi-instagram {
     cursor: pointer;
 }
-
+.pagination button{
+    padding: 9px;
+    height: 40px;
+}
 </style>
 </head>
 <jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
 <body>
-      <nav style="background: #ffffff;display: flex;justify-content: flex-end;">
-          <input type="text" placeholder="검색" style="width: 300px;">
-      </nav>
-      
-<main>
-		 <div>
-				<select name="select" id="select" style="width: 99px;height: 33px;border: 1px solid #dddddd;">
+      <nav style="background: #ffffff;display: flex;justify-content: space-between;">
+      <div>
+				<select name="select" id="select" style="width: 99px;height: 33px;border: 1px solid #dddddd; margin-left: 28px;">
 					<option value="POST_NO" >최신순</option>
 					<option value="POST_LIKE">좋아요순</option>
 				</select>
-		</div>
+			</div>
+          <input type="text" placeholder="검색" id="infoSearch" style="width: 300px;">
+      </nav>
+      
+<main>
+		 
 		<div style="display: flex;width: 100%;justify-content: flex-end;margin-bottom: 30px;">
 			<button id="writer_btn" type="button" onclick="writer();">작성하기</button>			
 		</div>
@@ -203,15 +207,84 @@ display: flex;
          <div class="pagination" style="">
          </div>
      </div>
-     <ul class="sns">
-			  <li class="kakaotalk">
-			  <a href="#n">카톡</a>
-			  </li>
-			</ul>
 </main>
 </body>
 
 <script>
+$("#infoSearch").on("keyup", function(ev){
+	if (ev.which == 13) {
+			infoSearch(1);
+	}
+})
+
+function infoSearch(page){
+	$.ajax({
+		url:"${contextPath}/community/selectInfoSearch.do",
+		type:"get",
+		data:{
+			search:$("#infoSearch").val(),
+			page:page
+		},
+		success:function(response){
+			
+			let htmlContent = '';
+			
+			response.list.forEach(function(item) {
+						
+			  // 첫 번째 <img> 태그의 시작과 끝 인덱스를 찾기
+		    let firstImgStart = item.postContent.indexOf("<img");
+		    let firstImgEnd = item.postContent.indexOf(">", firstImgStart);
+		    
+        htmlContent += '<article class="post">';
+        htmlContent += '    <div class="post-header">';
+        htmlContent += '        <img src="' + item.userPath + '" alt="Profile Image" class="profile-image" style="height:40px; width:40px;">';
+        htmlContent += '        <span class="nickname">' + item.writerNickName + '</span>';
+        htmlContent += '    </div>';
+        htmlContent += '    <div class="noimage" data-no="' + item.postNo + '" data-type="' + item.postType + '" data-writer="' + item.writerNo +'">';
+            
+        if (firstImgStart != -1) {
+            htmlContent += item.postContent.substring(firstImgStart, firstImgEnd + 1);
+        } else {
+            htmlContent += '<svg style="color: #6c757d;" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/></svg><br>NO IMAGE';
+        }
+
+        htmlContent += '    </div>';
+        htmlContent += '    <div class="post-info">';
+        htmlContent += '        <p class="description">' + item.postTitle + '</p>';
+        htmlContent += '        <div class="actions">';
+        let likeButtonStyle = ("${loginUser}" != "") ? 'style="color:' + (response.likeList.includes(item.postNo) ? 'rgba(255, 7, 7, 0.57)' : 'rgb(51, 51, 51)') + '"' : '';
+        htmlContent += '            <svg class="like_button" ' + likeButtonStyle + ' xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">';
+        htmlContent += '                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>';
+        htmlContent += '            </svg>';
+        htmlContent += '            <b class="likeCounter">' + item.postLike + '</b>';
+        htmlContent += '					  <svg style="cursor:auto" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">';
+        htmlContent += '  						<path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>';
+        htmlContent += '						</svg>';
+        htmlContent += '            <b>' + item.postComment + '</b>';
+        htmlContent += '						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">';
+        htmlContent += '  						<path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/>';
+        htmlContent += '						</svg>';
+        htmlContent += '        </div>';
+        htmlContent += '    </div>';
+	      htmlContent += '</article>';
+
+		 });
+			
+			if (response.list.length > 0) {
+			    $(".feed").html(htmlContent);
+			    selectSearchPaging(response.pi);
+			}else{
+				$(".feed").html("");
+				$('.pagination').html("");
+			}
+			
+		},
+		error:function(){
+			
+		}
+	})
+} 
+
 $("#select").on("change", function(){
 	selectChange(1);
 })
@@ -239,7 +312,7 @@ function selectChange(page){
         htmlContent += '        <img src="' + item.userPath + '" alt="Profile Image" class="profile-image" style="height:40px; width:40px;">';
         htmlContent += '        <span class="nickname">' + item.writerNickName + '</span>';
         htmlContent += '    </div>';
-        htmlContent += '    <div class="noimage" data-no="' + item.postNo + '" data-type="' + item.postType + '">';
+        htmlContent += '    <div class="noimage" data-no="' + item.postNo + '" data-type="' + item.postType + '" data-writer="' + item.writerNo +'">';
             
         if (firstImgStart != -1) {
             htmlContent += item.postContent.substring(firstImgStart, firstImgEnd + 1);
@@ -253,13 +326,16 @@ function selectChange(page){
         htmlContent += '        <div class="actions">';
         let likeButtonStyle = ("${loginUser}" != "") ? 'style="color:' + (response.likeList.includes(item.postNo) ? 'rgba(255, 7, 7, 0.57)' : 'rgb(51, 51, 51)') + '"' : '';
         htmlContent += '            <svg class="like_button" ' + likeButtonStyle + ' xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">';
-        htmlContent += '                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>';
+        htmlContent += '               <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>';
         htmlContent += '            </svg>';
         htmlContent += '            <b class="likeCounter">' + item.postLike + '</b>';
-        htmlContent += '                <svg class="kakaotalk" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">';
-        htmlContent += '                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>';
-        htmlContent += '                </svg>';
-
+        htmlContent += '					  <svg style="cursor:auto" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">';
+        htmlContent += '  						<path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>';
+        htmlContent += '						</svg>';
+        htmlContent += '            <b>' + item.postComment + '</b>';
+        htmlContent += '						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">';
+        htmlContent += '  						<path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/>';
+        htmlContent += '						</svg>';
         htmlContent += '        </div>';
         htmlContent += '    </div>';
 	      htmlContent += '</article>';
@@ -269,6 +345,9 @@ function selectChange(page){
 			if (response.list.length > 0) {
 			    $(".feed").html(htmlContent);
 			    selectOptionPaging(response.pi);
+			}else{
+				$(".feed").html("");
+				$('.pagination').html("");
 			}
 			
 		},
@@ -279,6 +358,35 @@ function selectChange(page){
 	})
 }
 
+function selectSearchPaging(pi){
+	
+	 var html = '';
+
+	    if (pi.listCount > 0) {
+	        if (pi.currentPage === 1) {
+	            html += "<button class='page bt' disabled>이전</button>";
+	        } else {
+	            html += "<button class='page bt' onclick='infoSearch(" + (pi.currentPage - 1) + ")'>이전</button>";
+	        }
+
+	        for (var i = pi.startPage; i <= pi.endPage; i++) {
+	            if (i === pi.currentPage) {
+	                html += "<button class='page active' disabled>" + i + "</button>";
+	            } else {
+	                html += "<button class='page' onclick='infoSearch(" + i + ")'>" + i + "</button>";
+	            }
+	        }
+
+	        if (pi.currentPage === pi.maxPage) {
+	            html += "<button class='page bt' disabled>다음</button>";
+	        } else {
+	            html += "<button class='page bt' onclick='infoSearch(" + (pi.currentPage + 1) + ")'>다음</button>";
+	        }
+	    }
+
+	    $('.pagination').html(html);
+	
+}
 
 function selectOptionPaging(pi){
 	
@@ -355,10 +463,13 @@ function infoBoardLoad(page){
 	        htmlContent += '                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>';
 	        htmlContent += '            </svg>';
 	        htmlContent += '            <b class="likeCounter">' + item.postLike + '</b>';
-	        htmlContent += '                <svg class="kakaotalk" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">';
-	        htmlContent += '                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>';
-	        htmlContent += '                </svg>';
-
+	        htmlContent += '								<svg style="cursor:auto" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">';
+	        htmlContent += '  								  <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>';
+	        htmlContent += '								</svg>';
+	        htmlContent += '            <b>' + item.postComment + '</b>';
+	        htmlContent += '						<svg style="cursor:auto" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">';
+	        htmlContent += '  						<path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/>';
+	        htmlContent += '						</svg>';
 	        htmlContent += '        </div>';
 	        htmlContent += '    </div>';
 		      htmlContent += '</article>';
@@ -403,7 +514,12 @@ $(document).on("click", ".noimage", function(){
 	
 	let postNo = $(this).data("no");
 	let postType= $(this).data("type");
-	location.href="${contextPath}/community/detail.page?postNo=" + postNo + "&postType=" + postType;
+	let writerNo = $(this).data("writer");
+	if("${loginUser.userNo}" == writerNo){
+		location.href="${contextPath}/community/detail.page?postNo=" + postNo + "&postType=" + postType;		
+	}else{
+		location.href="${contextPath}/community/increase.do?postNo=" + postNo + "&postType=" + postType;
+	}
 })
 
 
@@ -498,40 +614,5 @@ $(document).on("click", ".like_button", function(){
 </script>
 
 	
-<script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
-<script>
-/*
-$(document).on("click", ".btnKakao", function(){
-	let title = $(this).data("title");
-	let content = $(this).data("content");
-	let kakao = 'kakao';
-	fn_sendFB(kakao, title, content);
-})
 
-
-
-function fn_sendFB(kakao, title, content) {
-var thisUrl = document.URL;
-var snsTitle = "2021 웹진 [봄]";
-    // 사용할 앱의 JavaScript 키 설정
-    if (!Kakao.isInitialized()) {
-    Kakao.init('f5fb251a62d19d3f09c42218629ae62d');
-		};	
-    // 카카오링크 버튼 생성
-    Kakao.Link.createDefaultButton({
-        container: '.btnKakao', // HTML에서 작성한 ID값
-        objectType: 'feed',
-        content: {
-        title: title, // 보여질 제목
-        description: content, // 보여질 설명
-        imageUrl: thisUrl, // 콘텐츠 URL
-        link: {
-            mobileWebUrl: thisUrl,
-            webUrl: thisUrl
-        }
-        }
-    });
-}
-*/
-</script>
 </html>

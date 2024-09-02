@@ -299,17 +299,15 @@ section h2 {
 button {
     padding: 10px 20px;
     border: none;
-    border-radius: 10px;
     background-color: #ff9999; /* 부드러운 핑크색 */
     color: #fff;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s, transform 0.2s;
+    border-radius: 20px;
 }
 
 button:hover {
     background-color: #ff6666; /* 강조된 핑크색 */
-    transform: scale(1.05);
 }
 
 /* 테이블 스타일 */
@@ -555,6 +553,7 @@ h2 {
 
 .product-info {
     flex: 1;
+    padding: 11px;
 }
 
 .review-stars {
@@ -688,7 +687,21 @@ p {
 .active {
     display: block; /* 또는 원하는 스타일로 설정 */
 }
+.button_align{
+display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+}
 
+.review_button{
+		border-radius: 20px;
+    font-size: 14px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    font-size: 14px;
+}
 </style>
 </head>
 <body>
@@ -1058,7 +1071,6 @@ $(document).on("click", "#account_deletion", function(){
                 <button type="button" data-period="today" id="today">오늘</button>
                 <button type="button" data-period="1month" id="1month">1개월</button>
                 <button type="button" data-period="3months" id="3months">3개월</button>
-                <button type="button" data-period="6months" id="6months">6개월</button>
             </div>
             <label for="start-date">시작일자:</label>
             <input type="date" id="start-date" name="start-date">
@@ -1639,12 +1651,15 @@ function openModal(items) {
 			    let html = '';
 			    // 다른 상품 목록 추가
 			    order.forEach(function(item){
-			    	  	html += '<div class="grid-item">';
-				        html += '    <img src="${contextPath}' + item.productThumbnailPath + '">';
+			    	  	html += '<div class="grid-item" data-no="' + item.orderProductNo +'">';
+				        html += '    <img src="${contextPath}' + item.productThumbnailPath + '" onclick="${contextPath}/detail.page?productNo=28">';
 				        html += '    <div class="product-info">';
 				        html += '        <p><strong>상품명: &nbsp;</strong>' + item.orderProductName + '</p>';
 				        html += '        <p><strong>수량: &nbsp;</strong>' + (item.orderProductAmount + "개") + '</p>';
 				        html += '        <p><strong>가격: &nbsp;</strong>' + (parseFloat(item.productPrice) * item.orderProductAmount).toLocaleString('ko-KR') + '</p>';
+				        html += '        <div class="button_align">'
+				        html += '				 	<button type="button" class="review_button">리뷰작성하기</button>'
+				        html += '    		 </div>';
 				        html += '    </div>';
 				        html += '</div>';
 			    })
@@ -1661,6 +1676,11 @@ function openModal(items) {
   })
   
 }
+
+$(document).on("click", ".review_button", function(){
+	let productNo = $(this).closest(".grid-item").data("no");
+	location.href="${contextPath}/product/detail.page?productNo=" + productNo;
+})
 
 
 

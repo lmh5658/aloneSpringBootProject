@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.mh.boot.dao.CommunityDao;
+import com.mh.boot.dto.AlarmDto;
 import com.mh.boot.dto.AttachDto;
 import com.mh.boot.dto.CommentDto;
 import com.mh.boot.dto.CommunityDto;
@@ -244,6 +245,36 @@ public class CommunityServiceImpl implements CommunityService{
 	@Override
 	public List<Integer> selectLikeUser(int userNo) {
 		return communityDao.selectLikeUser(userNo);
+	}
+
+	@Override
+	public int insertAlarmMessage(AlarmDto alarm) {
+		return communityDao.insertAlarmMessage(alarm);
+	}
+
+	@Override
+	public List<AlarmDto> selectAlarmMessage(String userId) {
+		return communityDao.selectAlarmMessage(userId);
+	}
+
+	@Override
+	public int deleteAlarmMessage(int postNo) {
+		return communityDao.deleteAlarmMessage(postNo);
+	}
+	
+	@Override
+	public int selectInfoCount(String search) {
+		return communityDao.selectInfoCount(search);
+	}
+	
+	@Override
+	public List<CommunityDto> selectInfoSearch(String search, PageInfoDto pi) {
+		return communityDao.selectInfoSearch(search, pi);
+	}
+
+	@Override
+	public int selectAlarmCount(String userId) {
+		return communityDao.selectAlarmCount(userId);
 	}
 
 	

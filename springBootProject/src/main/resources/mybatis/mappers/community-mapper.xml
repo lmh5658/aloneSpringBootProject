@@ -16,6 +16,7 @@
     <result column="POST_LIKE" property="postLike"/>
     <result column="LOCATION_NAME" property="locationName"/>
     <result column="USER_PATH" property="userPath"/>
+    <result column="POST_COMMENT" property="postComment"/>
     
     <collection resultMap="attachResult" property="attachList" />
   </resultMap>
@@ -60,6 +61,15 @@
     <result column="SEND_NICKNAME" property="sendNickName"/>
     <result column="RECEIVE_NICKNAME" property="receiveNickName"/>
   </resultMap>
+  
+  <resultMap id="alarmResult" type="AlarmDto">
+    <id column="ALARM_NO" property="alarmNo"/>
+    <result column="ALARM_CONTENT" property="alarmContent"/>
+    <result column="USER_ID" property="userId"/>
+    <result column="POST_NO" property="postNo"/>
+    <result column="POST_TYPE" property="postType"/>
+  </resultMap>
+  
 	
 	<!-- 게시글 등록 -->
 	<insert id="insertBoard">
@@ -146,6 +156,9 @@
 					, (SELECT COUNT(*)
                FROM TB_LIKE L 
               WHERE C.POST_NO = L.POST_NO) AS POST_LIKE
+          , (SELECT COUNT(*)
+                  FROM TB_COMMENT
+                WHERE BOARD_NO = POST_NO) AS POST_COMMENT
 	    FROM 
 	        TB_COMMUNITY C
 		 WHERE 
@@ -230,7 +243,10 @@
 			    A.FILE_TYPE,
 			    (SELECT COUNT(*)
               FROM TB_LIKE
-             WHERE POST_NO = #{postNo}) AS POST_LIKE
+             WHERE POST_NO = #{postNo}) AS POST_LIKE,
+         (SELECT COUNT(*)
+     			  FROM TB_COMMENT
+    			 WHERE BOARD_NO = POST_NO) AS POST_COMMENT
 			FROM 
 			    TB_COMMUNITY C
 			LEFT JOIN 
@@ -643,13 +659,93 @@
         WHERE USER_NO = #{userNo}
     </select>
 	
+	<insert id="insertAlarmMessage">
+		INSERT
+				INTO
+				TB_ALARM
+				(
+				  ALARM_NO
+				, ALARM_CONTENT
+				, USER_ID
+				, POST_NO
+				, POST_TYPE
+				)
+				VALUES
+				(
+				 SEQ_ALNO.NEXTVAL
+			 , #{alarmContent}
+			 , #{userId}
+			 , #{postNo}
+			 , #{postType}
+				)
+		<selectKey keyProperty="alarmNo" resultType="int" order="AFTER">
+        SELECT SEQ_ALNO.CURRVAL AS ALARM_NO
+          FROM DUAL
+    </selectKey> 
+	</insert>
+	
+	<select id="selectAlarmMessage" resultMap="alarmResult">
+		SELECT
+	  			ALARM_NO
+				, ALARM_CONTENT
+				, USER_ID
+				, POST_NO
+				, POST_TYPE
+		  FROM TB_ALARM		
+		 WHERE USER_ID = #{userId}
+	</select>
+	
+	<select id="selectAlarmCount" resultType="_int">
+		SELECT COUNT(*)
+		  FROM TB_ALARM
+		 WHERE USER_ID = #{userId}
+	</select>
 	
 	
+	<delete id="deleteAlarmMessage">
+		DELETE FROM TB_ALARM
+		 WHERE ALARM_NO = #{alarmNo}
+	</delete>
+	<select id="selectInfoCount" resultType="_int">
+		SELECT COUNT(*)
+		  FROM TB_COMMUNITY
+		 WHERE POST_TYPE = 'I'
+		   AND (POST_TITLE LIKE '%' || #{search} || '%' OR
+	 				 WRITER_NICKNAME LIKE '%' || #{search} || '%') 
+	</select>
+	
+	<select id="selectInfoSearch" resultMap="communityResult">
+	 		SELECT 
+					 POST_NO
+					,POST_TITLE
+					,POST_CONTENT
+					,WRITER_NO
+					,WRITER_NICKNAME
+					,TO_CHAR(POST_UPLOAD_DATE,'YY/MM/DD(DY)') AS POST_UPLOAD_DATE
+					,(SELECT COUNT(*)
+					    FROM TB_ATTACHMENT
+					  WHERE REF_NO = POST_NO) FILE_STATUS
+					,POST_COUNT
+					,POST_TYPE
+					, (SELECT USER_PATH
+               FROM TB_MEMBER M
+               WHERE C.WRITER_NO = M.USER_NO) AS USER_PATH
+					, (SELECT COUNT(*)
+               FROM TB_LIKE L 
+              WHERE C.POST_NO = L.POST_NO) AS POST_LIKE
+          , (SELECT COUNT(*)
+                  FROM TB_COMMENT
+                WHERE BOARD_NO = POST_NO) AS POST_COMMENT
+	    FROM 
+	        TB_COMMUNITY C
+		 WHERE 
+		     POST_TYPE = 'I'
+	 		 AND 
+	 		 	 (POST_TITLE LIKE '%' || #{search} || '%' OR
+	 				WRITER_NICKNAME LIKE '%' || #{search} || '%')
+		  ORDER
+		     BY POST_NO DESC 
+	</select>
 	
 	
-	
-	
-  
-
-
 </mapper>

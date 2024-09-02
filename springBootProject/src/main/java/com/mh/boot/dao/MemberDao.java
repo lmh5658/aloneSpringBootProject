@@ -80,5 +80,14 @@ public class MemberDao {
 		return sqlSessionTemplate.update("memberMapper.updatePassword", map);
 	}
 	
+	public MemberDto userSearch(Map<String, Object> map) {
+		return sqlSessionTemplate.selectOne("memberMapper.userSearch", map);
+	}
+	
+	public int selectEmailCheck(String mails) {
+		return sqlSessionTemplate.selectOne("memberMapper.selectEmailCheck", mails);
+	}
+
+	
 
 }

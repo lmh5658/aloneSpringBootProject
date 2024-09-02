@@ -1,9 +1,9 @@
 package com.mh.boot.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.mh.boot.dto.AlarmDto;
 import com.mh.boot.dto.AttachDto;
 import com.mh.boot.dto.CommentDto;
 import com.mh.boot.dto.CommunityDto;
@@ -100,6 +100,19 @@ public interface CommunityService {
 	int updateWriter(CommunityDto community, List<AttachDto> attachList, List<String> fileDelNo);
 	
 	List<Integer> selectLikeUser(int userNo);
+	
+	int insertAlarmMessage(AlarmDto alarm);
+	
+	List<AlarmDto> selectAlarmMessage(String userId);
+	
+	int deleteAlarmMessage(int postNo);
+	
+	int selectInfoCount(String search);
+	
+	List<CommunityDto> selectInfoSearch(String search, PageInfoDto pi);
+	
+	//알람 갯수조회
+	int selectAlarmCount(String userId);
 	
 	
 }

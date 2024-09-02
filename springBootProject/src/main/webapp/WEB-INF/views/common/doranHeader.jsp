@@ -115,7 +115,7 @@ nav a:hover {
 }
 
 .section {
-    padding: 40px 20px; /* 여백을 상하로 추가 */
+    padding: 22px 12px;
     background: #fff;
     border-radius: 12px; /* 섹션의 모서리를 둥글게 */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* 그림자 강도를 증가 */
@@ -123,13 +123,13 @@ nav a:hover {
 }
 
 .section h2 {
-    font-size: 2.2em; /* 섹션 제목 폰트 크기 조정 */
-    border-bottom: 4px solid #ff6f61;
-    padding-bottom: 12px; /* 제목 아래 여백 증가 */
+    font-size: 2.2em;
+    border-bottom: 4px solid #84b5e9;
+    padding-bottom: 12px;
     margin-bottom: 20px;
-    color: #ff6f61;
+    color: #84b5e9;
     font-weight: 700;
-    text-transform: uppercase; /* 제목 대문자로 변환 */
+    text-transform: uppercase;
 }
 
 .posts h3, .gallery h3 {
@@ -221,10 +221,6 @@ footer p {
     transform: rotate(0deg);
   }
 }
-
-
-
-
   #messageModal .modal-content {
       border-radius: 10px;
       overflow: hidden;
@@ -300,13 +296,11 @@ footer p {
 }
 .badge {
    position: absolute;
-   top: -5px;
-   right: -5px;
    background-color: red;
    color: white;
    padding: 2px 6px;
    border-radius: 50%;
-   font-size: 10px;
+   font-size: 13px;
    line-height: 1;
 }
 #home{
@@ -359,6 +353,117 @@ display: flex;
 .condition {
     color: #00796b; /* 진한 파란색 */
 }
+
+
+/*알리창 모달 css*/
+.pet-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6); /* Black with opacity */
+}
+
+.pet-modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    height: 523px;
+}
+
+h2 {
+    color: #333;
+    margin-top: 0;
+}
+
+.pet-close {
+    color: #ff6f61;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.del-close {
+    color: #ff6f61;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.pet-close:hover {
+    color: #e55b4f;
+}
+
+.alert-list {
+    overflow-y: auto;
+    margin: 10px 0;
+    height: 374px;
+
+}
+
+.alert-item {
+    background-color: #fefefe;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#clearAlerts {
+    background-color: #ff6f61;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#clearAlerts:hover {
+    background-color: #e55b4f;
+}
+
+/* Ensure nav is behind the modal */
+nav {
+    z-index: 9; /* Lower than modal's z-index */
+}
+
+.alarm_div{
+height: 39px;
+border: 1px solid #adb5bd;
+border-radius: 10px;
+display: flex;
+    align-items: center;
+}
+
+.alarm_content{
+width: 411px;
+padding-left: 10px;
+}
+#tost_message{
+position: absolute;
+    display: flex;
+    width: 100%;
+    z-index: 1000;
+    align-items: baseline;
+    justify-content: flex-end;
+}
+
+.pagination button{
+    padding: 9px;
+    height: 40px;
+}
 </style>
 </head>
 <body>
@@ -388,52 +493,55 @@ display: flex;
         </div>
          -->
     </header>
-    <nav style="display: flex; justify-content: space-between;">
-    		<div style="display: flex;width: 100%;justify-content: space-evenly;margin-left: 104px;align-items: center;">
-	        <a href="${contextPath}/">pet Connect Shop</a>
-	        <a href="${contextPath}/community/doranMain.page">홈</a>
-	        <a href="${contextPath}/community/noticeBoard.do">공지사항</a>
-	        <a href="${contextPath}/community/board.do">자유게시판</a>
-	        <a href="${contextPath}/community/infoBoard.do">강아지 정보</a>
-    		</div>
-    		<div><img alt="" src=""></div>
-        <div style="width: 252px;display: flex;justify-content: center;align-items: center;">
-	        <c:choose>
-	        	<c:when test="${ empty loginUser }">
-	        		<a class="modalLogin" data-toggle="modal" data-target="#myModal">Login</a>
-	        	</c:when>
-	        	<c:otherwise>
-	        		<div style="display: flex;justify-content: center;align-items: center;">
-							<div style="display: flex;align-items: center; gap: 11px">
-								<div>
-									<svg style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#messageModal" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-envelope-open" viewBox="0 0 16 16">
-									  <path d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.817l5.75 3.45L8 8.917l1.25.75L15 6.217V5.4a1 1 0 0 0-.53-.882zM15 7.383l-4.778 2.867L15 13.117zm-.035 6.88L8 10.082l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738ZM1 13.116l4.778-2.867L1 7.383v5.734ZM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765z"/>
-									</svg>
-								</div>
-								<div style="position: relative; display: inline-block; cursor: po" id="openModal" >
-							    <svg id="bell" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="" viewBox="0 0 16 16">
-							        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
-							    </svg>
-							    <span class="badge" id="badge"></span> <!-- 알림 숫자 표시 -->
-								</div>
-							</div>
-	        		<div style="width: 123px; display: flex;flex-direction: column;align-items: center;">
-	        			<a href="${contextPath}/member/myPage.page">${ loginUser.nickName }님</a>
-	        			<a href="${contextPath}/member/comunitySignout.do" style="font-size: 17px;">
-	        			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
-								  <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
-								  <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
-								</svg>
-	        			</a>
-	        		</div>
-	        		</div>
-	        	</c:otherwise>
-	        </c:choose>
-        </div>
-        
-    </nav>
-    <div id="tost_message" style="display: flex; justify-content: flex-end;">
-		</div>
+   <nav style="display: flex; justify-content: space-between;">
+    <div style="display: flex; width: 100%; justify-content: space-evenly; margin-left: 104px; align-items: center;">
+        <a href="${contextPath}/">pet Connect Shop</a>
+        <a href="${contextPath}/community/doranMain.page">홈</a>
+        <a href="${contextPath}/community/noticeBoard.do">공지사항</a>
+        <a href="${contextPath}/community/board.do">자유게시판</a>
+        <a href="${contextPath}/community/infoBoard.do">강아지 정보</a>
+    </div>
+    <div><img alt="" src=""></div>
+    <div style="width: 252px; display: flex; justify-content: center; align-items: center;">
+        <c:choose>
+            <c:when test="${ empty loginUser }">
+                <a class="modalLogin" data-toggle="modal" data-target="#myModal">Login</a>
+            </c:when>
+            <c:otherwise>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 25px;">
+                        <div>
+                            <svg style="cursor: pointer; position: relative; display: inline-block;" data-bs-toggle="modal" data-bs-target="#messageModal" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-envelope-open" viewBox="0 0 16 16">
+                                <path d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.817l5.75 3.45L8 8.917l1.25.75L15 6.217V5.4a1 1 0 0 0-.53-.882zM15 7.383l-4.778 2.867L15 13.117zm-.035 6.88L8 10.082l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738ZM1 13.116l4.778-2.867L1 7.383v5.734ZM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765z"/>
+                            </svg>
+                            <span class="badge" id="badge"></span>
+                        </div>
+                        <button id="showPetModal" style="border: none; background: #84b5e9; color: white;">
+                            <svg id="bell" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="" viewBox="0 0 16 16">
+                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
+                            </svg>
+                            <span class="badge" id="alarm_count"></span>            
+                        </button>
+                    </div>
+                    <div style="width: 123px; display: flex; flex-direction: column; align-items: center;">
+                        <a href="${contextPath}/member/myPage.page">${ loginUser.nickName }님</a>
+                        <a href="${contextPath}/member/comunitySignout.do" style="font-size: 17px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </c:otherwise>
+        </c:choose>
+    </div>
+	</nav>
+	
+	<!-- Tost Message Div -->
+	<div id="tost_message" style="z-index: 10; position: static;">
+	    <!-- 내용 -->
+	</div>
     
     
  <!-- 로그인 클릭 시 뜨는 모달 (기존에는 안보이다가 위의 a 클릭시 보임) -->
@@ -480,316 +588,271 @@ $(document).ready(function(){
 
 <!--============================ ajax 페이징 스크립트 S ============================-->
 <script>
-
 $(document).ready(function(){
-	loadMessage(1);
-})
-
-function handleToastClick(){
-	loadMessage(1);
-}
-
+    loadMessage(1);
+});
 function loadMessage(page){
-	
-	$.ajax({
-		url:"${contextPath}/community/ajaxSelectMessage.do",
-		type:"get",
-		data:{page:page},
-		success:function(response){
-			
-			//받은 쪽지 리스트
-			let receivePi = response.piReceive;
-			let receiveList = response.receiveList;
-			//보낸 쪽지 리스트
-			let sendPi = response.piSend;
-			let sendList = response.sendList;
-			
-			//휴지통 리스트
-			let collectPi = response.piCollect;
-			let collectList = response.collectList;
-			
-			//읽지 않은 리스트
-			let readCount = response.readCount;
-			
-			$("#badge").html(readCount > 0 ? readCount : "");
-    	if(readCount > 0) {
-    	    $("#bell").removeClass("bell-hidden");
-    	    $("#bell").addClass("bi bi-bell bell-swing");
-    	} else {
-    	    $("#bell").removeClass("bi bi-bell bell-swing");
-    	    $("#bell").addClass("bell-hidden"); 
-    	}	
-			
-			let receiveHtml = '';
-			if (receiveList.length > 0) {
-			    receiveList.forEach(function(item, index) {
-			        const messageId = 'receivedMessage' + (index + 1);
-			        const messageStatusId = 'receivedMessageStatus' + (index + 1);
+    $.ajax({
+        url: "${contextPath}/community/ajaxSelectMessage.do",
+        type: "get",
+        data: { page: page },
+        success: function(response){
+            // 받은 쪽지 리스트
+            let receivePi = response.piReceive;
+            let receiveList = response.receiveList;
+            // 보낸 쪽지 리스트
+            let sendPi = response.piSend;
+            let sendList = response.sendList;
+            // 휴지통 리스트
+            let collectPi = response.piCollect;
+            let collectList = response.collectList;
+            // 읽지 않은 리스트
+            let readCount = response.readCount;
+            
+            // 읽지 않은 쪽지 개수 표시
+            $("#badge").html(readCount > 0 ? readCount : "");
 
-			        receiveHtml += '<li class="list-group-item d-flex flex-column" data-no="' + item.messageNo + '" onclick="toggleMessageDetail(\'' + messageId + '\')">';
-			        receiveHtml += '    <div class="d-flex justify-content-between align-items-center mb-2">';
-			        receiveHtml += '        <div class="d-flex align-items-center">';
-			        receiveHtml += '            <div class="me-2">';
-			        receiveHtml += '                <span class="fw-normal">보낸 사람 : ' + item.sendNickName + "(" + item.sendId.substring(0, 3) + '*'.repeat(item.sendId.length - 3) + ")" + '</span> | ';
-			        receiveHtml += '                ' + (item.content.length >= 10 ? item.content.substring(0, 10) + "...." : item.content);
-			        receiveHtml += '            </div>';
-			        receiveHtml += '        </div>';
-			        receiveHtml += '        <div class="d-flex align-items-center dataRead">';
-			        receiveHtml += '            <span class="' + (item.dateRead != null ? 'text-primary' : 'text-secondary') + ' fw-normal">';
-			        receiveHtml += '                ' + (item.dateRead != null ? '읽음' : '안읽음') + '';
-			        receiveHtml += '            </span>';
-			        receiveHtml += '            <small class="text-muted ms-2">' + timeForToday(item.dateSend) + '</small>';
-			        receiveHtml += '        </div>';
-			        receiveHtml += '    </div>';
-			        receiveHtml += '    <div id="' + messageId + '" class="message-detail" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;" data-send="' + item.sendId + '">';
-			        receiveHtml += '        <div class="mb-2">';
-			        receiveHtml += '            <span class="fw-bold">보낸 사람:</span> <span class="fw-normal">' + item.sendNickName + "(" + item.sendId.substring(0, 3) + '*'.repeat(item.sendId.length - 3) + ")" + '</span>';
-			        receiveHtml += '        </div>';
-			        receiveHtml += '        <div class="mb-2">';
-			        receiveHtml += '            <span class="fw-bold">제목:</span> <span class="fw-normal">' + item.title + '</span>';
-			        receiveHtml += '        </div>';
-			        receiveHtml += '        <div class="mb-2">';
-			        receiveHtml += '            <span class="fw-bold">내용:</span>';
-			        receiveHtml += '            <p class="fw-normal">' + item.content + '</p>';
-			        receiveHtml += '        </div>';
-			        receiveHtml += '        <div class="d-flex justify-content-end mt-2">';
-			        receiveHtml += '            <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#replyModal" onclick="reply(\'' + item.sendId + '\');">답장</button>';
-			        receiveHtml += '            <button class="btn btn-outline-secondary btn-sm" onclick="moveToTrash(\'' + item.messageNo + '\')">보관</button>';
-			        receiveHtml += '            <button class="btn btn-outline-danger btn-sm me-2" onclick="deleteReceiveMessage(\'' + item.messageNo + '\')">삭제</button>';
-			        receiveHtml += '        </div>';
-			        receiveHtml += '    </div>';
-			        receiveHtml += '</li>';
+           
+                let receiveHtml = '';
+                if (receiveList && receiveList.length > 0) {
+                    receiveList.forEach(function(item, index) {
+                        const messageId = 'receivedMessage' + (index + 1);
+                        receiveHtml += '<li class="list-group-item d-flex flex-column" data-no="' + item.messageNo + '" onclick="toggleMessageDetail(\'' + messageId + '\')">';
+                        receiveHtml += '    <div class="d-flex justify-content-between align-items-center mb-2">';
+                        receiveHtml += '        <div class="d-flex align-items-center">';
+                        receiveHtml += '            <div class="me-2">';
+                        receiveHtml += '                <span class="fw-normal">보낸 사람 : ' + item.sendNickName + "(" + item.sendId.substring(0, 3) + '*'.repeat(item.sendId.length - 3) + ")" + '</span> | ' + (item.content.length >= 10 ? item.content.substring(0, 10) + "...." : item.content);
+                        receiveHtml += '            </div>';
+                        receiveHtml += '        </div>';
+                        receiveHtml += '        <div class="d-flex align-items-center dataRead">';
+                        receiveHtml += '            <span class="' + (item.dateRead != null ? 'text-primary' : 'text-secondary') + ' fw-normal">';
+                        receiveHtml += '                ' + (item.dateRead != null ? '읽음' : '안읽음') + '';
+                        receiveHtml += '            </span>';
+                        receiveHtml += '            <small class="text-muted ms-2">' + timeForToday(item.dateSend) + '</small>';
+                        receiveHtml += '        </div>';
+                        receiveHtml += '    </div>';
+                        receiveHtml += '    <div id="' + messageId + '" class="message-detail" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;" data-send="' + item.sendId + '">';
+                        receiveHtml += '        <div class="mb-2">';
+                        receiveHtml += '            <span class="fw-bold">보낸 사람:</span> <span class="fw-normal">' + item.sendNickName + "(" + item.sendId.substring(0, 3) + '*'.repeat(item.sendId.length - 3) + ")" + '</span>';
+                        receiveHtml += '        </div>';
+                        receiveHtml += '        <div class="mb-2">';
+                        receiveHtml += '            <span class="fw-bold">제목:</span> <span class="fw-normal">' + item.title + '</span>';
+                        receiveHtml += '        </div>';
+                        receiveHtml += '        <div class="mb-2">';
+                        receiveHtml += '            <span class="fw-bold">내용:</span>';
+                        receiveHtml += '            <p class="fw-normal">' + item.content + '</p>';
+                        receiveHtml += '        </div>';
+                        receiveHtml += '        <div class="d-flex justify-content-end mt-2">';
+                        receiveHtml += '            <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#replyModal" onclick="reply(\'' + item.sendId + '\');">답장</button>';
+                        receiveHtml += '            <button class="btn btn-outline-secondary btn-sm" onclick="moveToTrash(\'' + item.messageNo + '\')">보관</button>';
+                        receiveHtml += '            <button class="btn btn-outline-danger btn-sm me-2" onclick="deleteReceiveMessage(\'' + item.messageNo + '\')">삭제</button>';
+                        receiveHtml += '    </div>';
+                        receiveHtml += '</li>';
+                    });
+                } else {
+                    receiveHtml = '<li class="list-group-item">받은 쪽지가 없습니다.</li>';
+                }
 
-			    });
-			} else {
-			    receiveHtml = '<li class="list-group-item">받은 쪽지가 없습니다.</li>';
-			}
+                $("#receivedMessageList").html(receiveHtml);
+                receiveBoxPaging(receivePi);
+          
+                let sendHtml = '';
+                if (sendList && sendList.length > 0) {
+                    sendList.forEach(function(item, index) {
+                        const messageId = 'sentMessage' + (index + 1);
+                        sendHtml += '<li class="list-group-item d-flex flex-column" data-no="' + item.messageNo + '" onclick="toggleMessageDetail(\'' + messageId + '\')">';
+                        sendHtml += '    <div class="d-flex justify-content-between align-items-center mb-2">';
+                        sendHtml += '        <div class="d-flex align-items-center">';
+                        sendHtml += '            <div class="me-2">';
+                        sendHtml += '                <span class="fw-normal">받는 사람 : ' + item.receiveNickName + "(" + item.receiveId.substring(0, 3) + '*'.repeat(item.receiveId.length - 3) + ")" + '</span> | ' + (item.content.length >= 10 ? item.content.substring(0, 10) + "...." : item.content);
+                        sendHtml += '            </div>';
+                        sendHtml += '        </div>';
+                        sendHtml += '        <div class="d-flex align-items-center">';
+                        if (item.msgCollect === 'Y') {
+                            sendHtml += '<span>회수</span>&nbsp;&nbsp;';
+                        }
+                        sendHtml += '            <span class="receiveRead ' + (item.dateRead != null ? 'text-primary' : 'text-secondary') + ' fw-normal">';
+                        sendHtml += '                ' + (item.dateRead != null ? '읽음' : '안읽음') + '';
+                        sendHtml += '            </span>';
+                        sendHtml += '            <small class="text-muted ms-2">' + timeForToday(item.dateSend) + '</small>';
+                        sendHtml += '        </div>';
+                        sendHtml += '    </div>';
+                        sendHtml += '    <div id="' + messageId + '" class="message-detail" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;" data-sendId="' + item.receiveId + '">';
+                        sendHtml += '        <div class="mb-2">';
+                        sendHtml += '            <span class="fw-bold">받는 사람:</span> <span class="fw-normal">' + item.receiveNickName + "(" + item.receiveId.substring(0, 3) + '*'.repeat(item.receiveId.length - 3) + ")" + '</span>';
+                        sendHtml += '        </div>';
+                        sendHtml += '        <div class="mb-2">';
+                        sendHtml += '            <span class="fw-bold">제목:</span> <span class="fw-normal">' + item.title + '</span>';
+                        sendHtml += '        </div>';
+                        sendHtml += '        <div class="mb-2">';
+                        sendHtml += '            <span class="fw-bold">내용:</span>';
+                        sendHtml += '            <p class="fw-normal">' + item.content + '</p>';
+                        sendHtml += '        </div>';
+                        sendHtml += '        <div class="d-flex justify-content-end">';
+                        sendHtml += '            <button class="btn btn-outline-danger btn-sm me-2" onclick="collectMessage(\'' + item.messageNo + '\')">회수</button>';
+                        sendHtml += '            <button class="btn btn-outline-danger btn-sm me-2" onclick="deleteSendMessage(\'' + item.messageNo + '\')">삭제</button>';
+                        sendHtml += '        </div>';
+                        sendHtml += '    </div>';
+                        sendHtml += '</li>';
+                    });
+                } else {
+                    sendHtml = '<li class="list-group-item">보낸 쪽지가 없습니다.</li>';
+                }
 
-			$("#receivedMessageList").html(receiveHtml);
-			receivePaging(receivePi);
-
-			let sendHtml = '';
-			if (sendList.length > 0) {
-			    sendList.forEach(function(item, index) {
-			        const messageId = 'sentMessage' + (index + 1);
-			        const messageStatusId = 'sentMessageStatus' + (index + 1);
-
-			        sendHtml += '<li class="list-group-item d-flex flex-column" data-no="' + item.messageNo + '" onclick="toggleMessageDetail(\'' + messageId + '\')">';
-			        sendHtml += '    <div class="d-flex justify-content-between align-items-center mb-2">';
-			        sendHtml += '        <div class="d-flex align-items-center">';
-			        sendHtml += '            <div class="me-2">';
-			        sendHtml += '                <span class="fw-normal">받는 사람 : ' + item.receiveNickName + "(" + item.receiveId.substring(0, 3) + '*'.repeat(item.receiveId.length - 3) + ")" + '</span> | ';
-			        sendHtml += '                ' + (item.content.length >= 10 ? item.content.substring(0, 10) + "...." : item.content);
-			        sendHtml += '            </div>';
-			        sendHtml += '        </div>';
-			        sendHtml += '        <div class="d-flex align-items-center">';
-							//회신여부
-			        if (item.msgCollect == 'Y') {
-			            sendHtml += '<span>회수</span>&nbsp;&nbsp;';
-			        }
-
-			        sendHtml += '            <span class="receiveRead ' + (item.dateRead != null ? 'text-primary' : 'text-secondary') + ' fw-normal">';
-			        sendHtml += '                ' + (item.dateRead != null ? '읽음' : '안읽음') + '';
-			        sendHtml += '            </span>';
-			        sendHtml += '            <small class="text-muted ms-2">' + timeForToday(item.dateSend) + '</small>';
-			        sendHtml += '        </div>';
-			        sendHtml += '    </div>';
-			        sendHtml += '    <div id="' + messageId + '" class="message-detail" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;" data-sendId="' + item.receiveId + '">';
-			        sendHtml += '        <div class="mb-2">';
-			        sendHtml += '            <span class="fw-bold">받는 사람:</span> <span class="fw-normal">' + item.receiveNickName + "(" + item.receiveId.substring(0, 3) + '*'.repeat(item.receiveId.length - 3) + ")" + '</span>';
-			        sendHtml += '        </div>';
-			        sendHtml += '        <div class="mb-2">';
-			        sendHtml += '            <span class="fw-bold">제목:</span> <span class="fw-normal">' + item.title + '</span>';
-			        sendHtml += '        </div>';
-			        sendHtml += '        <div class="mb-2">';
-			        sendHtml += '            <span class="fw-bold">내용:</span>';
-			        sendHtml += '            <p class="fw-normal">' + item.content + '</p>';
-			        sendHtml += '        </div>';
-
-			        sendHtml += '        <div class="d-flex justify-content-end">';
-			        sendHtml += '            <button class="btn btn-outline-danger btn-sm me-2" onclick="collectMessage(\'' + item.messageNo + '\')">회수</button>';
-			        sendHtml += '            <button class="btn btn-outline-danger btn-sm me-2" onclick="deleteSendMessage(\'' + item.messageNo + '\')">삭제</button>';
-			        sendHtml += '        </div>';
-			        sendHtml += '    </div>';
-			        sendHtml += '</li>';
-
-
-			    });
-			} else {
-			    sendHtml += '<li class="list-group-item">보낸 쪽지가 없습니다.</li>';
-			}
-
-			$("#sentMessageList").html(sendHtml);
-			sendPaging(sendPi);
-
-			
-			
-			let collectHtml = '';
-			if (collectList.length > 0) {
-					collectList.forEach(function(item, index) {
-			        const messageId = 'trashMessage' + (index + 1);
-
-			        collectHtml += '<li class="list-group-item d-flex flex-column" data-no="' + item.messageNo + '" onclick="toggleMessageDetail(\'' + messageId + '\')">';
-			        collectHtml += '    <div class="d-flex justify-content-between align-items-center mb-2">';
-			        collectHtml += '        <div class="d-flex align-items-center">';
-			        collectHtml += '            <div class="me-2">';
-			        collectHtml += '                <span class="fw-normal">' + item.receiveId + '</span> - ';
-			        collectHtml += '                ' + (item.content.length >= 10 ? item.content.substring(0, 10) + "...." : item.content);
-			        collectHtml += '            </div>';
-			        collectHtml += '        </div>';
-			        collectHtml += '        <div class="d-flex align-items-center">';
-			        collectHtml += '            <small class="text-muted">' + timeForToday(item.dateSend) + '</small>';
-			        collectHtml += '        </div>';
-			        collectHtml += '    </div>';
-			        collectHtml += '    <div id="' + messageId + '" class="message-detail" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;" data-sendId="' + item.receiveId + '">';
-			        collectHtml += '        <div class="mb-2">';
-			        collectHtml += '            <h6 class="fw-normal">제목: ' + item.title + '</h6>';
-			        collectHtml += '            <p>내용: ' + item.content + '</p>';
-			        collectHtml += '            <p>받는 사람: ' + item.receiveId + '</p>';
-			        collectHtml += '        </div>';
-			        collectHtml += '        <div class="d-flex justify-content-end">';
-			        collectHtml += '            <button class="btn btn-outline-danger btn-sm" onclick="deleteMessage(\'' + item.messageNo +'\')">삭제</button>';
-			        collectHtml += '        </div>';
-			        collectHtml += '    </div>';
-			        collectHtml += '</li>';
-
-			    });
-			} else {
-				collectHtml += '<li class="list-group-item">보관함에 담긴 쪽지가 없습니다.</li>';
-			}
-
-			$("#trashMessageList").html(collectHtml);
-			collectPaging(collectPi);
-
-
-		},
-		error:function(){
-			console.log("ajax통신 오류");
-		}
-		
-		
-	})
-	
-}
-
-function collectPaging(pi){
-	
-	let htmlPI = '';
-	
-	if(pi.listCount != 0){
-		
-   if (pi.currentPage == 1) {
-	   htmlPI += "<button class='page bt' disabled>이전</button>";
-   } else {
-	   htmlPI += "<button class='page bt' onclick='loadMessage(" + (pi.currentPage - 1) + ")'>이전</button>";
-   }
-
-   // 페이지 번호 버튼 렌더링
-   for (let i = pi.startPage; i <= pi.endPage; i++) {
-       if (i == pi.currentPage) {
-    	   htmlPI += '<button class="page" disabled active>' + (i) + '</button>';
-       } else {
-    	   htmlPI += "<button class='page' onclick='loadMessage(" + i + ")'>" + (i) + "</button>";
-       }
-   }
-
-   // Next 버튼 렌더링
-   if (pi.currentPage == pi.maxPage) {
-	   htmlPI += "<button class='page bt' disabled>다음</button>";
-   } else {
-	   htmlPI +=  "<button class='page bt' onclick='loadMessage(" + (pi.currentPage + 1) + ")'>다음</button>";
-   }
-
-   $('#collectPaging').html(htmlPI);
-   
-   
-	}else{
-		
-		$('#collectPaging').html("");
-		
-	}
-	
+                $("#sentMessageList").html(sendHtml);
+                sendBoxPaging(sendPi);
+          
+                let collectHtml = '';
+                if (collectList && collectList.length > 0) {
+                    collectList.forEach(function(item, index) {
+                        const messageId = 'trashMessage' + (index + 1);
+                        collectHtml += '<li class="list-group-item d-flex flex-column" data-no="' + item.messageNo + '" onclick="toggleMessageDetail(\'' + messageId + '\')">';
+                        collectHtml += '    <div class="d-flex justify-content-between align-items-center mb-2">';
+                        collectHtml += '        <div class="d-flex align-items-center">';
+                        collectHtml += '            <div class="me-2">';
+                        collectHtml += '                <span class="fw-normal">' + item.receiveId + '</span> - ' + (item.content.length >= 10 ? item.content.substring(0, 10) + "...." : item.content);
+                        collectHtml += '            </div>';
+                        collectHtml += '        </div>';
+                        collectHtml += '        <div class="d-flex align-items-center">';
+                        collectHtml += '            <small class="text-muted">' + timeForToday(item.dateSend) + '</small>';
+                        collectHtml += '        </div>';
+                        collectHtml += '    </div>';
+                        collectHtml += '    <div id="' + messageId + '" class="message-detail" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;" data-sendId="' + item.receiveId + '">';
+                        collectHtml += '        <div class="mb-2">';
+                        collectHtml += '            <h6 class="fw-normal">제목: ' + item.title + '</h6>';
+                        collectHtml += '            <p>내용: ' + item.content + '</p>';
+                        collectHtml += '            <p>받는 사람: ' + item.receiveId + '</p>';
+                        collectHtml += '        </div>';
+                        collectHtml += '        <div class="d-flex justify-content-end">';
+                        collectHtml += '            <button class="btn btn-outline-danger btn-sm" onclick="deleteMessage(\'' + item.messageNo +'\')">삭제</button>';
+                        collectHtml += '        </div>';
+                        collectHtml += '    </div>';
+                        collectHtml += '</li>';
+                    });
+		            }else{
+		            	collectHtml = '<li class="list-group-item">보관함에 담긴 쪽지가 없습니다.</li>';
+		            }
+                
+                $("#trashMessageList").html(collectHtml);
+                collectBoxPaging(collectPi);
+        },
+        error: function(){
+            console.log("ajax 통신 오류");
+        }
+    });
 }
 
 
-function receivePaging(pi){
-	
-	let htmlPI = '';
-	
-	if(pi.listCount != 0){
-		
-   if (pi.currentPage == 1) {
-	   htmlPI += "<button class='page bt' disabled>이전</button>";
-   } else {
-	   htmlPI += "<button class='page bt' onclick='loadMessage(" + (pi.currentPage - 1) + ")'>이전</button>";
-   }
+function collectBoxPaging(pi){
+    let htmlPI = '';
 
-   // 페이지 번호 버튼 렌더링
-   for (let i = pi.startPage; i <= pi.endPage; i++) {
-       if (i == pi.currentPage) {
-    	   htmlPI += '<button class="page" disabled active>' + (i) + '</button>';
-       } else {
-    	   htmlPI += "<button class='page' onclick='loadMessage(" + i + ")'>" + (i) + "</button>";
-       }
-   }
+    if (pi && pi.listCount != 0) {
+        // 이전 버튼
+        if (pi.currentPage === 1) {
+            htmlPI += "<button class='page bt' disabled>이전</button>";
+        } else {
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage - 1) + "' data-type='collect'>이전</button>";
+        }
 
-   // Next 버튼 렌더링
-   if (pi.currentPage == pi.maxPage) {
-	   htmlPI += "<button class='page bt' disabled>다음</button>";
-   } else {
-	   htmlPI +=  "<button class='page bt' onclick='loadMessage(" + (pi.currentPage + 1) + ")'>다음</button>";
-   }
+        // 페이지 번호 버튼 렌더링
+        for (let i = pi.startPage; i <= pi.endPage; i++) {
+            if (i === pi.currentPage) {
+                htmlPI += '<button class="page" disabled>' + i + '</button>';
+            } else {
+                htmlPI += "<button class='page' data-page='" + i + "' data-type='collect'>" + i + "</button>";
+            }
+        }
 
-   $('#receivePaging').html(htmlPI);
-   
-   
-	}else{
-		
-		$('#receivePaging').html("");
-		
-	}
-	
+        // 다음 버튼
+        if (pi.currentPage === pi.maxPage) {
+            htmlPI += "<button class='page bt' disabled>다음</button>";
+        } else {
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage + 1) + "' data-type='collect'>다음</button>";
+        }
+
+        $('#collectPaging').html(htmlPI);
+    } else {
+        $('#collectPaging').html("");
+    }
 }
 
-function sendPaging(pi){
-	
-	let htmlPI = '';
-	
-	if(pi.listCount != 0){
-		
-   if (pi.currentPage == 1) {
-	   htmlPI += "<button class='page bt' disabled>이전</button>";
-   } else {
-	   htmlPI += "<button class='page bt' onclick='loadMessage(" + (pi.currentPage - 1) + ")'>이전</button>";
-   }
+function receiveBoxPaging(pi){
+    let htmlPI = '';
 
-   // 페이지 번호 버튼 렌더링
-   for (let i = pi.startPage; i <= pi.endPage; i++) {
-       if (i == pi.currentPage) {
-    	   htmlPI += '<button class="page" disabled active>' + (i) + '</button>';
-       } else {
-    	   htmlPI += "<button class='page' onclick='loadMessage(" + i + ")'>" + (i) + "</button>";
-       }
-   }
+    if (pi && pi.listCount != 0) {
+        // 이전 버튼
+        if (pi.currentPage === 1) {
+            htmlPI += "<button class='page bt' disabled>이전</button>";
+        } else {
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage - 1) + "' data-type='receive'>이전</button>";
+        }
 
-   // Next 버튼 렌더링
-   if (pi.currentPage == pi.maxPage) {
-	   htmlPI += "<button class='page bt' disabled>다음</button>";
-   } else {
-	   htmlPI +=  "<button class='page bt' onclick='loadMessage(" + (pi.currentPage + 1) + ")'>다음</button>";
-   }
+        // 페이지 번호 버튼 렌더링
+        for (let i = pi.startPage; i <= pi.endPage; i++) {
+            if (i === pi.currentPage) {
+                htmlPI += '<button class="page" disabled>' + i + '</button>';
+            } else {
+                htmlPI += "<button class='page' data-page='" + i + "' data-type='receive'>" + i + "</button>";
+            }
+        }
 
-   $('#sendPaging').html(htmlPI);
-   
-   
-	}else{
-		
-		$('#sendPaging').html("");
-		
-	}
-	
+        // 다음 버튼
+        if (pi.currentPage === pi.maxPage) {
+            htmlPI += "<button class='page bt' disabled>다음</button>";
+        } else {
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage + 1) + "' data-type='receive'>다음</button>";
+        }
+
+        $('#receivePaging').html(htmlPI);
+    } else {
+        $('#receivePaging').html("");
+    }
 }
 
+function sendBoxPaging(pi){
+    let htmlPI = '';
+
+    if (pi && pi.listCount != 0) {
+        // 이전 버튼
+        if (pi.currentPage === 1) {
+            htmlPI += "<button class='page bt' disabled>이전</button>";
+        } else {
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage - 1) + "' data-type='send'>이전</button>";
+        }
+
+        // 페이지 번호 버튼 렌더링
+        for (let i = pi.startPage; i <= pi.endPage; i++) {
+            if (i === pi.currentPage) {
+                htmlPI += '<button class="page" disabled>' + i + '</button>';
+            } else {
+                htmlPI += "<button class='page' data-page='" + i + "' data-type='send'>" + i + "</button>";
+            }
+        }
+
+        // 다음 버튼
+        if (pi.currentPage === pi.maxPage) {
+            htmlPI += "<button class='page bt' disabled>다음</button>";
+        } else {
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage + 1) + "' data-type='send'>다음</button>";
+        }
+
+        $('#sendPaging').html(htmlPI);
+    } else {
+        $('#sendPaging').html("");
+    }
+}
+
+$(document).on('click', '.page', function(event) {
+    // 버튼에 데이터 속성에서 페이지 번호와 타입 가져오기
+    const page = $(this).data('page');
+
+    if (page) {
+        // 이벤트 전파 방지
+        event.stopPropagation();
+        // 페이지 번호와 타입을 인자로 해서 메시지 박스 로드
+        loadMessage(page);
+    }
+});
 </script>
 <!--============================ ajax 페이징 스크립트 E ============================-->
 
@@ -902,6 +965,7 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
     	
     	$("#badge").html(count > 0 ? count : "");
     	
+    	/*
     	if(count > 0) {
     	    $("#bell").removeClass("bell-hidden");
     	    $("#bell").addClass("bi bi-bell bell-swing");
@@ -909,7 +973,8 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
     	    $("#bell").removeClass("bi bi-bell bell-swing");
     	    $("#bell").addClass("bell-hidden"); 
     	}
-
+			*/
+			
     	$("#sentMessageList").children(".list-group-item").each(function() {
     	    if ($(this).data("no") == msgNo) {
     	        let $receiveRead = $(this).find(".receiveRead");
@@ -918,14 +983,83 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
     	            $receiveRead.removeClass();
     	            $receiveRead.addClass("receiveRead text-primary fw-normal"); 
     	        }
-    	        
     	    }
     	});
     	
     }
+    //대댓글 알림
+    if(data != null && data.length == 8){
     	
+		let nickName = data[1];
+		let alarmNo = data[3];
+		let count = data[4];
+		let postType = data[5];
+		let postNo = data[6];
+		$("#alarm_count").html(count == 0 ? "" : count);
+		let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true' style='cursor:pointer;'>";
+       toast += 	"<div class='toast-header'><i class='fas fa-bell mr-2'></i><strong class='mr-auto'>알림</strong>";
+       toast += 	"<small class='text-muted'>just now</small><button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>";
+       toast += 	"<span aria-hidden='true' class='hide'>&times;</span></button>";
+       toast += 	"</div> <div class='toast-body' onclick='alarmOpen()'><b>" + nickName  +  "님이 남긴 댓글에 새 댓글이 달렸습니다. 확인해보세요!</div></div>";
+       
+       $("#tost_message").append(toast);   // msgStack div에 생성한 toast 추가
+       $(".toast").toast({"animation": true, "autohide": false});
+       $('.toast').toast('show');
+
+       // 10초 뒤에 토스트를 숨기기
+       setTimeout(function() {
+           $('.toast').toast('hide');
+       }, 15000); // 10000 밀리초 = 10초
+       
+       html = '';
+       html += '<div class="alarm_div" data-no="' + alarmNo + '">';
+       html += '    <b class="alarm_content"><a style="text-decoration: none;" href="${contextPath}/community/detail.page?postNo=' + postNo + '&postType=' + postType + '">' + nickName  +  "님 댓글에 댓글이 달렸습니다." + '</a></b>';
+       html += '    <span class="del-close">&times;</span>';
+       html += '</div>';
+       
+       $("#alertList").prepend(html);
+       
+		}	
+    //게시글 댓글 알림
+    if(data != null && data.length == 7){
+    	
+    		let nickName = data[1];
+    		let alarmNo = data[3];
+    		let count = data[4];
+    		let postType = data[5];
+    		let postNo = data[6];
+    		$("#alarm_count").html(count == 0 ? "" : count);
+    		let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true' style='cursor:pointer;'>";
+	       toast += 	"<div class='toast-header'><i class='fas fa-bell mr-2'></i><strong class='mr-auto'>알림</strong>";
+	       toast += 	"<small class='text-muted'>just now</small><button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>";
+	       toast += 	"<span aria-hidden='true' class='hide'>&times;</span></button>";
+	       toast += 	"</div> <div class='toast-body' onclick='alarmOpen()'><b>" + nickName  +  "님 게시글에 새 댓글이 달렸습니다. 확인해보세요!</div></div>";
+	       
+	       $("#tost_message").append(toast);   // msgStack div에 생성한 toast 추가
+	       $(".toast").toast({"animation": true, "autohide": false});
+	       $('.toast').toast('show');
+	
+	       // 10초 뒤에 토스트를 숨기기
+	       setTimeout(function() {
+	           $('.toast').toast('hide');
+	       }, 15000); // 10000 밀리초 = 10초
+	       
+	       html = '';
+	       html += '<div class="alarm_div" data-no="' + alarmNo + '">';
+	       html += '    <b class="alarm_content"><a style="text-decoration: none;" href="${contextPath}/community/detail.page?postNo=' + postNo + '&postType=' + postType + '">' + nickName  +  "님 게시글에 댓글이 달렸습니다." + '</a></b>';
+	       html += '    <span class="del-close">&times;</span>';
+	       html += '</div>';
+	       
+	       $("#alertList").prepend(html);
+	       
+    }
+    	
+    	
+    
+    
+    
     if(data != null && data.length == 9){
-    	
+    	/*
 			$("#badge").html(count > 0 ? count : "");
     	if(count > 0) {
     	    $("#bell").removeClass("bell-hidden");
@@ -934,14 +1068,13 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
     	    $("#bell").removeClass("bi bi-bell bell-swing");
     	    $("#bell").addClass("bell-hidden"); 
     	}		
-    	// toast
-    	
-    	
-	       let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true'>";
+    	*/
+    		// toast
+	       let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true' style='cursor:pointer;'>";
 	       toast += 	"<div class='toast-header'><i class='fas fa-bell mr-2'></i><strong class='mr-auto'>알림</strong>";
 	       toast += 	"<small class='text-muted'>just now</small><button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>";
 	       toast += 	"<span aria-hidden='true' class='hide'>&times;</span></button>";
-	       toast += 	"</div> <div class='toast-body' onclick='handleToastClick()' data-bs-toggle='modal' data-bs-target='#messageModal'><b>"+ sendNickName + "(" + maskedId + ")" +  "님의 쪽지가 도착 했어요!<br><b> 제목 :</b>" + title + "<br></div></div>";
+	       toast += 	"</div> <div class='toast-body'  data-bs-toggle='modal' data-bs-target='#messageModal'><b>"+ sendNickName + "(" + maskedId + ")" +  "님의 쪽지가 도착 했어요!<br><b> 제목 :</b>" + title + "<br></div></div>";
 	       $("#tost_message").append(toast);   // msgStack div에 생성한 toast 추가
 	       $(".toast").toast({"animation": true, "autohide": false});
 	       $('.toast').toast('show');
@@ -949,7 +1082,7 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
 	       // 10초 뒤에 토스트를 숨기기
 	       setTimeout(function() {
 	           $('.toast').toast('hide');
-	       }, 10000); // 10000 밀리초 = 10초
+	       }, 15000); // 10000 밀리초 = 10초
     	
 
         
@@ -1016,63 +1149,68 @@ $(document).on("click", '#sendBtn', function(e){
   //var modal = $('#nav-compose').has(e.target); //포함여부확인
   let modal = $(this).closest("#v-pills-compose");
   //var type = '70';
-  var receiveId = modal.find('#recipient').val();
-  var content = modal.find('#messageContent').val();
-  var title = modal.find("#messageTitle").val();
-  
-  // 전송한 정보를 db에 저장	
-  if(confirm("정말로 쪽지를 보내시겠습니까?")){
-  		 $.ajax({
-           url: '${contextPath}/member/nickNamecheck.do',
-           type: 'get',
-           dataType: 'text',
-           data: {
-           		receiveId: receiveId,
-               content: content,
-               title: title
-           },
-           success: function(response){
-          	 
-               if(response == "YYYYY"){
-              	 
-                   $.ajax({
-                       url: '${contextPath}/member/insertSend.do',
-                       type: 'post',
-                       dataType: 'text',
-                       data: {
-                       		receiveId: receiveId,
-                           content: content,
-                           title: title
-                       },
-                       success: function(data){    // db전송 성공시 실시간 알림 전송
-                      	 
-                           // 소켓에 전달되는 메시지
-                           // 위에 기술한 EchoHandler에서 ,(comma)를 이용하여 분리시킨다.
-                           //socket.send(message);	
-                       		socket.send(data);
-                        
-                           alert("쪽지 보내기를 완료했습니다.");
-                           loadMessage(1);
-                           modal.find('#recipient').val("");
-                           modal.find('#messageTitle').val("");
-                           modal.find('#messageContent').val("");
-                       },
-                    		error:function(){
-                    			console.log("ajax통신 오류");
-                    		}
-                       
-                   });
-               }else{
-              	 alert("존재하지 않는 회원입니다. 다시 확인해주세요.");
-               }
-               
-           },
-        		error:function(){
-        			console.log("ajax통신 오류");
-        		}
-       });
+	var receiveId = modal.find('#recipient').val().trim();
+	var content = modal.find('#messageContent').val().trim();
+	var title = modal.find("#messageTitle").val().trim();
+	
+	if(receiveId != "" && content != "" && title != "") {
 
-  	}
+	  if(confirm("정말로 쪽지를 보내시겠습니까?")){
+	  		 $.ajax({
+	           url: '${contextPath}/member/nickNamecheck.do',
+	           type: 'get',
+	           dataType: 'text',
+	           data: {
+	           		receiveId: receiveId,
+	               content: content,
+	               title: title
+	           },
+	           success: function(response){
+	          	 
+	               if(response == "YYYYY"){
+	              	 
+	                   $.ajax({
+	                       url: '${contextPath}/member/insertSend.do',
+	                       type: 'post',
+	                       dataType: 'text',
+	                       data: {
+	                       		receiveId: receiveId,
+	                           content: content,
+	                           title: title
+	                       },
+	                       success: function(data){    // db전송 성공시 실시간 알림 전송
+	                      	 
+	                           // 소켓에 전달되는 메시지
+	                           // 위에 기술한 EchoHandler에서 ,(comma)를 이용하여 분리시킨다.
+	                           //socket.send(message);	
+	                       		socket.send(data);
+	                        
+	                           alert("쪽지 보내기를 완료했습니다.");
+	                           loadMessage(1);
+	                           modal.find('#recipient').val("");
+	                           modal.find('#messageTitle').val("");
+	                           modal.find('#messageContent').val("");
+	                       },
+	                    		error:function(){
+	                    			console.log("ajax통신 오류");
+	                    		}
+	                       
+	                   });
+	               }else{
+	              	 alert("존재하지 않는 회원입니다. 다시 확인해주세요.");
+	               }
+	               
+	           },
+	        		error:function(){
+	        			console.log("ajax통신 오류");
+	        		}
+	       });
+
+	  	}
+  }else{
+	  alert("내용을 빠짐없이 기입해주세요.");
+  }
+  
 
 });
 
@@ -1096,62 +1234,64 @@ function maskId(sendId) {
 $(document).on("click", "#replys", function(){
 		
   //let type = '70';
-  let title = $("#replyTitle").val();
-  let content = $('#replyContent').val();
-  let receiveId = $('#received').val();
-  let $this = $(this);
-  
-  // 전송한 정보를 db에 저장	
-  if(confirm("정말로 쪽지를 보내시겠습니까?")){
-  		 $.ajax({
-           url: '${contextPath}/member/nickNamecheck.do',
-           type: 'get',
-           dataType: 'text',
-           data: {
-           		receiveId: receiveId,
-               content: content,
-               title: title
-           },
-           success: function(response){
-          	 
-               if(response == "YYYYY"){
-              	 
-                   $.ajax({
-                       url: '${contextPath}/member/insertSend.do',
-                       type: 'post',
-                       dataType: 'text',
-                       data: {
-                       		receiveId: receiveId,
-                           content: content,
-                           title: title
-                       },
-                       success: function(data){
-                      	 	
-                       		socket.send(data);
-                        
-                          alert("쪽지 보내기를 완료했습니다.");
-                          loadMessage(1);
-                          $("#replyTitle").val("");
-                          $('#replyContent').val("");
-                          
-                       },
-                    		error:function(){
-                    			console.log("ajax통신 오류");
-                    		}
-                       
-                   });
-               }else{
-              	 alert("존재하지 않는 회원입니다. 다시 확인해주세요.");
-               }
-               
-           },
-        		error:function(){
-        			console.log("ajax통신 오류");
-        		}
-       });
+	let title = $("#replyTitle").val().trim(); // title의 공백 제거
+	let content = $('#replyContent').val().trim(); // content의 공백 제거
+	let receiveId = $('#received').val().trim(); // receiveId의 공백 제거
+	
+	// 값 검증
+	if (title !== "" && content !== "" && receiveId !== "") {
+	  if(confirm("정말로 쪽지를 보내시겠습니까?")){
+	  		 $.ajax({
+	           url: '${contextPath}/member/nickNamecheck.do',
+	           type: 'get',
+	           dataType: 'text',
+	           data: {
+	           		receiveId: receiveId,
+	               content: content,
+	               title: title
+	           },
+	           success: function(response){
+	          	 
+	               if(response == "YYYYY"){
+	              	 
+	                   $.ajax({
+	                       url: '${contextPath}/member/insertSend.do',
+	                       type: 'post',
+	                       dataType: 'text',
+	                       data: {
+	                       		receiveId: receiveId,
+	                           content: content,
+	                           title: title
+	                       },
+	                       success: function(data){
+	                      	 	
+	                       		socket.send(data);
+	                        
+	                          alert("쪽지 보내기를 완료했습니다.");
+	                          loadMessage(1);
+	                          $("#replyTitle").val("");
+	                          $('#replyContent').val("");
+	                          
+	                       },
+	                    		error:function(){
+	                    			console.log("ajax통신 오류");
+	                    		}
+	                       
+	                   });
+	               }else{
+	              	 alert("존재하지 않는 회원입니다. 다시 확인해주세요.");
+	               }
+	               
+	           },
+	        		error:function(){
+	        			console.log("ajax통신 오류");
+	        		}
+	       });
 
-  	}
-  
+	  	}
+  }else{
+	  alert("내용을 빠짐없이 기입해주세요.");
+  }
   
 });
 
@@ -1362,12 +1502,12 @@ function collectMessage(messageNo){
                 <!-- 제목 입력 필드 -->
                 <div class="mb-2">
                     <label for="title" class="form-label">제목</label>
-                    <input type="text" class="form-control" placeholder="제목을 입력하세요" id="replyTitle">
+                    <input type="text" class="form-control" placeholder="제목을 입력하세요" id="replyTitle" required> 
                 </div>
                 <!-- 내용 입력 필드 -->
                 <div class="mb-2">
                     <label for="content" class="form-label">내용</label>
-                    <textarea class="form-control" placeholder="답장 내용을 입력하세요" id="replyContent" rows="5"></textarea>
+                    <textarea class="form-control" placeholder="답장 내용을 입력하세요" id="replyContent" rows="5" required></textarea>
                 </div>
             </div>
 						<div class="modal-footer">
@@ -1417,7 +1557,7 @@ function collectMessage(messageNo){
 			                            <!-- 예시 쪽지 -->
 			                        </ul>
 			                        <div class="d-flex justify-content-center align-items-center mt-3">
-			                            <ul class="pagination" id="receivePaging">
+			                            <ul id="receivePaging">
 			                                <!-- 페이징 버튼 -->
 			                            </ul>
 			                        </div>
@@ -1432,7 +1572,7 @@ function collectMessage(messageNo){
 			                            <!-- 예시 보낸 쪽지 -->
 			                        </ul>
 			                        <div class="d-flex justify-content-center align-items-center mt-3">
-			                            <ul class="pagination" id="sendPaging">
+			                            <ul id="sendPaging">
 			                                <!-- 페이징 버튼 -->
 			                            </ul>
 			                        </div>
@@ -1444,15 +1584,15 @@ function collectMessage(messageNo){
 			                        <form id="newMessageForm">
 			                            <div class="mb-3">
 			                                <label for="recipient" class="form-label"></label>
-			                                <input type="text" class="form-control" id="recipient" placeholder="아이디를 입력하세요." required>
+			                                <input type="text" class="form-control" id="recipient" placeholder="아이디를 입력하세요.">
 			                            </div>
 			                            <div class="mb-3">
 			                                <label for="messageTitle" class="form-label">제목</label>
-			                                <input type="text" class="form-control" id="messageTitle" placeholder="제목을 입력하세요" required>
+			                                <input type="text" class="form-control" id="messageTitle" placeholder="제목을 입력하세요">
 			                            </div>
 			                            <div class="mb-3">
 			                                <label for="messageContent" class="form-label">쪽지 내용</label>
-			                                <textarea class="form-control" id="messageContent" rows="5" placeholder="쪽지 내용을 입력하세요" required></textarea>
+			                                <textarea class="form-control" id="messageContent" rows="5" placeholder="쪽지 내용을 입력하세요"></textarea>
 			                            </div>
 			                            <button type="button" class="btn btn-primary w-100" id="sendBtn">보내기</button>
 			                        </form>
@@ -1467,7 +1607,7 @@ function collectMessage(messageNo){
 			                            <!-- 예시 휴지통 메시지 -->
 			                        </ul>
 			                        <div class="d-flex justify-content-center align-items-center mt-3">
-			                            <ul class="pagination" id="collectPaging">
+			                            <ul id="collectPaging">
 			                                <!-- 페이징 버튼 -->
 			                            </ul>
 			                        </div>
@@ -1485,15 +1625,95 @@ function collectMessage(messageNo){
 </div>
 
  <!-- 모달 -->
-<div id="myModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>알림</h2>
-        <p>이것은 알림 모달입니다.</p>
+  <div id="petAlertModal" class="pet-modal">
+        <div class="pet-modal-content">
+            <span class="pet-close">&times;</span>
+            <h2>알림메세지함</h2>
+            <div id="alertList" class="alert-list">
+                
+            </div>
+        </div>
     </div>
-</div>
 
 <script>
+$(document).ready(function() {
+    // Show the modal
+    $('#showPetModal').on('click', function() {
+        $('#petAlertModal').fadeIn();
+    });
+   
+
+    // Hide the modal when the user clicks on <span> (x) or Close button
+    $('.pet-close, #closePetModal').on('click', function() {
+        $('#petAlertModal').fadeOut();
+    });
+
+    // Hide the modal when the user clicks anywhere outside of the modal
+    $(window).on('click', function(event) {
+        if ($(event.target).is('#petAlertModal')) {
+            $('#petAlertModal').fadeOut();
+        }
+    });
+});
+function alarmOpen(){
+	$('#petAlertModal').fadeIn();
+}
+
+</script>
+
+<script>
+$(document).ready(function(){
+	loadAlarm();
+})
+
+function loadAlarm(){
+	$.ajax({
+		url:"${contextPath}/community/selectAlarmMessage.do",
+		type:"get",
+		success:function(response){
+			let list = response.list;
+			let alarmCount = response.count;
+			let html = '';
+			$("#alarm_count").html(alarmCount == 0 ? "" : alarmCount);
+			if(list){
+				list.forEach(function(item){
+		      html += '<div class="alarm_div" data-no="' + item.alarmNo + '">';
+		      html += '    <b class="alarm_content"><a style="text-decoration: none;" href="${contextPath}/community/detail.page?postNo=' + item.postNo + '&postType=' + item.postType + '">' + item.alarmContent + '</a></b>';
+		      html += '    <span class="del-close">&times;</span>';
+		      html += '</div>';
+				})				
+			}
+			
+	    $("#alertList").html(html);			
+		},
+		error:function(){
+			
+		}
+		
+	})
+}
+
+$(document).on("click", ".del-close", function(){
+	let alarmNo = $(this).closest(".alarm_div").data("no");
+	console.log(alarmNo);
+	$.ajax({
+		url:"${contextPath}/community/deleteAlarmMessage.do",
+		type:"get",
+		data:{alarmNo:alarmNo},
+		success:function(response){
+			let alarmCount = response.count;
+			if(response.success == 1){
+				$("#alarm_count").html(alarmCount == 0 ? "" : alarmCount);
+			}
+			loadAlarm();
+		},
+		error:function(){
+			
+		}
+		
+	})
+})
+
 
 </script>
 

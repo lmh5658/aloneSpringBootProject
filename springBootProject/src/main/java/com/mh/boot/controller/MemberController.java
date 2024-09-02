@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.mh.boot.dto.AlarmDto;
 import com.mh.boot.dto.MemberDto;
 import com.mh.boot.dto.MessageBoxDto;
 import com.mh.boot.service.CommunityService;
@@ -183,14 +184,16 @@ public class MemberController {
 	
 	@RequestMapping("/comunitySignout.do")
 	public String comunitySignout(HttpSession session, HttpServletRequest request) {
+		/*
 		String uri = request.getHeader("Referer");
 		
 		if (uri != null) {
 			request.getSession().setAttribute("prevPage", uri);
 		}
 		String prevPage = (String) session.getAttribute("prevPage");
+		*/
 		session.invalidate();
-		return "redirect:" + prevPage;
+		return "redirect:/community/doranMain.page";
 	}
 	
 	// * 회원가입 관련 ---------------------------------------
@@ -535,9 +538,63 @@ public class MemberController {
 		
 	}
 		
+	
+	@ResponseBody
+	@GetMapping("/userSearch.do")
+	public String userSearch(String userNo, String postType, int postNo, HttpSession session) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("userNo", userNo);
+		MemberDto memberSearch = memberService.userSearch(param);
+		
+		AlarmDto alarm = new AlarmDto();
+		alarm.setAlarmContent(memberSearch.getNickName() + "님 게시글에 새 댓글이 달렸습니다.");
+		alarm.setUserId(memberSearch.getUserId());
+		alarm.setPostNo(postNo);
+		alarm.setPostType(postType);
+		int result = comunityService.insertAlarmMessage(alarm);
+		int alarmNo = alarm.getAlarmNo();
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		int count = 0;
+		if(member != null) {
+			count = comunityService.selectAlarmCount(member.getUserId());	
+		}
+		
+		return memberSearch.getUserId() + "," + alarmNo + "," + count;
+	}
+		
 		
 	
+	@ResponseBody
+	@GetMapping("/userIdSearch.do")
+	public String userIdSearch(String nickName, String postType, int postNo, HttpSession session) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("nickName", nickName);
+		MemberDto memberSearch = memberService.userSearch(param);
+		
+		AlarmDto alarm = new AlarmDto();
+		alarm.setAlarmContent(nickName + "님이 남긴 댓글에 새 댓글이 달렸습니다.");
+		alarm.setUserId(memberSearch.getUserId());
+		alarm.setPostNo(postNo);
+		alarm.setPostType(postType);
+		int result = comunityService.insertAlarmMessage(alarm);
+		int alarmNo = alarm.getAlarmNo();
+		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		int count = 0;
+		if(member != null) {
+			count = comunityService.selectAlarmCount(member.getUserId());	
+		}
+		
+		return memberSearch.getUserId() + "," + alarmNo + "," + count;
+	}
 	
+	/**
+	 * > 회원가입 ) 이메일 중복 체크
+	 */
+	@ResponseBody
+	@PostMapping("/emailCheck.do")
+	public int emailCheck(String mails) {
+		return memberService.selectEmailCheck(mails);
+	}
 	
 	
 

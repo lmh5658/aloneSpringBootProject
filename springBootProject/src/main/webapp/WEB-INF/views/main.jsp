@@ -287,11 +287,11 @@ $(document).on("click", ".product_cart", function(){
 
 
 $(document).ready(function() {
-	/*
+	
     setInterval(function() {
         $("#nextButton").click();
-    }, 3300);
-	*/
+    }, 2800);
+	
 });
 
 

@@ -797,7 +797,7 @@ text-align: center;
 								    </div>
 								    <div class="review-prompt">
 										    <div class="stars" style="display: flex; justify-content: space-between;"><div style="margin-left: 86px;">★★★★★</div><div style="cursor: pointer;" onclick="closed();">x</div></div>
-										    <p class="review-text">리뷰 작성시 <strong>최대 1000 포인트</strong>을 드립니다.<br>첫번째 리뷰를 작성해보세요.</p>
+										    <p class="review-text">리뷰 작성시 <strong>최대 500 포인트</strong>을 드립니다.<br>첫번째 리뷰를 작성해보세요.</p>
 										    <button class="review-button" data-toggle="modal" data-target="#firstMyModal">리뷰작성하기</button>
 										</div>
 							</div>
@@ -1446,7 +1446,7 @@ function firstReview() {
         },
         success: function(response) {
             if(response.list.length > 0) {
-                alert("리뷰 등록이 완료되었습니다. 첫구매 1000포인트가 정상적으로 적립되었습니다.");
+                alert("리뷰 등록이 완료되었습니다. 첫구매 500 포인트가 정상적으로 적립되었습니다.");
                 $(".review-prompt").css({"z-index": "-1", "display": "none"});
                 renderReviews(response);
                 location.reload();

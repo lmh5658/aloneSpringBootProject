@@ -238,11 +238,11 @@ form textarea {
             		<table>
             			<tr>
             				<th>주문자 이름<b style="color: red;">&nbsp;*</b></th>
-            				<td><input type="text" id="orderName" name="orderName" placeholder="수령인을 입력하세요." required></td>
+            				<td><input type="text" id="userName" name="userName" placeholder="수령인을 입력하세요." required></td>
             			</tr>
             			<tr>
             				<th>휴대전화<b style="color: red;">&nbsp;*</b></th>
-            				<td><input type="text" id="phone" name="orerPhone" placeholder="예)010-0000-0000" required></td>
+            				<td><input type="text" id="phone" name="phone" placeholder="예)010-0000-0000" required></td>
             			</tr>
             			<tr>
             				<th class="col1">이메일<b style="color: red;">&nbsp;*</b></th>
@@ -619,30 +619,21 @@ function insertPoint(orderKey){
 //주문자 정보와 동일 체크 이벤트 스크립트
 $(document).ready(function(){
 	
-	var userName = "${memberList.userName}";
-	var phones = "${memberList.phone}";
-	var address = "${memberList.address}";
-	var addressDatail = "${memberList.addressDatail}";
-	var streetAddress = "${memberList.streetAddress}";
-	var otherAddress = "${memberList.otherAddress}";
 	var email = "${memberList.email}";
 	var parts = email.split("@");
   var userPart = parts[0];
   var domainPart = parts[1];
   
-		
-  
-
   $("#check").change(function() {
       if($(this).is(":checked")) {
-          $("input[type='text'][name='userName']").val(userName);
-          $("input[type='text'][name='phone']").val(phones);
+          $("input[type='text'][name='userName']").val("${memberList.userName}");
+          $("input[type='text'][name='phone']").val("${memberList.phone}");
           $("input[type='text'][name='mail']").val(userPart);
           $("input[type='text'][name='email']").val(domainPart);
-          $("input[type='text'][name='address']").val(address);
-          $("input[type='text'][name='addressDatail']").val(addressDatail);
-          $("input[type='text'][name='streetAddress']").val(streetAddress);
-          $("input[type='text'][name='otherAddress']").val(otherAddress);
+          $("input[type='text'][name='address']").val("${memberList.address}");
+          $("input[type='text'][name='addressDatail']").val("${memberList.addressDatail}");
+          $("input[type='text'][name='streetAddress']").val("${memberList.streetAddress}");
+          $("input[type='text'][name='otherAddress']").val("${memberList.otherAddress}");
       } else {
           $("input[type='text']").val("");
       }

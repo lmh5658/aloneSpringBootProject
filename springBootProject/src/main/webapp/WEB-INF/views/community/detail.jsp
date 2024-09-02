@@ -37,11 +37,14 @@ body {
     font-size: 2em;
     margin: 0;
     color: #333;
+    padding-bottom: 26px;
 }
 .post-meta {
     font-size: 19px;
     color: #666;
     margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
 }
 .post-meta span {
     margin-right: 15px;
@@ -164,15 +167,11 @@ body {
     cursor: pointer;
     font-size: 14px;
 }
-
-
-
 .submit-reply:hover {
-    background-color: #218838;
+  background-color: #84b5e9a3;
 }
-
-.submit-edit:hover {
-    background-color: #e996db78;
+.submit-reply-reply:hover{
+	background-color: #84b5e9a3;
 }
 
 /* 대댓글 박스 */
@@ -374,7 +373,21 @@ border: 1px solid #ced4da;
     border-radius: 10px;
     background: pink;
 }
+.submit-edit-edit:hover{
+	background: #ffc0cbb3;
+}
+.submit-edit:hover {
+  background: #ffc0cbb3;
+}
+.edit-form .replyContent {
+    resize: none;
+    border: 1px solid #dddddd;
+}
 
+.edit-form-form .replyContent{
+resize: none;
+    border: 1px solid #dddddd;
+}
 </style>
 </head>
 
@@ -386,10 +399,26 @@ border: 1px solid #ced4da;
 
         <!-- 게시글 S-->
          <div class="post">
-		        <h1 class="post-title">제목: ${ board.postTitle }</h1>
+	         	<div style="display: flex;justify-content: space-between;">
+	         	  <div>
+					        <h1 class="post-title">제목:&nbsp;${ board.postTitle }</h1>
+			         </div>
+	        		<div>
+	        			<button id="kakao-link-btn" style="border: none;background: none;">
+	        			<svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+								  <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
+								</svg>Kakao공유
+								</button>
+		        	</div>
+	         	</div>
 		        <div class="post-meta">
-		            <span>닉네임: ${ board.writerNickName }</span><br>
-		            <span>작성일: ${ board.postUploadDt }</span>
+		        		<div>
+			            <span>닉네임:&nbsp;&nbsp;${ board.writerNickName }</span><br>		        		
+			            <span>작성일:&nbsp;&nbsp;${ board.postUploadDt }</span>
+		        		</div>
+		        		<div>
+		        			<span>조회수:&nbsp;&nbsp;${ board.postCount } </span>
+		        		</div>
 		        </div>
 		        <div class="post-image">
 		        	<c:if test="${ not empty attachList }">
@@ -415,6 +444,7 @@ border: 1px solid #ced4da;
 										좋아요&nbsp;<strong style="font-weight: bold;" id="likeCounter">${ board.postLike == 0 ? "" : board.postLike }</strong>
 		        			</div>
 		        		</div>
+		        		
 		        </div>
 		        <div id="attach_div">
 			          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder2-open" viewBox="0 0 16 16">
@@ -470,7 +500,7 @@ border: 1px solid #ced4da;
         </div>
         <!-- 댓글 작성 폼 E -->
 </div>
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f5fb251a62d19d3f09c42218629ae62d&libraries=services"></script> 
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services"></script> 
 <script>
 // 장소 검색 객체를 생성합니다
 var ps = new kakao.maps.services.Places(); 
@@ -649,10 +679,28 @@ $(document).on('click', '.submit-comment', function(e) {
  	                },
  	                success: function(response) {
  	                    console.log('댓글 등록:', response);
+
  	                    if(response != null){
  	    	                $("#commentContent").val("");
  	    	                renderComments(response); // 전체 댓글 다시 렌더링                	
  	                    }
+ 	                    
+ 	                    $.ajax({
+ 	                    	url:"${contextPath}/member/userSearch.do",
+ 	                    	type:"get",
+ 	                    	data:{
+ 	                    		userNo:"${board.writerNo}",
+ 	                    		postType:"${board.postType}",
+ 	                      	postNo:"${board.postNo}"
+ 	                    	},
+ 	                  		success:function(response){
+ 	                  			socket.send("" + "," + "${board.writerNickName}" + "," + response + "," + "${board.postType}" + "," + "${board.postNo}");
+ 	                  		},
+ 	                  		error:function(){
+ 	                  			
+ 	                  		}
+ 	                    })
+ 	                    
  	                },
  	                error: function(response) {
  	                    console.log("AJAX 통신 실패 =>" + response);
@@ -672,11 +720,10 @@ $(document).on('click', '.submit-comment', function(e) {
 // 대댓글 폼 제출 처리
 $(document).on('click', '.submit-reply', function(e) {
     e.preventDefault(); // 폼 제출 방지
-    
     let refGroup = $(this).closest(".reply-form").data("ref");
     let content = $(this).closest(".reply-form").find(".replyContent").val().trim();
     let id = $(this).closest(".reply-form").find(".reply-form-content").data("id");
-    
+    let nickName = $(this).closest(".reply-form").data("name");
     
     let loginCheck = ("${loginUser}" == "");
     if(loginCheck == false){
@@ -702,7 +749,23 @@ $(document).on('click', '.submit-reply', function(e) {
 		                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
 		                renderComments(response); // 전체 댓글 다시 렌더링
 	            	}
-	               
+	            	
+	            	  $.ajax({
+                   	url:"${contextPath}/member/userIdSearch.do",
+                   	type:"get",
+                   	data:{
+                   		nickName:nickName,
+                   		postType:"${board.postType}",
+                   		postNo:"${board.postNo}"
+                   	},
+                 		success:function(response){
+                 			socket.send("" + "," + nickName + "," + response + "," + "${board.postType}" + "," + "${board.postNo}" + "," + "");
+                 		},
+                 		error:function(){
+                 			
+                 		}
+                  })
+                  
 	            },
 	            error: function() {
 	                console.log("AJAX 통신 실패");
@@ -728,7 +791,7 @@ $(document).on('click', '.submit-reply-reply', function(e) {
     let id = reply.find(".reply-form-content").data("id");
     let step = reply.data("step");
     let refOrder = $(this).closest(".replies").find(".reply-header").data("order");
-    
+    let nickName = $(this).closest(".reply-form-form").data("name");
     
     	if (content.trim() === '') {
             alert('댓글을 입력하세요.');
@@ -757,6 +820,22 @@ $(document).on('click', '.submit-reply-reply', function(e) {
    	                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
    	                renderComments(response); // 전체 댓글 다시 렌더링
                	}
+               	
+                $.ajax({
+                   	url:"${contextPath}/member/userIdSearch.do",
+                   	type:"get",
+                		data:{
+                   		nickName:nickName,
+                   		postType:"${board.postType}",
+                   		postNo:"${board.postNo}"
+                   	},
+                 		success:function(response){
+                 			socket.send("" + "," + nickName + "," + response + "," + "${board.postType}" + "," + "${board.postNo}" + "," + "");
+                 		},
+                 		error:function(){
+                 			
+                 		}
+                })
                   
                },
                error: function() {
@@ -823,80 +902,69 @@ $(document).on("click", ".edit-reply", function() {
 
 // 댓글과 대댓글을 렌더링하는 함수
 function renderComments(comment) {
-	
-		let comments = comment.list;
-		let pi = comment.pi;
-		let login = "${loginUser.userNo}";
-    var html = '<div class="comments">';
+    let comments = comment.list;
+    let pi = comment.pi;
+    let login = "${loginUser.userNo}";
+    var loginCheck = "${loginUser}" == "" ? 'style="display:none;"' : '';
 
-    
+    var html = '<div class="comments">';
     for (let i = 0; i < comments.length; i++) {
-    	
-    	var style = comments[i].userNo != login ? 'style="display:none;"' : '';
-    	let buttonStyle = comments[i].delYN == "N";
-    	
+        var style = comments[i].userNo != login ? 'style="display:none;"' : '';
+        let buttonStyle = comments[i].delYN == "N";
+
         if (comments[i].parentNum == 0 && comments[i].refOrder == 0) {
-        	
             html += '<div class="comment">';
             html += '  <div class="comment-header">';
             html += '    <strong class="user-nickname">' + comments[i].userNickName + '</strong>';
-            html += '    <p class="comment-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>")  + '</p>';
+            html += '    <p class="comment-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>") + '</p>';
             html += '    <span class="comment-date">' + timeForToday(comments[i].registDt) + '</span>';
-            html += '    <div ' + (buttonStyle ? "" : "style='display:none;'") +' class="comment-actions">';
-            html += '      <button class="reply-button">답글쓰기</button>';
-            html += '      <button class="edit-comment"' +  style + '>수정</button>';
-            html += '      <button class="delete-comment"' +  style + '>삭제</button>';
+            html += '    <div ' + (buttonStyle ? "" : "style='display:none;'") + ' class="comment-actions"' + loginCheck + '>';
+            html += '      <button class="reply-button" data-id="' + comments[i].id + '">답글쓰기</button>';
+            html += '      <button class="edit-comment"' + style + '>수정</button>';
+            html += '      <button class="delete-comment"' + style + '>삭제</button>';
             html += '    </div>';
-            
             html += '  <div class="edit-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
             html += '    <form class="edit-form-content" data-id="' + comments[i].id + '">';
             html += '      <textarea placeholder="댓글을 수정하세요." rows="4" class="replyContent"></textarea>';
-            html += '      <button type="submit" class="submit-edit"' +  style + '>수정</button>';
+            html += '      <button type="submit" class="submit-edit"' + style + '>수정</button>';
             html += '    </form>';
             html += '  </div>';
-            
-            
-            html += '  <div class="reply-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
+            html += '  <div class="reply-form" data-name="' + comments[i].userNickName + '" style="display: none;" data-ref="' + comments[i].refGroup + '">';
             html += '    <form class="reply-form-content" data-id="' + comments[i].id + '">';
             html += '      <textarea placeholder="대댓글을 입력하세요." rows="4" class="replyContent"></textarea>';
             html += '      <button type="submit" class="submit-reply">등록</button>';
             html += '    </form>';
             html += '  </div>';
             html += '  </div>';
-            
         }
 
         if (comments[i].parentNum != 0) {
-        	
-        		html += '  <div class="replies" data-no="' + comments[i].id + '">'; 
+            html += '  <div class="replies" data-no="' + comments[i].id + '">';
             html += '    <div class="reply">';
             html += '      <div class="reply-header" data-order="' + comments[i].refOrder + '">';
-            html += '        <strong class="user-nickname" data-step="' + comments[i].step  + '">' + comments[i].userNickName + '</strong>';
-            html += '        <p class="reply-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>")  + '</p>';
+            html += '        <strong class="user-nickname" data-step="' + comments[i].step + '">' + comments[i].userNickName + '</strong>';
+            html += '        <p class="reply-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>") + '</p>';
             html += '        <span class="reply-date">' + timeForToday(comments[i].registDt) + '</span>';
-            html += '        <div ' + (buttonStyle ? "" : "style='display:none;'") + 'class="reply-actions">';
-            html += '          <button class="reply-button">답글쓰기</button>';
-            html += '          <button class="edit-reply" ' +  style + '>수정</button>';
-            html += '          <button class="delete-reply" ' +  style + '>삭제</button>';
+            html += '        <div ' + (buttonStyle ? "" : "style='display:none;'") + ' class="reply-actions"' + loginCheck + '>';
+            html += '          <button class="reply-button" data-id="' + comments[i].id + '">답글쓰기</button>';
+            html += '          <button class="edit-reply"' + style + '>수정</button>';
+            html += '          <button class="delete-reply"' + style + '>삭제</button>';
             html += '        </div>';
             html += '      </div>';
             html += '    </div>';
-            
             html += '  <div class="edit-form-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
             html += '    <form class="edit-form-content" data-id="' + comments[i].id + '">';
             html += '      <textarea placeholder="댓글을 수정하세요." rows="4" class="replyContent"></textarea>';
-            html += '      <button type="submit" class="submit-edit-edit" ' +  style + '>수정</button>';
+            html += '      <button type="submit" class="submit-edit-edit"' + style + '>수정</button>';
             html += '    </form>';
             html += '  </div>';
-            
-            html += '  <div class="reply-form-form" style="display: none;" data-step="' + comments[i].step  + '" data-ref="' + comments[i].refGroup + '">';
+            html += '  <div class="reply-form-form" data-name="' + comments[i].userNickName + '" style="display: none;" data-step="' + comments[i].step + '" data-ref="' + comments[i].refGroup + '">';
             html += '    <form class="reply-form-content" data-id="' + comments[i].id + '">';
             html += '      <textarea placeholder="대댓글을 입력하세요." rows="4" class="replyContent"></textarea>';
             html += '      <button type="submit" class="submit-reply-reply">등록</button>';
             html += '    </form>';
             html += '  </div>';
-            html += ' </div>'; 
-            
+            html += ' </div>';
         }
 
         if (comments[i].parentNum == 0 && comments[i].refOrder == 0) {
@@ -905,53 +973,51 @@ function renderComments(comment) {
     }
 
     html += '</div>'; // comments div 닫기
-    
+
     $('.comments-section').html(html);
-    
+
     paging(pi);
-    
+}
+function paging(pi) {
+    let htmlPI = '';
+
+    if (pi.listCount != 0) {
+        if (pi.currentPage == 1) {
+            htmlPI += "<button class='page bt' disabled>이전</button>";
+        } else {
+            htmlPI += "<button class='page bt' data-page='" + (pi.currentPage - 1) + "'>이전</button>";
+        }
+
+        // 페이지 번호 버튼 렌더링
+        for (let i = 1; i <= pi.endPage; i++) {
+            if (i == pi.currentPage) {
+                htmlPI += '<button class="page" data-page="' + i + '" disabled>' + (i) + '</button>';
+            } else {
+                htmlPI += "<button class='page' data-page='" + i + "'>" + (i) + "</button>";
+            }
+        }
+
+        // Next 버튼 렌더링
+        if (pi.currentPage == pi.maxPage) {
+            htmlPI += "<button class='page bt' disabled>다음</button>";
+        } else {
+            htmlPI += "<button class='page bt' data-page='" + (pi.currentPage + 1) + "'>다음</button>";
+        }
+
+        $('.pagination').html(htmlPI);
+    } else {
+        $('.pagination').html("");
+    }
 }
 
-function paging(pi){
-	
-	let htmlPI = '';
-	
-	if(pi.listCount != 0){
-		
-   if (pi.currentPage == 1) {
-	   htmlPI += "<button class='page bt' disabled>이전</button>";
-   } else {
-	   htmlPI += "<button class='page bt' onclick='loadPage(" + (pi.currentPage - 1) + ")'>이전</button>";
-   }
+$(document).on('click', '.page', function(event) {
+    const page = $(this).data('page');
+    if (page) {
+		    event.stopPropagation(); // 클릭 이벤트 전파 방지
+        loadPage(page);
+    }
+});
 
-   // 페이지 번호 버튼 렌더링
-   for (let i = 1; i <= pi.endPage; i++) {
-       if (i == pi.currentPage) {
-    	   htmlPI += '<button class="page" disabled active>' + (i) + '</button>';
-       } else {
-    	   htmlPI += "<button class='page'" + (pi.currenPage == i ? "disabled active" : "")  + " onclick='loadPage(" + i + ")'>" + (i) + "</button>";
-       }
-   }
-
-   // Next 버튼 렌더링
-   if (pi.currentPage == pi.maxPage) {
-	   htmlPI += "<button class='page bt' disabled>다음</button>";
-   } else {
-	   htmlPI +=  "<button class='page bt' onclick='loadPage(" + (pi.currentPage + 1) + ")'>다음</button>";
-   }
-
-   $('.pagination').html(htmlPI);
-   
-   
-	}else{
-		
-		$('.pagination').html("");
-		
-	}
-	
-	
-
-}
 
 
 //댓글 수정 버튼 클릭 시 수정 처리
@@ -1122,6 +1188,55 @@ function timeForToday(value) {
 
 
 </script> 
+
+
+
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script>
+  Kakao.init('${kakaoKey}');
+</script>
+<script>
+/*
+const content = {
+	  title: "${board.postTitle}",
+	  description:"likecount: ${board.postLike} commentCount: ${board.postComment}",
+	  imageUrl: '',
+	  link: {
+	    mobileWebUrl: 'https://developers.kakao.com',
+	    androidExecParams: 'test',
+	  },
+}
+*/
+Kakao.Link.createDefaultButton({
+  container: '#kakao-link-btn',
+  objectType: 'feed', 
+  content: {
+    title: "${board.postTitle}",
+	  description:"좋아요수 ${board.postLike} 댓글수 ${board.postComment}",
+    imageUrl: '',
+    link: {
+      mobileWebUrl: 'https://developers.kakao.com',
+      androidExecParams: 'test',
+    },
+  }
+  /*
+  buttons: [
+    {
+      title: '웹으로 이동',
+      link: {
+        mobileWebUrl: 'https://developers.kakao.com',
+      },
+    },
+    {
+      title: '앱으로 이동',
+      link: {
+        mobileWebUrl: 'https://developers.kakao.com',
+      },
+    },
+  ],
+  */
+})
+</script>
 
 
 </body>

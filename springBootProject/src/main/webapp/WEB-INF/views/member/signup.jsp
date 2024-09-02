@@ -8,7 +8,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
- 
+ /*
     div.create{
     width: 800px;
     text-align: center;
@@ -23,10 +23,6 @@
     border-top: 3px solid black;
     margin-right: auto;
     margin-left: auto;
-    }
- 
-    td{
-    border-bottom: 1px dotted black;
     }
  
     caption{
@@ -102,6 +98,14 @@
     border: 2px solid black;
     }
     
+    .but4{cursor: pointer;}
+  */  
+.smallfont{font-size:0.8em;}
+.nocheck{display:none;}
+.usable{color:green;}
+.unusable{color:red;}
+
+
     p{
     font-size: 0.7em;
     }
@@ -121,22 +125,195 @@
     .num{
     color: red;
     }
-    .but4{cursor: pointer;}
-    
-.smallfont{font-size:0.8em;}
-.nocheck{display:none;}
-.usable{color:green;}
-.unusable{color:red;}
+     td{
+    border-bottom: 1px dotted gray;
+    }
+
+/* 기본 스타일 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* 콘텐츠 스타일 */
+.content {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+/* 제목 스타일 */
+.innerOuter h2 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+}
+
+/* 폼 컨테이너 스타일 */
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 폼 요소 스타일 */
+.insert table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 10px 20px;
+}
+
+.insert td {
+    padding: 10px;
+    vertical-align: top;
+}
+
+.insert .col1 {
+    font-weight: 600;
+    color: #34495e;
+}
+
+.insert .col2 {
+    color: #7f8c8d;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+select:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+    color: #95a5a6;
+}
+
+/* 버튼 스타일 */
+input[type="button"],
+button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type="button"] {
+    background-color: #ecf0f1;
+    color: #34495e;
+}
+
+input[type="button"]:hover {
+    background-color: #bdc3c7;
+}
+
+button {
+    background-color: #3498db;
+    color: #fff;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* 버튼 상태 */
+.but3 {
+    background-color: #ecf0f1;
+    color: #34495e;
+}
+
+.but4 {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.but4:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* 결과 메시지 스타일 */
+.nocheck {
+    font-size: 0.9em;
+    color: #e74c3c;
+}
+
+.smallfont {
+    font-size: 0.8em;
+}
+
+/* 주소 입력 스타일 */
+#sample6_postcode,
+#sample6_address,
+#sample6_detailAddress,
+#sample6_extraAddress {
+    margin-bottom: 10px;
+}
+
+#sample6_postcode,
+#sample6_address {
+    display: inline-block;
+    width: calc(100% - 50px);
+}
+
+#sample6_detailAddress,
+#sample6_extraAddress {
+    width: calc(100% - 50px);
+}
+
+input[type="button"] {
+    background-color: #e67e22;
+    color: #fff;
+}
+
+input[type="button"]:hover {
+    background-color: #d35400;
+}
+.create{
+    display: flex;
+    justify-content: center;
+    gap: 72px;
+}
+
+#sample6_extraAddress{
+	width: 260px;
+}
+#sample6_postcode{
+width: 241px;
+}
+.content button, input[type='button']{
+border-radius: 14px;
+}
 </style>
 </head>
 <body>
 
 	<jsp:include page="/WEB-INF/views/common/header.jsp"/>
 
-	<div class="content">
+	<div class="content" style="height: auto;">
 	    <br><br>
-	    <div class="innerOuter">
-	        <h2 style="margin-left: 156px;">회원가입</h2>
+	    <div>
+	        <h2 style="text-align: center;">회원가입</h2>
 	        <br>
 	
 	         <form method="post" action="${contextPath}/member/signup.do" id="signup_form">
@@ -189,19 +366,26 @@
 				    <tr>
 				        <td class="col1">이메일</td>
 				        <td class="col2">
-				            <input type="text" name="mail" required>
+				            <input type="text" name="mail" style="width: 150px;" required>
 				            <span class="a">@</span>
-				            <input type="text" name="email" required>
-				            <select name="mailslc" id="mailSelect">
+				            <input type="text" name="email" style="width: 150px;" required>
+				            <select name="mailslc" id="mailSelect"  style="width: 150px;">
 				                <option id="self" value="">직접입력</option>
 				                <option value="naver.com">naver.com</option>
 				                <option value="gmail.com">gmail.com</option>
 				                <option value="daum.com">daum.com</option>
 				                <option value="yahoo.com">yahoo.com</option>
 				            </select>
-				            <button type="button" class="btn btn-primary" id="myBtn2">인증하기</button>
+				            <button type="button" id="myBtn2">인증하기</button>
 				        </td>
-				    </tr>
+				     </tr>
+				   	 <tr>
+				   	 			<td style="border-bottom:none;"></td>
+				   	 			<td id="mailCheck_tr" style="display: none;">
+						        <input style="width: 200px;" type="text" id="checkMessage" value="" placeholder="인증번호를 입력하세요.">
+								    <button id="checkBtn" type="button">확인</button>
+							    </td>	
+				     </tr>
 				     <tr>
 				     		<td class="col1">주소</td>
 				     		<td>
@@ -218,8 +402,8 @@
 				 
 					  <div class="create">
 					    
-					        <input class="but3" type="button" value="가입취소" onclick="">
-					        <button class="but4" type="submit" disabled>회원가입</button>
+					        <input class="but3" type="button" value="가입취소" onclick="location.href='${contextPath}/'">
+					        <button class="but4" id="signup_button" type="submit" disabled>회원가입</button>
 					    
 					  </div>
 				  </div>
@@ -228,43 +412,27 @@
 	    <br><br>
 	</div>
 	
-	
-	<!-- 이메일 인증 모달 창 -->
-	  <!-- Modal -->
-  <div class="modal fade" id="myModal2" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">이메일 인증</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        	
-        	<div style="margin:120px">
-				    <div style="margin-bottom: 10px">
-				        <h6 style="width: 305px; ">입력하신 이메일로 인증번호가 발송되었습니다.<br> 아래 입력칸에 인증 번호를 입력해주세요.<br> (시간이 소요될 수 있습니다. 잠시만 기다려주세요..)</h6>
-				    </div>
-				    <div style="text-align: center;">
-				        <input type="text" id="checkMessage" value="">
-						    <button id="checkBtn">확인</button>
-				    </div>
-				</div>
-				
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
+
+
+				    
 <!-- ------------------------------------이메일 인증 스크립트------------------------------ -->
 <script>
+$("#signup_button").on("click", function(){
+		event.preventDefault();
+    let checkButton = $("#checkBtn");
+    if(checkButton.prop("disabled") == false) {  // 맞으면 true
+        alert("이메일 인증이 완료되지 않았습니다.");
+        return;
+    }else{
+    	$("#signup_form").submit();
+    }
+});
+
 $(document).on("click", "#myBtn2", function(event){
 	
 	event.preventDefault();
   event.stopPropagation();
-	
+  
 	
 	var mail = $("input[type='text'][name='mail']").val().trim();
   var email = $("input[type='text'][name='email']").val().trim();
@@ -273,20 +441,38 @@ $(document).on("click", "#myBtn2", function(event){
 	var regex = /^(\w+\.)+\w+$/;
 	
 	if( mail.length != 0 && email.length !== 0 && regex.test(email) ){
-		$("#myModal2").modal({backdrop: false});
-		
 		$.ajax({
-			url:"${contextPath}/mail/mailSend.do",
+			url:"${contextPath}/member/emailCheck.do",
 			type:"post",
-			data:"mail=" + mails + "&distinction=sign",
+			data:{mails:mails},
+			async:false, //동기식으로 진행
 			success:function(response){
-				console.log("ajax통신 성공");
+				if(response > 0){
+					alert("중복된 이메일입니다. 다시 확인해주세요.");
+				}else{
+					
+					alert("입력하신 이메일로 인증번호가 발송되었습니다.");
+					$("#mailCheck_tr").css("display", "block");
+					
+					$.ajax({
+						url:"${contextPath}/mail/mailSend.do",
+						type:"post",
+						data:"mail=" + mails + "&distinction=sign",
+						success:function(response){
+							console.log("ajax통신 성공");
+						},
+						error:function(request){
+							console.log("ajax통신 오류");
+							alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+						}
+					})
+					
+				}
 			},
-			error:function(request){
-				console.log("ajax통신 오류");
-				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+			error:function(){
 			}
 		})
+		
 		
 	}else{
 		alert("이메일 형식에 맞지 않습니다. 다시 입력해주세요.");
@@ -297,7 +483,7 @@ $(document).on("click", "#myBtn2", function(event){
 
 
 $(document).on("click", "#checkBtn", function(){
-		
+
 		var message = $("#checkMessage").val();
 		console.log(message);
 		
@@ -310,12 +496,14 @@ $(document).on("click", "#checkBtn", function(){
 			success:function(response){
 				console.log("response = " + response);
 				if(response == true){
+					 alert("이메일 인증이 완료되었습니다.");
 					 $("input[type='text'][name='mail']").attr("readonly", "true");
 					 $("input[type='text'][name='email']").attr("readonly", "true");
-					 $("#mailSelect").attr("disabled", "true");
-					 alert("이메일 인증이 완료되었습니다.");
-					 $("#myModal2").modal('hide');
-					 $("#but4").css("disabled", "block");
+					 $("#checkMessage").attr("readonly", "true");
+					 $("#mailSelect").attr("readonly", "true");
+					 $("#but4").attr("disabled", "true");
+					 $("#myBtn2").attr("disabled", "true");
+					 $("#checkBtn").attr("disabled", "true");
 					 
 				}else{
 					alert("인증 번호가 틀립니다. 다시 입력해주세요.");
@@ -566,9 +754,9 @@ $(document).on("change", "#mailSelect", function() {
 		function validate(){
 			console.log(idResult, pwdResult, pwdEqualResult, nameResult, neckNameResult);
 			if(idResult && pwdResult && pwdEqualResult && nameResult && neckNameResult){
-				$("#signup_form :submit").removeAttr("disabled");
+				$("#signup_button").removeAttr("disabled");
 			}else{
-				$("#signup_form :submit").attr("disabled", true);
+				$("#signup_button").attr("disabled", true);
 			}
 		}
 		
