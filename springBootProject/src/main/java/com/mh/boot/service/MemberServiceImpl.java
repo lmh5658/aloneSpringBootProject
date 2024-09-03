@@ -105,6 +105,11 @@ public class MemberServiceImpl implements MemberService {
 	public int selectEmailCheck(String mails) {
 		return memberDao.selectEmailCheck(mails);
 	}
+	
+	@Override
+	public String findIdcheck(String checkNickName) {
+		return memberDao.findIdcheck(checkNickName);
+	}
 
 	
 	

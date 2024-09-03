@@ -218,6 +218,17 @@ public class MemberController {
 	public String nickNamecheck(String checkNickName) {
 		return memberService.selectNickNamecount(checkNickName) > 0 ? "NNNNN" : "YYYYY";
 	}
+	
+	/**
+	 * > 쪽지 보내기 AJAX 
+	 *   닉네임으로 아이디 찾기 또는 아이디로 아이디찾기
+	 */
+	@ResponseBody
+	@GetMapping("/findIdcheck.do")
+	public String findIdcheck(String checkNickName) {
+		return memberService.findIdcheck(checkNickName);
+	}
+	
 	/**
 	 * > 회원가입 스프링 시큐리티 적용(BcryptPasswordEncoder) => 랜덤값 암호화
 	 * 	 회원가입 실패 => 이전 화면 + alert

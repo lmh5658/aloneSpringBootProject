@@ -446,7 +446,7 @@ function infoBoardLoad(page){
 	        htmlContent += '        <img src="' + item.userPath + '" alt="Profile Image" class="profile-image" style="height:40px; width:40px;">';
 	        htmlContent += '        <span class="nickname">' + item.writerNickName + '</span>';
 	        htmlContent += '    </div>';
-	        htmlContent += '    <div class="noimage" data-no="' + item.postNo + '" data-type="' + item.postType + '">';
+	        htmlContent += '    <div class="noimage" data-no="' + item.postNo + '" data-type="' + item.postType + '" data-writer="' + item.writerNo +'">';
 	            
 	        if (firstImgStart != -1) {
 	            htmlContent += item.postContent.substring(firstImgStart, firstImgEnd + 1);
@@ -514,8 +514,8 @@ $(document).on("click", ".noimage", function(){
 	
 	let postNo = $(this).data("no");
 	let postType= $(this).data("type");
-	let writerNo = $(this).data("writer");
-	if("${loginUser.userNo}" == writerNo){
+	let writer = $(this).data("writer");
+	if("${loginUser.userNo}" == writer){
 		location.href="${contextPath}/community/detail.page?postNo=" + postNo + "&postType=" + postType;		
 	}else{
 		location.href="${contextPath}/community/increase.do?postNo=" + postNo + "&postType=" + postType;

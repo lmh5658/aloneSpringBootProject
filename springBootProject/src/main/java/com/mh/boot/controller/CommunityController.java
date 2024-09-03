@@ -429,14 +429,17 @@ public class CommunityController {
 	 * 실패시 => return 0
 	 */
 	@GetMapping("/deleteBoard.do")
-	public String deleteBoard(String type, RedirectAttributes redirectAttribute) {
+	public String deleteBoard(String postType, int postNo, RedirectAttributes redirectAttribute) {
 		
-		int result = communityService.updateDeleteBoard(type);
+		int result = communityService.updateDeleteBoard(postNo);
+		
 		if(result > 0) {
-			redirectAttribute.addFlashAttribute("alertMsg", type.equals("J") ? "자유 게시판 게시글 삭제가 완료되었습니다." 
-																	 : "공지사항 게시판 게시글 삭제가 완료되었습니다.");
+			Map<String, Object> params = new HashMap<>();
+			params.put("postNo", postNo);
+			communityService.deleteAlarmMessage(params);
+			redirectAttribute.addFlashAttribute("alertMsg", "게시글 삭제가 완료되었습니다.");
 		}
-		return "redirect:/community/board.do";
+		return postType.equals("I") ? "redirect:/community/infoBoard.do" : postType.equals("G") ? "redirect:/community/noticeBoard.do" : "redirect:/community/board.do";
 	}
 	
 	/**
@@ -701,12 +704,14 @@ public class CommunityController {
 	@GetMapping("/deleteAlarmMessage.do")
 	public Map<String, Object> deleteAlarmMessage(int alarmNo, HttpSession session) {
 		MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		Map<String, Object> params = new HashMap<>();
+		params.put("alarmNo", alarmNo);
 		int count = 0;
 		if(member != null) {
 			count = communityService.selectAlarmCount(member.getUserId());
 		}
 		Map<String, Object> map = new HashMap<>();
-		map.put("success", communityService.deleteAlarmMessage(alarmNo));
+		map.put("success", communityService.deleteAlarmMessage(params));
 		map.put("count", count);
 		
 		return map;

@@ -320,6 +320,12 @@
  		  FROM TB_MEMBER
  		 WHERE EMAIL = #{mails}
  	</select>
+ 	
+ 	<select id="findIdcheck" resultType="string">
+ 		SELECT USER_ID
+ 		  FROM TB_MEMBER
+ 		 WHERE (NICKNAME = #{checkNickName} OR USER_ID = #{checkNickName})
+ 	</select>
 
   
 

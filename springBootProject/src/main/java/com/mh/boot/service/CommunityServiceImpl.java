@@ -216,8 +216,8 @@ public class CommunityServiceImpl implements CommunityService{
 	
 
 	@Override
-	public int updateDeleteBoard(String type) {
-		return communityDao.updateDeleteBoard(type);
+	public int updateDeleteBoard(int postNo) {
+		return communityDao.updateDeleteBoard(postNo);
 	}
 
 	@Override
@@ -258,8 +258,8 @@ public class CommunityServiceImpl implements CommunityService{
 	}
 
 	@Override
-	public int deleteAlarmMessage(int postNo) {
-		return communityDao.deleteAlarmMessage(postNo);
+	public int deleteAlarmMessage(Map<String, Object> map) {
+		return communityDao.deleteAlarmMessage(map);
 	}
 	
 	@Override
@@ -276,6 +276,8 @@ public class CommunityServiceImpl implements CommunityService{
 	public int selectAlarmCount(String userId) {
 		return communityDao.selectAlarmCount(userId);
 	}
+
+	
 
 	
 	

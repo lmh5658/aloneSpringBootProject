@@ -499,7 +499,7 @@ position: absolute;
         <a href="${contextPath}/community/doranMain.page">홈</a>
         <a href="${contextPath}/community/noticeBoard.do">공지사항</a>
         <a href="${contextPath}/community/board.do">자유게시판</a>
-        <a href="${contextPath}/community/infoBoard.do">강아지 정보</a>
+        <a href="${contextPath}/community/infoBoard.do">정보게시판</a>
     </div>
     <div><img alt="" src=""></div>
     <div style="width: 252px; display: flex; justify-content: center; align-items: center;">
@@ -539,9 +539,11 @@ position: absolute;
 	</nav>
 	
 	<!-- Tost Message Div -->
-	<div id="tost_message" style="z-index: 10; position: static;">
-	    <!-- 내용 -->
-	</div>
+	
+		<div id="tost_message" style="z-index: 10; position: static;">
+		    <!-- 내용 -->
+		</div>	
+	
     
     
  <!-- 로그인 클릭 시 뜨는 모달 (기존에는 안보이다가 위의 a 클릭시 보임) -->
@@ -642,7 +644,7 @@ function loadMessage(page){
                         receiveHtml += '            <span class="fw-bold">내용:</span>';
                         receiveHtml += '            <p class="fw-normal">' + item.content + '</p>';
                         receiveHtml += '        </div>';
-                        receiveHtml += '        <div class="d-flex justify-content-end mt-2">';
+                        receiveHtml += '        <div class="d-flex justify-content-end mt-2" style="gap:18px;">';
                         receiveHtml += '            <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#replyModal" onclick="reply(\'' + item.sendId + '\');">답장</button>';
                         receiveHtml += '            <button class="btn btn-outline-secondary btn-sm" onclick="moveToTrash(\'' + item.messageNo + '\')">보관</button>';
                         receiveHtml += '            <button class="btn btn-outline-danger btn-sm me-2" onclick="deleteReceiveMessage(\'' + item.messageNo + '\')">삭제</button>';
@@ -688,7 +690,7 @@ function loadMessage(page){
                         sendHtml += '            <span class="fw-bold">내용:</span>';
                         sendHtml += '            <p class="fw-normal">' + item.content + '</p>';
                         sendHtml += '        </div>';
-                        sendHtml += '        <div class="d-flex justify-content-end">';
+                        sendHtml += '        <div class="d-flex justify-content-end" style="gap:18px;">';
                         sendHtml += '            <button class="btn btn-outline-danger btn-sm me-2" onclick="collectMessage(\'' + item.messageNo + '\')">회수</button>';
                         sendHtml += '            <button class="btn btn-outline-danger btn-sm me-2" onclick="deleteSendMessage(\'' + item.messageNo + '\')">삭제</button>';
                         sendHtml += '        </div>';
@@ -860,10 +862,11 @@ $(document).on('click', '.page', function(event) {
 <script>
 
 // 답장보내기 모달창 뒤로가기 스크립트
-$("#replyBack").on("click", function(){
-	$("#messageModal").modal("show");
-})
-
+$(document).ready(function() {
+    $("#replyBack").on("click", function() {
+        $("#messageModal").modal("show");
+    });
+});
 
 function toggleMessageDetail(messageId) {
     var detail = document.getElementById(messageId);
@@ -996,9 +999,9 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
 		let postType = data[5];
 		let postNo = data[6];
 		$("#alarm_count").html(count == 0 ? "" : count);
-		let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true' style='cursor:pointer;'>";
+		let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true'  style='cursor:pointer; position: fixed; z-index:100;'>";
        toast += 	"<div class='toast-header'><i class='fas fa-bell mr-2'></i><strong class='mr-auto'>알림</strong>";
-       toast += 	"<small class='text-muted'>just now</small><button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>";
+       toast += 	"<small class='text-muted'></small><button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>";
        toast += 	"<span aria-hidden='true' class='hide'>&times;</span></button>";
        toast += 	"</div> <div class='toast-body' onclick='alarmOpen()'><b>" + nickName  +  "님이 남긴 댓글에 새 댓글이 달렸습니다. 확인해보세요!</div></div>";
        
@@ -1029,9 +1032,9 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
     		let postType = data[5];
     		let postNo = data[6];
     		$("#alarm_count").html(count == 0 ? "" : count);
-    		let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true' style='cursor:pointer;'>";
+    		let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true' style='cursor:pointer; position: fixed; z-index:100;'>";
 	       toast += 	"<div class='toast-header'><i class='fas fa-bell mr-2'></i><strong class='mr-auto'>알림</strong>";
-	       toast += 	"<small class='text-muted'>just now</small><button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>";
+	       toast += 	"<small class='text-muted'></small><button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>";
 	       toast += 	"<span aria-hidden='true' class='hide'>&times;</span></button>";
 	       toast += 	"</div> <div class='toast-body' onclick='alarmOpen()'><b>" + nickName  +  "님 게시글에 새 댓글이 달렸습니다. 확인해보세요!</div></div>";
 	       
@@ -1070,9 +1073,9 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
     	}		
     	*/
     		// toast
-	       let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true' style='cursor:pointer;'>";
+	       let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true'  style='cursor:pointer; position: fixed; z-index:100;'>";
 	       toast += 	"<div class='toast-header'><i class='fas fa-bell mr-2'></i><strong class='mr-auto'>알림</strong>";
-	       toast += 	"<small class='text-muted'>just now</small><button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>";
+	       toast += 	"<small class='text-muted'></small><button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>";
 	       toast += 	"<span aria-hidden='true' class='hide'>&times;</span></button>";
 	       toast += 	"</div> <div class='toast-body'  data-bs-toggle='modal' data-bs-target='#messageModal'><b>"+ sendNickName + "(" + maskedId + ")" +  "님의 쪽지가 도착 했어요!<br><b> 제목 :</b>" + title + "<br></div></div>";
 	       $("#tost_message").append(toast);   // msgStack div에 생성한 toast 추가
@@ -1157,24 +1160,22 @@ $(document).on("click", '#sendBtn', function(e){
 
 	  if(confirm("정말로 쪽지를 보내시겠습니까?")){
 	  		 $.ajax({
-	           url: '${contextPath}/member/nickNamecheck.do',
+	           url: '${contextPath}/member/findIdcheck.do',
 	           type: 'get',
 	           dataType: 'text',
 	           data: {
-	           		receiveId: receiveId,
-	               content: content,
-	               title: title
+           		 checkNickName:receiveId
 	           },
-	           success: function(response){
+	           success: function(userId){
 	          	 
-	               if(response == "YYYYY"){
+	               if(userId){
 	              	 
 	                   $.ajax({
 	                       url: '${contextPath}/member/insertSend.do',
 	                       type: 'post',
 	                       dataType: 'text',
 	                       data: {
-	                       		receiveId: receiveId,
+	                       		 receiveId: userId,
 	                           content: content,
 	                           title: title
 	                       },
@@ -1520,7 +1521,7 @@ function collectMessage(messageNo){
 </div>
 
 
-<!-- 네이버 쪽지함 스타일 모달 -->
+<!-- 쪽지함  모달 -->
 <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -1584,7 +1585,7 @@ function collectMessage(messageNo){
 			                        <form id="newMessageForm">
 			                            <div class="mb-3">
 			                                <label for="recipient" class="form-label"></label>
-			                                <input type="text" class="form-control" id="recipient" placeholder="아이디를 입력하세요.">
+			                                <input type="text" class="form-control" id="recipient" placeholder="아이디 또는 닉네임을 입력하세요.">
 			                            </div>
 			                            <div class="mb-3">
 			                                <label for="messageTitle" class="form-label">제목</label>

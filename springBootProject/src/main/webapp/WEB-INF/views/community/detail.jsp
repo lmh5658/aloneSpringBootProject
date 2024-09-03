@@ -388,6 +388,35 @@ border: 1px solid #ced4da;
 resize: none;
     border: 1px solid #dddddd;
 }
+ .reply {
+      position: relative; /* 버튼과 메시지 박스를 이 기준으로 배치 */
+    }
+  .comment-header {
+      position: relative; /* 버튼과 메시지 박스를 이 기준으로 배치 */
+    }
+
+    .message_btn {
+      width: 51px;
+      border: none;
+      background: none;
+      position: relative; /* 메시지 박스를 버튼 기준으로 위치시키기 위해 */
+    }
+
+    .message-box {
+      position: absolute; /* 버튼을 기준으로 절대 위치 설정 */
+      border: 1px solid black;
+      width: 72px; /* 적절한 너비 설정 */
+      height: 25px; /* 적절한 높이 설정 */
+      background: #f9f9f9;
+      display: none; /* 초기 상태에서 숨김 */
+      z-index: 1000; /* 버튼 위에 위치하도록 설정 */
+      right: 0; /* 버튼의 오른쪽으로 위치 조정 */
+      bottom: -30px; /* 버튼 아래쪽으로 위치 조정 (버튼 높이와 간격 조정) */
+      cursor: pointer;
+      background: rgb(132, 181, 233);
+    color: white;
+    border: 1px solid #adb5bd;
+    }
 </style>
 </head>
 
@@ -461,13 +490,18 @@ resize: none;
 			    <c:if test="${ loginUser.userNo == board.writerNo }">
 						<div style="display: flex;justify-content: flex-end;gap: 23px;">
 							<button type="button" id="modify_button">수정</button>
-							<button type="button" id="delete_button" onclick="location.href='${contextPath}/community/deleteBoard.do?postNo=${board.postNo}&postType=${board.postType}'">삭제</button>
+							<button type="button" id="delete_button">삭제</button>
 						</div>
 			    </c:if>
 			    
 			    <script>
 			    	$("#modify_button").on("click", function(){
 			    		location.href="${contextPath}/community/modifyForm.page?postNo=${board.postNo}&postType=${board.postType}";
+			    	})
+			    	$("#delete_button").on("click", function(){
+			    		if(confirm("게시글을 삭제 하시겠습니까?")){
+			    		 location.href="${contextPath}/community/deleteBoard.do?postNo=${board.postNo}&postType=${board.postType}";			    			
+			    		}
 			    	})
 			    </script>
 				<!-- 게시글 E-->
@@ -915,7 +949,10 @@ function renderComments(comment) {
         if (comments[i].parentNum == 0 && comments[i].refOrder == 0) {
             html += '<div class="comment">';
             html += '  <div class="comment-header">';
+            html += '   <button class="message_btn">';
             html += '    <strong class="user-nickname">' + comments[i].userNickName + '</strong>';
+            html += '  	</button>';
+            html += '    <div class="message-box" data-writerno="' + comments[i].userNo + '" data-name="' + comments[i].userNickName + '" style="left: 26px;top: 18px;" data-bs-toggle="modal" data-bs-target="#messageModal" data-button-class="nav-link active">쪽지보내기</div>';	
             html += '    <p class="comment-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>") + '</p>';
             html += '    <span class="comment-date">' + timeForToday(comments[i].registDt) + '</span>';
             html += '    <div ' + (buttonStyle ? "" : "style='display:none;'") + ' class="comment-actions"' + loginCheck + '>';
@@ -942,15 +979,18 @@ function renderComments(comment) {
             html += '  <div class="replies" data-no="' + comments[i].id + '">';
             html += '    <div class="reply">';
             html += '      <div class="reply-header" data-order="' + comments[i].refOrder + '">';
+            html += '      <button class="message_btn">';
             html += '        <strong class="user-nickname" data-step="' + comments[i].step + '">' + comments[i].userNickName + '</strong>';
-            html += '        <p class="reply-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>") + '</p>';
-            html += '        <span class="reply-date">' + timeForToday(comments[i].registDt) + '</span>';
-            html += '        <div ' + (buttonStyle ? "" : "style='display:none;'") + ' class="reply-actions"' + loginCheck + '>';
-            html += '          <button class="reply-button" data-id="' + comments[i].id + '">답글쓰기</button>';
-            html += '          <button class="edit-reply"' + style + '>수정</button>';
-            html += '          <button class="delete-reply"' + style + '>삭제</button>';
-            html += '        </div>';
+            html += '      </button>';
+            html += '      <div class="message-box" data-writerno="' + comments[i].userNo + '" data-name="' + comments[i].userNickName + '" style="left: 37px;top: 27px;" data-bs-toggle="modal" data-bs-target="#messageModal">쪽지보내기</div>';
+            html += '      <p class="reply-content">' + (buttonStyle ? comments[i].content : "<b style='color:gray'>삭제된 댓글입니다.</b>") + '</p>';
+            html += '      <span class="reply-date">' + timeForToday(comments[i].registDt) + '</span>';
+            html += '      <div ' + (buttonStyle ? "" : "style='display:none;'") + ' class="reply-actions"' + loginCheck + '>';
+            html += '        <button class="reply-button" data-id="' + comments[i].id + '">답글쓰기</button>';
+            html += '        <button class="edit-reply"' + style + '>수정</button>';
+            html += '        <button class="delete-reply"' + style + '>삭제</button>';
             html += '      </div>';
+            html += '     </div>';
             html += '    </div>';
             html += '  <div class="edit-form-form" style="display: none;" data-ref="' + comments[i].refGroup + '">';
             html += '    <form class="edit-form-content" data-id="' + comments[i].id + '">';
@@ -978,6 +1018,36 @@ function renderComments(comment) {
 
     paging(pi);
 }
+
+// 닉네임 클릭시 쪽지보내기 모달나타는 스크립트---------------------
+var modal = new bootstrap.Modal(document.getElementById('messageModal'));
+$(document).on('click', '.message-box', function() {
+	
+    let writerNo = $(this).data("writerno");
+    let nickName = $(this).data("name");
+    console.log(nickName);
+	   modal.show();
+    
+    $('#v-pills-compose-tab').click();
+    $("#recipient").val(nickName);
+});
+
+$(document).on("click", ".btn-close", function(){
+    modal.hide();
+});
+  
+$(document).on("click", ".message_btn", function() {
+    var messageBox = $(this).next('.message-box'); // 버튼 바로 다음에 위치한 .message-box 선택
+    if (messageBox.css('display') == "none") {
+      $(".message-box").css("display", "none");
+      messageBox.css("display", "block"); // 이미 보이는 상태이면 숨김
+    } else {
+    	messageBox.css("display", "none"); // 다른 모든 쪽지 박스 숨김
+    }
+});
+
+//------------------------------------------------
+
 function paging(pi) {
     let htmlPI = '';
 
@@ -1018,6 +1088,9 @@ $(document).on('click', '.page', function(event) {
     }
 });
 
+$(document).on("click", ".message_btn", function(){
+	
+})
 
 
 //댓글 수정 버튼 클릭 시 수정 처리

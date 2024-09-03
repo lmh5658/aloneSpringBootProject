@@ -93,7 +93,7 @@ public interface CommunityService {
 	List<CommunityDto> selectBoardMerge(PageInfoDto pi);
 	
 	
-	int updateDeleteBoard(String type);
+	int updateDeleteBoard(int postNo);
 	
 	List<AttachDto> selectDelFileList(List<String> list);
 	
@@ -105,7 +105,7 @@ public interface CommunityService {
 	
 	List<AlarmDto> selectAlarmMessage(String userId);
 	
-	int deleteAlarmMessage(int postNo);
+	int deleteAlarmMessage(Map<String, Object> map);
 	
 	int selectInfoCount(String search);
 	
@@ -113,6 +113,8 @@ public interface CommunityService {
 	
 	//알람 갯수조회
 	int selectAlarmCount(String userId);
+	
+	
 	
 	
 }

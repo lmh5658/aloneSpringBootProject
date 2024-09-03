@@ -163,6 +163,8 @@
 	        TB_COMMUNITY C
 		 WHERE 
 		     POST_TYPE = #{type}
+		   AND 
+		  	 POST_STATUS = 'Y'
 		 <choose>
 		 	<when test="select != null and !select.equals('') ">
 		  ORDER
@@ -193,6 +195,7 @@
 				         ,POST_TYPE
 				    FROM TB_COMMUNITY
 				    WHERE POST_TYPE = 'G'
+				      AND POST_STATUS = 'Y'
 				)
 				SELECT POST_NO
 				     ,POST_TITLE
@@ -219,8 +222,10 @@
 				     ,POST_TYPE
 				FROM TB_COMMUNITY
 				WHERE POST_TYPE = 'J'
-				ORDER BY POST_TYPE ASC
-        			 , POST_NO DESC
+				  AND POST_STATUS = 'Y'
+				ORDER 
+					 BY POST_TYPE ASC
+        		, POST_NO DESC
 			]]>	
 	</select>
 	
@@ -691,7 +696,7 @@
 				, USER_ID
 				, POST_NO
 				, POST_TYPE
-		  FROM TB_ALARM		
+		  FROM TB_ALARM
 		 WHERE USER_ID = #{userId}
 	</select>
 	
@@ -704,7 +709,16 @@
 	
 	<delete id="deleteAlarmMessage">
 		DELETE FROM TB_ALARM
-		 WHERE ALARM_NO = #{alarmNo}
+		<where>
+			<choose>
+				<when test="alarmNo != null and !alarmNo.equals('')">
+			  ALARM_NO = #{alarmNo}			
+				</when>
+				<otherwise>
+				POST_NO = #{postNo}
+				</otherwise>
+			</choose>
+		</where>
 	</delete>
 	<select id="selectInfoCount" resultType="_int">
 		SELECT COUNT(*)

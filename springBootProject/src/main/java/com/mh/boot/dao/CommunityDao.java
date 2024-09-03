@@ -179,8 +179,8 @@ public class CommunityDao {
 		return sqlSessionTemplate.selectList("communityMapper.selectBoardMerge", null, rowBounds);
 	}
 	
-	public int updateDeleteBoard(String type) {
-		return sqlSessionTemplate.update("communityMapper.updateDeleteBoard", type);
+	public int updateDeleteBoard(int postNo) {
+		return sqlSessionTemplate.update("communityMapper.updateDeleteBoard", postNo);
 	}
 	
 	public int updateWriter(CommunityDto community) {
@@ -208,8 +208,8 @@ public class CommunityDao {
 		return sqlSessionTemplate.selectList("communityMapper.selectAlarmMessage", userId);
 	}
 	
-	public int deleteAlarmMessage(int postNo) {
-		return sqlSessionTemplate.delete("communityMapper.deleteAlarmMessage", postNo);
+	public int deleteAlarmMessage(Map<String, Object> map) {
+		return sqlSessionTemplate.delete("communityMapper.deleteAlarmMessage", map);
 	}
 	
 	public int selectInfoCount(String search) {
@@ -224,4 +224,6 @@ public class CommunityDao {
 	public int selectAlarmCount(String userId) {
 		return sqlSessionTemplate.selectOne("communityMapper.selectAlarmCount", userId);
 	}
+	
+	
 }

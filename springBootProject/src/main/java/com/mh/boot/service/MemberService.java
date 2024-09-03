@@ -56,5 +56,8 @@ public interface MemberService {
 	//이메일 중복체크
 	int selectEmailCheck(String mails);
 	
+	//아아디&닉네임으로 아이디찾기
+	String findIdcheck(String checkNickName);
+	
 	
 }

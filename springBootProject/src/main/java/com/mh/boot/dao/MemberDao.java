@@ -88,6 +88,8 @@ public class MemberDao {
 		return sqlSessionTemplate.selectOne("memberMapper.selectEmailCheck", mails);
 	}
 
-	
+	public String findIdcheck(String checkNickName) {
+		return sqlSessionTemplate.selectOne("memberMapper.findIdcheck", checkNickName);
+	}
 
 }
