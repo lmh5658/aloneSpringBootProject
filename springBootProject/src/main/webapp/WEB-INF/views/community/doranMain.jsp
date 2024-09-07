@@ -35,9 +35,10 @@ body {
 .popular-posts {
 display: flex;
     flex-direction: row;
-    gap: 15px;
-    background: #ffffff;
-    padding: 20px;
+    gap: 40px;
+		margin-bottom: 114px;
+	
+    
 }
 
 .post-card {
@@ -46,6 +47,7 @@ display: flex;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
 }
 
 .post-title {
@@ -64,18 +66,16 @@ display: flex;
 
 /* 섹션 스타일 */
 .section {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+
     margin-bottom: 20px; /* 아래쪽 여백 */
     flex: 1; /* Flexbox로 균등하게 배치 */
     width: 30%;
+
 }
 
 /* 섹션 헤더 스타일 */
 .section h2 {
-    font-size: 1.5em;
+    font-size: 26px;
     margin-bottom: 15px;
     color: #333; /* 헤더 텍스트 색상 */
 }
@@ -111,12 +111,12 @@ display: flex;
     <div class="container">
         <!-- 날씨 정보를 표시할 베너 추가 -->
         <div class="bannere">
-            <div><h2>인기글</h2></div>
+            <div><h2>인기글👍</h2></div>
             <div class="popular-posts">
                 <c:forEach var="item" items="${likeList}" varStatus="varStatus">
-                    <div class="post-card" style="cursor: pointer;width: 32%;" onclick="location.href='${contextPath}/community/${loginUser.userNo == item.writerNo ? 'detail.page' : 'increase.do'}?postNo=${item.postNo}&postType=${item.postType}'">
+                    <div class="post-card" style="cursor: pointer;width: 30%;" onclick="location.href='${contextPath}/community/${loginUser.userNo == item.writerNo ? 'detail.page' : 'increase.do'}?postNo=${item.postNo}&postType=${item.postType}'">
                         <b style="color: red;">인기글TOP${varStatus.index + 1}</b>
-                        <h3 class="post-title">제목 : ${item.postTitle}</h3>
+                        <h3 class="post-title">${item.postTitle}</h3>
                         <div class="post-meta">
                             <span class="likes">👍 ${item.postLike}</span>
                         </div>
@@ -124,10 +124,10 @@ display: flex;
                 </c:forEach>
             </div>
         </div>
-
-        <div style="    display: flex;height: 500px;gap: 37px;flex-wrap: wrap;flex-direction: column;">
+			<div><h2>최신 게시글📝</h2></div>
+        <div style="display: flex;height: 500px;flex-wrap: wrap;flex-direction: column;">		
             <div class="section">
-                <h2>공지사항</h2>
+                <h2>📢공지사항</h2>
                 <div class="latest-posts" style=" height: 298px;">
                     <ul>
                         <c:forEach var="item" items="${noticeList}">
@@ -137,7 +137,7 @@ display: flex;
                 </div>
             </div>
             <div id="forum" class="section">
-                <h2>자유게시판</h2>
+                <h2>🗨️자유게시판</h2>
                 <div class="latest-posts" style=" height: 298px;">
                     <ul>
                         <c:forEach var="item" items="${boardList}">
@@ -147,7 +147,7 @@ display: flex;
                 </div>
             </div>
             <div id="info" class="section">
-                <h2>강아지 정보</h2>
+                <h2>📚정보게시판</h2>
                 <div class="latest-posts" style=" height: 298px;">
                     <ul>
                         <c:forEach var="item" items="${infoList}">

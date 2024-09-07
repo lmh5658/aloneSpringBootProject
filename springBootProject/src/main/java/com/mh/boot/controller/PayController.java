@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +40,8 @@ public class PayController {
 	private final ProductService productService;
 	private final MemberService memberService;
 	private final PagingUtil pagingUtil;
+	@Value("${portcode}")
+	private String portCode;
 	
 	/**
 	 * > 결제 페이지화면
@@ -57,6 +59,7 @@ public class PayController {
 	    params.put("userNo", userNo);
 	    params.put("productNoArray", productNoArray);
 		
+	    model.addAttribute("portCode", portCode);
 		model.addAttribute("cartList", payService.selectCartPayList(params));
 		model.addAttribute("memberList", memberService.selectMember(userId));
 		model.addAttribute("totalPrice", totalPrice);
@@ -77,6 +80,7 @@ public class PayController {
 		int userNo = ((MemberDto)session.getAttribute("loginUser")).getUserNo();
 	    
 	    
+		model.addAttribute("portCode", portCode);
 		model.addAttribute("list", payService.selectDirectPayList(productNo));
 		model.addAttribute("memberList", memberService.selectMember(userId));
 		model.addAttribute("totalPrice", totalPrice);

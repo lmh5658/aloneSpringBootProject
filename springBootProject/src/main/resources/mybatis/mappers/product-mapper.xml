@@ -13,7 +13,7 @@
     <result column="RPO_SALE_STATUS" property="productSaleStatus"/>
     <result column="PRO_SALE_PRICE" property="productSalePrice"/>
     <result column="PRO_THUMBNAIL_PATH" property="productThumbnailPath"/>
-    <result column="PRO_DETAIL_PATH" property="pDatailPath"/>
+    <result column="PRO_DETAIL_PATH" property="productDatailPath"/>
     <result column="ORDER_CHECK" property="orderCheck"/>
     <result column="REVIEW_CHECK" property="reviewCheck"/>
     <result column="COUNT" property="count"/>
@@ -553,7 +553,6 @@
          , PRODUCT_NAME
          , PRODUCT_PRICE
          , PRO_STATUS
-			   , PRO_STATUS
 			   , PRO_AMOUNT
 			   , RPO_SALE_STATUS
 			   , PRO_SALE_PRICE

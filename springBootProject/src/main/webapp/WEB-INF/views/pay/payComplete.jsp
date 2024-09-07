@@ -40,7 +40,7 @@ body {
     font-size: 2em;
 }
 
-/* 성공 메시지 섹션 스타일 */
+/* 성공 메시지 섹션 스타일 
 .success-message {
     background-color: #ffffff;
     padding: 20px;
@@ -48,7 +48,7 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
+*/
 .success-message img {
     max-width: 150px;
     margin-bottom: 20px;
@@ -180,13 +180,14 @@ body {
 <body>
     <div class="container">
         <header class="header">
-            <h1>🎉 결제가 완료되었습니다! 🎉</h1>
+            <h1> 결제가 완료되었습니다!</h1>
             <section class="success-message">
 	            <div style="display: flex;flex-direction: column;align-items: center;">
 	            	<a href="https://www.flaticon.com/kr/free-stickers/" title="코기 스티커">코기 스티커 제작자: Surfsup.Vector - Flaticon</a>
 				        <img src="${contextPath}/resources/images/free-sticker-corgi-7603210.png" alt="https://www.flaticon.com/kr/free-stickers/">
 			  			</div>
-	             <p>귀하의 결제가 성공적으로 완료되었습니다. 소중한 주문을 주셔서 감사합니다!</p>                
+	             <p>귀하의 결제가 성공적으로 완료되었습니다. 소중한 주문을 주셔서 감사합니다!</p>
+	             <p>주문 상태는 마이페이지 &nbsp;'주문관리'&nbsp; 메뉴에서 자세히 확인하실 수 있습니다.</p>                
             </section>
         </header>
         <main class="main-content">
@@ -201,7 +202,7 @@ body {
                 </ul>
             </section>
             <section class="ordered-items">
-                <h3>결제된 상품 목록</h3>
+                <h3>결제된 상품</h3>
                 <div class="items">
                 <c:forEach var="item" items="${ orderPList }">
                     <div class="item">
@@ -214,11 +215,6 @@ body {
                     </div>  
                 </c:forEach>
                 </div>
-            </section>
-            <section class="next-steps">
-                <h3>다음 단계</h3>
-                <p>주문하신 상품은 곧 배송될 예정입니다. 배송 상태를 확인하시려면 아래 버튼을 클릭하세요.</p>
-                <a href="${contextPath}/member/myPage.page" class="button">배송 상태 확인</a>
             </section>
         </main>
     </div>

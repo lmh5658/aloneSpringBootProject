@@ -55,7 +55,9 @@ body *{
     border: none;
     padding: 10px;
     margin-left: 17px;
- }
+    width: 100px;
+}
+
 #svgDiv svg{cursor: pointer;}
 #header{
     position: sticky;
@@ -63,7 +65,7 @@ body *{
     padding: 5px;
     z-index: 10;
     background-color: white;
-    height: 300px;
+    height: 217px;
     width: 100%;
 }
 
@@ -85,18 +87,18 @@ body {
 
 /* 모달 창 */
 .modals {
-    display: none; /* 기본적으로 숨김 */
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 500px;
+    width: 87%;
+    max-width: 566px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     z-index: 1000;
-    height: 300px;
+    padding: 8px;
 }
 
 
@@ -154,15 +156,13 @@ $(document).ready(function() {
 <div id="modalBackdrop" class="modal-backdrop"></div>
 
 <!-- 모달 창 -->
-<div id="welcomeModal" class="modals" style="height: 392px;">
+<div id="welcomeModal" class="modals" style="height: 402px;">
     <div class="modal-contents">
         <span class="close">&times;</span>
         <div style="text-align: center;">
-	        <h7>${NickName}님 가입해 주셔서 감사합니다!</h7>
-	        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-balloon-heart" viewBox="0 0 16 16">
-	         <path fill-rule="evenodd" d="m8 2.42-.717-.737c-1.13-1.161-3.243-.777-4.01.72-.35.685-.451 1.707.236 3.062C4.16 6.753 5.52 8.32 8 10.042c2.479-1.723 3.839-3.29 4.491-4.577.687-1.355.587-2.377.236-3.061-.767-1.498-2.88-1.882-4.01-.721zm-.49 8.5c-10.78-7.44-3-13.155.359-10.063q.068.062.132.129.065-.067.132-.129c3.36-3.092 11.137 2.624.357 10.063l.235.468a.25.25 0 1 1-.448.224l-.008-.017c.008.11.02.202.037.29.054.27.161.488.419 1.003.288.578.235 1.15.076 1.629-.157.469-.422.867-.588 1.115l-.004.007a.25.25 0 1 1-.416-.278c.168-.252.4-.6.533-1.003.133-.396.163-.824-.049-1.246l-.013-.028c-.24-.48-.38-.758-.448-1.102a3 3 0 0 1-.052-.45l-.04.08a.25.25 0 1 1-.447-.224l.235-.468ZM6.013 2.06c-.649-.18-1.483.083-1.85.798-.131.258-.245.689-.08 1.335.063.244.414.198.487-.043.21-.697.627-1.447 1.359-1.692.217-.073.304-.337.084-.398"/>
-					</svg><br>
-	         <h7>첫 구매 시 [10% 할인]을 드리는 쿠폰을 준비했습니다!<br>(쿠폰은 마이페이지에서 확인이 가능합니다.)</h7>
+	        <h7>안녕하세요, ${NickName}님! 저희 Pet Connect에 회원 가입해 주셔서 감사합니다.<br> 
+	         다양한 커뮤니티 활동과 유용한 정보를 통해 더 많은 즐거움을 경험하실 수 있습니다.  <br>
+	         🎁 구매 시 [10% 할인] 쿠폰이 마이페이지에 준비되어 있습니다. 지금 확인해 보세요!</h7>
         </div>
 				<div style="display: flex;flex-direction: column;align-items: center; justify-content: center; position: relative; margin-top: 31px;">
 				<img style="width: 200px;" src="${contextPath}/resources/images/free-sticker-gift-box-6931311.png" alt="https://www.flaticon.com/kr/free-stickers/">
@@ -173,15 +173,12 @@ $(document).ready(function() {
 
 	<div id="header">
 	
-     <div id="header_1" style="height: 184px;">
-         <div id="header_1_left">
-         		<!-- 
-             <img src="${ contextPath }/resources/images/logo.png" alt="로고이미지">
-            -->
-            아이콘 영역
+     <div id="header_1" style="height: 139px;">
+         <div id="header_1_left" style="display: flex;justify-content: center;align-items: center;font-size: 39px;gap: 14px;">
+            <b style="font-weight: bold;color: #f6d3ca;">Pet Connect</b> <b style="font-size: 43px;color: #9fb8cc;">#</b> 
          </div>
          <div id="header_1_center">
-         		<div class="search-container" style="height: 70px;width: 700px;display: flex;flex-direction: row;justify-content: space-between;">
+         		<div class="search-container" style="height: 57px;width: 700px;display: flex;flex-direction: row;justify-content: space-between;">
 			        <select class="search-select">
 			            <option value="all">통합검색</option>
 			        </select>
@@ -195,15 +192,13 @@ $(document).ready(function() {
          			<c:when test="${ empty loginUser }">
 		             <a href="${ contextPath }/member/signup.page">회원가입</a> | 
 		             <a href="${ contextPath }/member/loginPage.page">로그인</a> |
-		             <a href="${ contextPath }/member/loginPage.page">주문배송</a> |
-		             <a href="${ contextPath }/member/">찾아오는길</a>
+		             <a href="${ contextPath }/member/loginPage.page">주문배송</a>
               </c:when>
               <c:otherwise>
 		             <span>${ loginUser.nickName }님</span> &nbsp;|&nbsp;
 		             <a href="${ contextPath }/member/myPage.page">마이페이지</a> |
 		             <a href="${ contextPath }/member/signout.do">로그아웃</a> |
-		             <a href="${ contextPath }/member/myPage.page">주문배송</a> |
-		             <a href="${ contextPath }/member/">찾아오는길</a>
+		             <a href="${ contextPath }/member/myPage.page">주문배송</a>
              	</c:otherwise>
             </c:choose>
           </div> 

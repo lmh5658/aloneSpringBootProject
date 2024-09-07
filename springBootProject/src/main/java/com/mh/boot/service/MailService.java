@@ -26,12 +26,12 @@ public class MailService {
         try {
             message.setFrom(senderEmail);
             message.addRecipients(MimeMessage.RecipientType.TO, mail);
-            message.setSubject("안녕하세요 도란입니다.");
+            message.setSubject("안녕하세요 Pet Connect# 입니다.");
             String body = "";            
-            body += "<h3>" + "안녕하세요 도란입니다." + "</h3>";
-            body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
-            body += "<h1>" + number + "</h1>";
-            body += "<h3>" + "감사합니다." + "</h3>";
+            body += "<h4>" + "안녕하세요 Pet Connect# 입니다." + "</h4>";
+            body += "<h4>" + "요청하신 인증 번호입니다." + "</h4>";
+            body += "<h3>" + number + "</h3>";
+            body += "<h4>" + "감사합니다." + "</h4>";
             message.setText(body,"UTF-8", "html");
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -41,13 +41,13 @@ public class MailService {
         try {
         	messagePwd.setFrom(senderEmail);
         	messagePwd.addRecipients(MimeMessage.RecipientType.TO, mail);
-        	messagePwd.setSubject("안녕하세요 도란입니다. 임시비밀번호 안내 이메일 입니다.");
+        	messagePwd.setSubject("안녕하세요 Pet Connect# 입니다. 임시비밀번호 안내 이메일입니다.");
             String body = "";            
-            body += "<h3>" + "안녕하세요 도란입니다." + "</h3>";
-            body += "<h3>" + "요청하신 임시 비밀번호 입니다." + "</h3>";
-            body += "<h3>" + "임시비밀번호로 로그인하신 후 반드시 비밀번호 변경을 해주세요." + "</h3>";
-            body += "<h1>" + number + "</h1>";
-            body += "<h3>" + "감사합니다." + "</h3>";
+            body += "<h4>" + "안녕하세요 Pet Connect# 입니다." + "</h4>";
+            body += "<h4>" + "요청하신 임시 비밀번호 입니다." + "</h4>";
+            body += "<h4>" + "임시비밀번호로 로그인하신 후 반드시 비밀번호 변경을 해주세요." + "</h4>";
+            body += "<h3>" + number + "</h3>";
+            body += "<h4>" + "감사합니다." + "</h4>";
             messagePwd.setText(body,"UTF-8", "html");
         } catch (MessagingException e) {
             e.printStackTrace();

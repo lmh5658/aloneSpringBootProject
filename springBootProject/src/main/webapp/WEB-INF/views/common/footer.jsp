@@ -13,19 +13,17 @@
     <div id="footer-1">
         <a href="#">이용약관</a> | 
         <a href="#">개인정보취급방침</a> | 
-        <a href="#">인재채용</a> | 
         <a href="#">고객센터</a> 
     </div>
 
     <div id="footer-2">
         <p id="p1">
-            상호명 : GooDee Academy <br>
-전화 : 02-2108-5900 <br>
-팩스 : 02-2108-5909 <br>
-본관 : (08505) 서울특별시 금천구 가산디지털2로 115 (가산동, 대륭테크노타운3차) 509호, 811호, 1109-1호 <br>
-별관 : (08506) 서울특별시 금천구 가산디지털1로 151 (가산동, 세진 이노플렉스1차) 306호
+            상호명 : pet Connect # <br>
+전화 : 00-1234-1234 <br>
+팩스 : 00-1234-1234 <br>
+찾아오는길 : (01004) 인천시 남동구 구월로192  <br>
         </p>
-        <p id="p2">Copyright ⓒ GooDee Academy. All rights reserved.</p>     
+        <p id="p2">pet Connect# & pet Connect Community.</p>     
     </div>
 </div>
 </body>

@@ -786,12 +786,12 @@ $(document).on("click", "#delete-account", function(){
 $(document).on("click", "#passwordModify", function(){
 	
 	let currentPwd = $("#current-password").val(); //기존 비밀번호
-	let modifyPwd = $("#new-password").val(); //새 비밀번호
-	let checkModifyPwd = $("#confirm-password").val(); //새 비밀번호 확인
+	let modifyPwd = $("#new-password").val().trim(); //새 비밀번호
+	let checkModifyPwd = $("#confirm-password").val().trim(); //새 비밀번호 확인
 	
-	if(confirm("정말로 탈퇴를 진행하시겠습니까?")){
+	
 		
-		if(currentPwd.trim() == "" && modifyPwd.trim() == "" && checkModifyPwd.trim() == ""){
+		if(currentPwd == "" && modifyPwd == "" && checkModifyPwd == ""){
 			alert("비밀번호를 다시 입력해주세요.");
 		}else{
 			
@@ -807,21 +807,20 @@ $(document).on("click", "#passwordModify", function(){
 						if(response == 0){
 							alert("기존 비밀번호가 맞지 않습니다. 다시 입력해주세요.");
 						}else{
-							alert("비밀번호가 정상적으로 변경 되었습니다.");
+							alert("비밀번호 변경이 완료되었습니다. 새 비밀번호로 로그인해 주세요.");
 						}
 					},
 					error:function(){
 						
 					}
 						
-					
 				})		
 			}else{
 				alert("새 비밀번호가 일치하지않습니다. 다시 확인해주세요.");
 			}
 			
 		}
-	}
+	
 			
 			
 	
@@ -924,7 +923,7 @@ $(document).on("click", "#account_deletion", function(){
         <thead>
             <tr>
                 <th>포인트 번호</th>
-                <th>구매 상품</th>
+                <th style="width: 400px;">>구매 상품</th>
                 <th>포인트</th>
                 <th>발급일</th>
                 <th>차감일</th>
@@ -1115,7 +1114,7 @@ $(document).on("click", "#account_deletion", function(){
         <section class="profile-info">
             <h2>나의 회원정보</h2>
             <div class="profile-card" style="display: flex; flex-direction: column; width: 100%">
-                <img src="<c:out value='${ loginUser.userPath }' default='${contextPath}/resources/images/defaultProfile.png' />" alt="프로필 사진" class="profile-img">
+                <img src="<c:out value='${ loginUser.userPath }' default='/upload/image/defaultProfile.png' />" alt="프로필 사진" class="profile-img">
                 <div class="profile-details" style="width: 80%; font-size: 19px;margin-bottom: 45px;">
                     <p><strong>이름 :&nbsp;&nbsp;</strong><strong id="usrNameInfo">${loginUser.userName}</strong></p>
                     <p><strong>닉네임 :&nbsp;&nbsp;</strong><strong id="nickNameInfo">${loginUser.nickName}</strong></p>

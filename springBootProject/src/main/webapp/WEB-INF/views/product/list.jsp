@@ -18,10 +18,12 @@
 }
 
 .filters {
-    width: 20%;;
+width: 20%;
     padding: 20px;
     border-right: 1px solid #ddd;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* 오른쪽에 그림자 추가 */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 1200px;
+    font-size: 14px;
 }
 
 .filters h2 {
@@ -29,6 +31,9 @@
     margin-bottom: 15px;
     border-bottom: 2px solid #dee2e6;
     padding-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
 }
 
 .filter-category h3 {
@@ -45,30 +50,33 @@
     margin-bottom: 10px;
 }
 
+
 .products {
     padding: 20px;
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
     align-content: flex-start;
+    margin-left: 72px;
 }
 
 .product {
-    width: calc(33.333% - 20px); /* 3개 열에 맞게 조정 */
+    flex-shrink: 1;
+    flex-basis: calc(25% - 20px); /* 4개 열에 맞게 설정 */
     border: 1px solid #ddd;
     padding: 15px;
     border-radius: 8px;
     position: relative;
-    height: 450px;
+    height: auto;
+    font-size: 13px;
 }
 
 
 .product img {
     width: 100%;
-    height: 230px;
-    object-fit: cover; /* 이미지 비율 유지 */
+    height: 170px;
+    object-fit: cover;
     border-radius: 8px;
-    margin-bottom: 10px;
     cursor: pointer;
 }
 
@@ -110,11 +118,15 @@ background: #ffffff;
     width: 100%;
     font-size: 1em;
     transition: background 0.3s;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 
 #productName {
-        height: 80px;
+        height: 59px;
     font-size: 1em;
     display: flex;
     align-items: center;
@@ -131,10 +143,10 @@ background: #ffffff;
 }
 
 #totalPrice {
-    display: flex;
+display: flex;
     align-items: center;
     padding-left: 16px;
-        height: 50px;
+    height: 36px;
 }
 
 .noPrice {
@@ -148,7 +160,7 @@ background: #ffffff;
 
 .sold-out-banner {
 position: absolute;
-    top: 120px;
+    top: 86px;
     left: 0;
     width: 100%;
     background: #ffc10791;
@@ -180,7 +192,7 @@ background: white;
 <body>
     <div class="container" style="max-width: 1233px;">
         <aside class="filters">
-            <h2>필터</h2>
+            <h2>필터<button type="button" style="font-size: 13px; border: none; background: none;" id="reset">초기화</button></h2>
             
             <!-- 총 중량 필터 -->
             <section class="filter-category">
@@ -293,6 +305,15 @@ background: white;
 	 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
  <script>
  
+ $("#reset").on("click", function(){
+	 $(".filters input[type='checkbox']").prop("checked", false);
+	 if($("#searchProduct").val().trim() != ""){
+	    	$("#searchProduct").val("");
+	 }
+	 loadListPage(1);
+ })
+ 
+ 
  $(document).on("keyup", "#searchProduct", function(ev) {
 	    let search = $(this).val().trim().replace(/,/g, '');
 	    if (ev.key === "Enter") {
@@ -328,7 +349,7 @@ background: white;
 	                if (item.proAmount === 0) {
 	                    html += '<div class="sold-out-banner">Sold Out</div>';
 	                }
-	                html += '<img src="${contextPath}' + item.productThumbnailPath + '" class="product-image">';
+	                html += '<img src="' + item.productThumbnailPath + '" class="product-image">';
 	                html += '<div id="productName">' + item.proName + '</div>';
 	                html += '<div id="totalPrice">';
 	                if (item.productSaleStatus === 'Y') {
@@ -392,6 +413,7 @@ background: white;
 	}
 	
  $(document).ready(function(){
+	 $("#searchProduct").val("");
 	 loadListPage(1);
 	 /*
 	 $(".price").each(function() {
@@ -442,7 +464,7 @@ background: white;
 	                if (item.proAmount == 0) {
 	                    html += '    <div class="sold-out-banner">Sold Out</div>';
 	                }
-	                html += '    <img src="' + `${contextPath}` + item.productThumbnailPath + '" class="product-image">';
+	                html += '    <img src="' + item.productThumbnailPath + '" class="product-image">';
 	                html += '    <div id="productName">' + item.proName + '</div>';
 	                html += '    <div id="totalPrice">';
 	                if (item.productSaleStatus === 'Y') {
@@ -553,6 +575,9 @@ background: white;
 	        }
 	    });
 	    
+	    if($("#searchProduct").val().trim() != ""){
+	    	$("#searchProduct").val("");
+	    }
 	    allFilterSearch(weight, salaryTarget, size, functional, price, rating, 1);
 	    
 	});
@@ -589,7 +614,7 @@ background: white;
 	                if (item.proAmount === 0) {
 	                    html += '    <div class="sold-out-banner">Sold Out</div>';
 	                }
-	                html += '    <img src="' + `${contextPath}` + item.productThumbnailPath + '" class="product-image">';
+	                html += '    <img src="' + item.productThumbnailPath + '" class="product-image">';
 	                html += '    <div id="productName">' + item.proName + '</div>';
 	                html += '    <div id="totalPrice">';
 	                if (item.productSaleStatus === 'Y') {

@@ -23,7 +23,7 @@ public class ProductDto {
   private String productSaleStatus;
   private int productSalePrice;
   private String productThumbnailPath;
-  private String pDatailPath;
+  private String productDatailPath;
   private int orderCheck;
   private int reviewCheck;
   private int count;

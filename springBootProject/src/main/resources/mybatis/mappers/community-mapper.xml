@@ -68,6 +68,9 @@
     <result column="USER_ID" property="userId"/>
     <result column="POST_NO" property="postNo"/>
     <result column="POST_TYPE" property="postType"/>
+    <result column="PAGING_NUM" property="pagingNum"/>
+    <result column="SCROLL_NUM" property="scrollNum"/>
+    <result column="ALARM_DATE" property="alarmDt"/>
   </resultMap>
   
 	
@@ -157,8 +160,8 @@
                FROM TB_LIKE L 
               WHERE C.POST_NO = L.POST_NO) AS POST_LIKE
           , (SELECT COUNT(*)
-                  FROM TB_COMMENT
-                WHERE BOARD_NO = POST_NO) AS POST_COMMENT
+               FROM TB_COMMENT
+               WHERE BOARD_NO = POST_NO) AS POST_COMMENT
 	    FROM 
 	        TB_COMMUNITY C
 		 WHERE 
@@ -193,6 +196,9 @@
 				         ,POST_COUNT
 				         ,ROW_NUMBER() OVER (ORDER BY POST_UPLOAD_DATE DESC) AS RN
 				         ,POST_TYPE
+				         ,(SELECT COUNT(*)
+                 		 FROM TB_COMMENT
+               		  WHERE BOARD_NO = POST_NO) AS POST_COMMENT
 				    FROM TB_COMMUNITY
 				    WHERE POST_TYPE = 'G'
 				      AND POST_STATUS = 'Y'
@@ -205,6 +211,9 @@
 				     ,FILE_STATUS
 				     ,POST_COUNT
 				     ,POST_TYPE
+			       ,(SELECT COUNT(*)
+                 FROM TB_COMMENT
+                WHERE BOARD_NO = POST_NO) AS POST_COMMENT
 				FROM RecentPosts
 				WHERE RN <= 3
 				
@@ -220,6 +229,9 @@
 				       WHERE REF_NO = TB_COMMUNITY.POST_NO) AS FILE_STATUS
 				     ,POST_COUNT
 				     ,POST_TYPE
+				     ,(SELECT COUNT(*)
+                FROM TB_COMMENT
+               WHERE BOARD_NO = POST_NO) AS POST_COMMENT
 				FROM TB_COMMUNITY
 				WHERE POST_TYPE = 'J'
 				  AND POST_STATUS = 'Y'
@@ -674,6 +686,8 @@
 				, USER_ID
 				, POST_NO
 				, POST_TYPE
+				, PAGING_NUM
+				, SCROLL_NUM
 				)
 				VALUES
 				(
@@ -682,6 +696,8 @@
 			 , #{userId}
 			 , #{postNo}
 			 , #{postType}
+			 , #{pagingNum}
+			 , #{scrollNum}
 				)
 		<selectKey keyProperty="alarmNo" resultType="int" order="AFTER">
         SELECT SEQ_ALNO.CURRVAL AS ALARM_NO
@@ -696,8 +712,13 @@
 				, USER_ID
 				, POST_NO
 				, POST_TYPE
+				, PAGING_NUM
+				, SCROLL_NUM
+				, ALARM_DATE
 		  FROM TB_ALARM
 		 WHERE USER_ID = #{userId}
+		ORDER 
+		   BY ALARM_NO DESC
 	</select>
 	
 	<select id="selectAlarmCount" resultType="_int">

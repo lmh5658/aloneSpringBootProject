@@ -45,8 +45,8 @@ header h1 {
 
 .post-form h2, .post-list h2 {
     font-size: 1.8em;
-    color: #74b9ff;
-    border-bottom: 2px solid #d5e9fd;
+    color: #365779;
+    border-bottom: 2px solid #365779;
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
@@ -71,10 +71,7 @@ button {
     font-size: 19px;
 }
 
-button:hover {
-    background-color: #74b9ff;
-    color: white;
-}
+
 
 .post {
     border-bottom: 1px solid #ddd;
@@ -112,8 +109,8 @@ button:hover {
 }
 
 .post-list th {
-   background-color: #d5e9fd;
-    color: #74b9ff;
+background-color: #7a90a7;
+    color: #ffffff;
     font-size: 1.1em;
 }
 
@@ -182,10 +179,10 @@ button:hover {
 	                    <option value="WRITER_NICKNAME">작성자</option>
 	                </select>
 	                <input type="text" id="searchInput" placeholder="검색을 입력하세요." >
-	                <button type="button" id="search_btn" style="height: 40px;display: flex;align-items: center;">검색</button>                
+	                <button type="button" id="search_btn" style="height: 40px;display: flex;align-items: center;background: #7a90a7;color: white;">검색</button>                
                 </div>
                 <div style="width: 20%;display: flex;justify-content: flex-end;";>
-	                <button onclick="writer();">작성하기</button>
+	                <button onclick="writer();" style="border-radius: 10px;background: #365779;color: white;">작성하기</button>
                 </div>
                 <script>
                 	$("#search_btn").on("click", function(){
@@ -307,6 +304,7 @@ button:hover {
                             <th style="width: 488px;">제목</th>
                             <th style="width: 200px;">작성자</th>
                             <th>조회수</th>
+                            <th>댓글수</th>
                             <th>날짜</th>
                             <th style="width: 90px;">첨부파일</th>
                         </tr>
@@ -322,6 +320,7 @@ button:hover {
                                         <td>${ list.postTitle }</td>
                                         <td>${ list.writerNickName }</td>
                                         <td>${ list.postCount }</td>
+                                        <td>${ list.postComment }</td>
                                         <td>${ list.postUploadDt }</td>
                                         <td>
                                             <c:choose>

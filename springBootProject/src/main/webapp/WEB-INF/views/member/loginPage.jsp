@@ -115,13 +115,16 @@ body {
         <form id="loginInfo_form">
             <div class="input-group">
                 <label for="username">아이디</label>
-                 
-                <input type="text" id="userId" name="userId" required>
-                
+                <input type="text" id="userId" name="userId" value="${remember}" placeholder="아이디를 입력하세요." required>               
             </div>
+            <!-- 
+            <div style="display: flex;justify-content: flex-end;align-items: baseline;">
+                <input type="checkbox" id="remember" name="remember" value="on" ${ remember != "" ? 'checked' : '' }><label for="remember">아이디저장</label>            
+            </div>
+            -->
             <div class="input-group">
                 <label for="password">비밀번호</label>
-                <input type="password" id="userPwd" name="userPwd" required>
+                <input type="password" id="userPwd" name="userPwd" placeholder="비밀번호를 입력하세요." required>
             </div>
             <button type="button" class="login-btn">로그인</button>
         </form>
@@ -146,7 +149,17 @@ $(document).on("keydown", "#userPwd", function(ev) {
 });
 
 var previousUrl = document.referrer;
+var fullUrl = window.location.href;
+
+// 현재 페이지의 호스트 주소 (프로토콜 + 호스트)
+var baseUrl = window.location.origin;
+
+// 호스트 주소를 제외한 경로 부분
+var path = fullUrl.substring(baseUrl.length);
 $(document).ready(function(){
+	console.log(previousUrl);
+	console.log(baseUrl);
+	
 })
 function performLogin() {
     $.ajax({
@@ -155,12 +168,16 @@ function performLogin() {
         data: $("#loginInfo_form").serialize(),
         success: function(response) {
             // 로그인 성공 시 처리
-            if(response.success == true){
-            	location.href=previousUrl;
-            	alert(response.nickName + "님 환영합니다.");
-            	console.log("이전 주소 : " + previousUrl);
-            }else{
-            	alert("로그인 실패하였습니다. \n 아이디 및 비밀번호를 다시 확인해주세요.");
+            if(response.success == true) {
+                if(previousUrl == baseUrl + "/member/loginPage.page") {
+                    location.href = baseUrl + "/";
+                } else {
+                    location.href = previousUrl;
+                }
+                alert(response.nickName + "님 환영합니다.");
+                console.log("이전 주소 : " + previousUrl);
+            } else {
+                alert("로그인 실패하였습니다. \n 아이디 및 비밀번호를 다시 확인해주세요.");
             }
             
         },

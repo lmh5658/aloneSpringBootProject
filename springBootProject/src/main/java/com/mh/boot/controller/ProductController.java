@@ -48,7 +48,9 @@ public class ProductController {
   @GetMapping("/list.do")
   public void allProductList() {
   }
-  
+  /**
+   * > 전체 상품 검색 리스트 따로 조회
+   */
   @GetMapping("/allProductSearch.do")
   public void allProductSearch(@RequestParam(value="page", defaultValue="1") int currentPage
 							  , HttpSession session, Model model, String search) {
@@ -56,7 +58,7 @@ public class ProductController {
 	  Map<String, Object> params = new HashMap<>();
 	  params.put("search", search);
 	  int listCount = productService.selectSearchCount(params);
-	  PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 9);
+	  PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 12);
 	  
 	  List<ProductDto> list = productService.selectSearchList(params, pi);
 	  
@@ -76,7 +78,7 @@ public class ProductController {
 	  
     String categoryType = "";
     int listCount = productService.selectProductListCount(categoryType);
-    PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 9);
+    PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 12);
     Map<String, Object> map = new HashMap<>();
     map.put("categoryType", categoryType);
     List<ProductDto> list = productService.selectProductList(pi, map);
@@ -106,7 +108,7 @@ public class ProductController {
 	  
 	String categoryType = "C";
     int listCount = productService.selectProductListCount(categoryType);
-    PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 9);
+    PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 12);
     Map<String, Object> map = new HashMap<>();
     map.put("categoryType", categoryType);
     List<ProductDto> list = productService.selectProductList(pi, map);
@@ -136,7 +138,7 @@ public class ProductController {
     
 	String categoryType = "D";
     int listCount = productService.selectProductListCount(categoryType);
-    PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 9);
+    PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 12);
     Map<String, Object> map = new HashMap<>();
     map.put("categoryType", categoryType);
     List<ProductDto> list = productService.selectProductList(pi, map);
@@ -195,7 +197,7 @@ public class ProductController {
 	  }
 	  
 	  int listCount = productService.selectFilterSearchCount(paramMap);
-	  PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 9);
+	  PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 12);
 	  
 	  List<ProductDto> list = productService.selectFilterSearchList(paramMap, pi);
 	  
@@ -217,7 +219,7 @@ public class ProductController {
 	  params.put("search", search);
 	  params.put("type", type);
 	  int listCount = productService.selectSearchCount(params);
-	  PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 9);
+	  PageInfoDto pi = pagingUtil.getPageInfoDto(listCount, currentPage, 5, 12);
 	  
 	  List<ProductDto> list = productService.selectSearchList(params, pi);
 	  

@@ -486,10 +486,7 @@ margin: 10px;
     margin-top: 100px;
     margin-bottom: 100px;
 }
-.related-product-detail{
-	height: 1000px;
-	margin-top: 100px;
-}
+
 
 .product-grid {
     display: flex;
@@ -546,6 +543,10 @@ margin: 10px;
 
 .no-reviews {
   color: #888; /* 회색으로 부드럽게 표시 */
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 312px;
 }
 
 
@@ -571,9 +572,8 @@ margin: 10px;
 }
 
 .reviews h2{
-	margin-bottom: 42px;
-	color: #004085; 
-	font-weight: bold;
+    margin-bottom: 34px;
+    color: #343a40;
 }
 .add-to-cart{
 	border: 3px #dd68e333 solid;
@@ -637,9 +637,9 @@ text-align: center;
 }
 
 .arrow>svg{
-		background: #fbcbfd;
+		background: #f9f9f9;
     border-radius: 22px;
-    color: white;
+    color: black;
 }
 
 .no-to-cart{
@@ -650,6 +650,45 @@ text-align: center;
     font-size: 20px;
     margin-right: 21px;
 }
+
+
+
+
+
+.related-product-detail {
+    height: 550px; /* 기본 높이 설정 */
+    overflow: hidden; /* 넘치는 부분 숨김 */
+    position: relative;
+    /*transition: height 0.5s ease;  부드러운 전환 효과 */
+    margin-top: 100px;
+}
+
+.related-product-detail.expanded {
+    height: auto; /* 높이를 자동으로 조정 */
+}
+
+.related-product-detail img {
+    width: 100%; /* 이미지 가로 폭을 100%로 설정 */
+    display: block; /* 이미지 아래 공백 제거 */
+}
+
+.show-more-btn {
+position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #d9d9d9;
+    color: #000000;
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 2px solid black;
+    border-radius: 5px;
+    font-size: 0.9em;
+    z-index: 1;
+    width: 135px;
+}
+
+
 </style>
 </head>
 <body>
@@ -751,11 +790,13 @@ text-align: center;
 		        		let price = "${list.productPrice - list.productSalePrice}";
 		        		let amount = $("#amount").val();
 		        		let totalPrice = (parseFloat(price) * parseFloat(amount)).toLocaleString('ko-KR');
-		        		let productdNo = "${list.productNo}" 
-		        		if("${loginUser}" != ""){
-			        		location.href="${contextPath}/pay/directPay.page?totalPrice=" + totalPrice + "&productNo=" + productdNo + "&amount=" + amount;		        			
-		        		}else{
-		        			location.href="${contextPath}/member/loginPage.page";
+		        		let productdNo = "${list.productNo}"
+		        		if(confirm("상품을 결제하시겠습니까? \n확인버튼 클릭시 결제화면으로 이동합니다.")){
+			        		if("${loginUser}" != ""){
+				        		location.href="${contextPath}/pay/directPay.page?totalPrice=" + totalPrice + "&productNo=" + productdNo + "&amount=" + amount;		        			
+			        		}else{
+			        			location.href="${contextPath}/member/loginPage.page";
+			        		}		        			
 		        		}
 		        	})
 		        </script>
@@ -777,7 +818,7 @@ text-align: center;
 											    <div class="review-list">
 											    
 											    </div>
-											    <div class="review-count">
+											    <div class="review-count" style="margin-top: 40px;">
 											        <span>총 리뷰 </span><b></b>건
 											    </div>
 											    <div>
@@ -894,9 +935,11 @@ text-align: center;
 										</div>
 		            <!-- 리뷰 모달 화면 E-->
 		            
-		            <div class="related-product-detail">
-		            	<h2>상품 상세</h2>
-								</div>
+		            <div class="related-product-detail" style=" height: 550px; ">
+							    <h2>상품 상세</h2>
+							    <img id="productImage" alt="" src="${list.productDatailPath}">
+							    <button class="show-more-btn">자세히보기</button>
+							</div>
 							  <div class="related-products">
 							      <h2>관련 추천 TOP 상품</h2>
 							      <div class="product-grid">
@@ -912,6 +955,23 @@ text-align: center;
 		<jsp:include page="/WEB-INF/views/common/footer.jsp"/>  
 		  	
 <script>
+$(document).ready(function() {
+    $('.show-more-btn').on('click', function() {
+        var $parentDiv = $(this).closest('.related-product-detail');
+        var $img = $parentDiv.find('#productImage');
+
+        if ($parentDiv.hasClass('expanded')) {
+            $parentDiv.removeClass('expanded').css('height', '550px');
+            $(this).text('자세히보기');
+        } else {
+            //var imgHeight = $img[0].naturalHeight;
+            $parentDiv.addClass('expanded').css('height', '1178px');
+            $(this).text('접기');
+        }
+    });
+});
+
+
 //장바구니 스크립트
 $(document).on("click", ".add-to-cart", function(){
 	
@@ -1243,15 +1303,37 @@ $(document).ready(function() {
 
 
 
+//Sign Up 버튼 클릭 이벤트 처리
 $("#signUp").on("click", function() {
-    if (confirm("리뷰를 등록하시겠습니까?")) {
-        submitReview();
+    
+    let reviewContent = $("#reviewContent").val().trim();
+    let selectedStar = $("#myform input[type='radio']:checked").val();
+    
+    if (reviewContent === "" || selectedStar === undefined) {
+        alert("내용을 빠짐없이 기입해주세요.");
+        //$("#myModal").modal("show"); 
+    } else {
+        
+        if (confirm("리뷰를 등록하시겠습니까?")) {
+        	 submitReview();
+        }
     }
 });
 
+// First Review 버튼 클릭 이벤트 처리
 $("#firstReview").on("click", function() {
-    if (confirm("리뷰를 등록하시겠습니까?")) {
-    		firstReview();
+   
+    let reviewContent = $("#firstReviewContent").val().trim();
+    let selectedStar = $("#myforms input[type='radio']:checked").val();
+    
+    if (reviewContent === "" || selectedStar === undefined) {
+        alert("내용을 빠짐없이 기입해주세요.");
+        //$("#firstMyModal").modal("show"); 
+    } else {
+       
+        if (confirm("리뷰를 등록하시겠습니까?")) {
+            firstReview();
+        }
     }
 });
 
@@ -1269,7 +1351,7 @@ function loadPage(page) {
       success: function(response) {
       	if(response.list.length > 0){
       			$("#reviewYes").css("display", "block");
-      			$(".review-container").css("height", "1030px");
+      			$(".review-container").css("height", "1078px");
       			renderReviews(response); 
       	}else{
       			$("#reviewNo").css("display", "block");
@@ -1290,7 +1372,7 @@ function loadPage(page) {
 
 // 리뷰와 페이징 버튼 렌더링
 function renderReviews(response) {
-	
+
 		rating = '';
 		rating += '<div class="rating-distribution">';
 		rating += '    <div class="distribution-bar">';
@@ -1314,7 +1396,9 @@ function renderReviews(response) {
 		rating += '        <div class="bar"><div class="fill" id="bar-1"></div></div>';
 		rating += '    </div>';
 		rating += '</div>';
-		
+	
+	
+	
 		$(".rating-summary").html(rating);
 		ratingScore(response);
 		
@@ -1446,12 +1530,19 @@ function firstReview() {
         },
         success: function(response) {
             if(response.list.length > 0) {
-                alert("리뷰 등록이 완료되었습니다. 첫구매 500 포인트가 정상적으로 적립되었습니다.");
+                alert("리뷰 등록이 완료되었습니다. \n 500포인트가 정상적으로 적립되었습니다.");
                 $(".review-prompt").css({"z-index": "-1", "display": "none"});
-                renderReviews(response);
-                location.reload();
+                $("#firstReviewContent").val("");
+                $("#myforms input[type='radio']").prop("checked", false);
+              
+                if(response.list.length == 1){
+                	location.reload();
+                }else{
+	                renderReviews(response);                	
+                }
+                
             } else {
-                console.log("리뷰 등록 실패");
+            	 location.reload();
             }
         },
         error: function() {
@@ -1473,10 +1564,20 @@ function submitReview() {
         success: function(response) {
             if(response.list.length > 0) {
                 alert("리뷰 등록이 완료되었습니다.");
-                $(".review-prompt").css({"z-index": "-1", "display": "none"});
-                renderReviews(response);
+                if($(".review-prompt").css("display") != "none"){
+	                $(".review-prompt").css({"z-index": "-1", "display": "none"});                	
+                }
+                
+                $("#reviewContent").val("");
+                $("#myform input[type='radio']").prop("checked", false);
+                if(response.list.length == 1){
+                	location.reload();
+                }else{
+	                renderReviews(response);                	
+                }
+                
             } else {
-                console.log("리뷰 등록 실패");
+            	location.reload();
             }
         },
         error: function() {
@@ -1494,11 +1595,13 @@ function deleteFunction(reviewNo){
 			type:"get",
 			data:"reviewNo=" + reviewNo + "&productNo=" + productNo,
 			success:function(response){
+				alert("리뷰 글이 정상적으로 삭제되었습니다.");
 				
-				if(response.list.length > 0){
-					alert("리뷰 글이 정상적으로 삭제되었습니다.");
-					renderReviews(response);
-				}
+				 if (response.list.length > 0) {
+					 	renderReviews(response);      
+         }else{
+        	 location.reload();
+         }
 				
 			},
 			error:function(){

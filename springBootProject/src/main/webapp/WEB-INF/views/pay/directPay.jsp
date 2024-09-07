@@ -106,7 +106,6 @@ form textarea {
 .cart-summary td{
 		text-align: center;
     font-size: 18px;
-    font-weight: bolder;
 
 }
 
@@ -238,7 +237,7 @@ form textarea {
             		<table>
             			<tr>
             				<th>주문자 이름<b style="color: red;">&nbsp;*</b></th>
-            				<td><input type="text" id="orderName" name="orderName" placeholder="수령인을 입력하세요." required></td>
+            				<td><input type="text" id="userName" name="orderName" placeholder="수령인을 입력하세요." required></td>
             			</tr>
             			<tr>
             				<th>휴대전화<b style="color: red;">&nbsp;*</b></th>
@@ -247,9 +246,9 @@ form textarea {
             			<tr>
             				<th class="col1">이메일<b style="color: red;">&nbsp;*</b></th>
 				        		<td class="col2">
-					            <input type="text" name="mail" style="width: 145px;" required>
+					            <input type="text" name="mail" id="mail" style="width: 145px;" required>
 					            <span class="a">@</span>
-					            <input type="text" name="email" style="width: 145px;" required>
+					            <input type="text" name="email" id="email" style="width: 145px;" required>
 					            <select name="mailslc" id="mailSelect">
 					                <option id="self" value="" selected>직접입력</option>
 					                <option value="naver.com">naver.com</option>
@@ -337,8 +336,6 @@ form textarea {
 		            <section class="benefits-section">
 		                <h2>구매시 예상 포인트 혜택</h2>
 		                <div class="benefits-details">
-		                    <p><strong>구매 적립 : &nbsp;&nbsp;</strong><strong id="EarnPurchaseRewards"></strong>원</p>
-		                    <p><strong>리뷰 적립 : &nbsp;&nbsp;</strong><strong id="reviewPurchaseRewards"></strong> 원</p>
 		                    <p><strong>최대 적립 금액 : &nbsp;&nbsp;</strong><strong id="maxPurchaseRewards"></strong>원</p>
 		                </div>
 		            </section>
@@ -353,7 +350,7 @@ form textarea {
 					          </div>
 					      </div>
 					      <div style="display: flex; align-items: center;justify-content: center;margin: 103p">
-	                <button type="button" class="pay-button" id="payBtn">결제하기</button>					      
+	                <button type="submit" class="pay-button" id="payBtn">결제하기</button>					      
 					      </div>
                 
                 
@@ -363,20 +360,23 @@ form textarea {
 <script>
 $(document).ready(function(){
 	let price = parseFloat($("#totalPrice").text().trim().replace(/,/g, ''));
-	let purchaseRewards = price * 0.015
+	let purchaseRewards = Math.round(price * 0.015);
 	let productAmount = "${cartList.size()}";
-	let reviewTotalPrice = productAmount * 500;
-	let maxPurchaseRewards = purchaseRewards + reviewTotalPrice;
-	$("#EarnPurchaseRewards").text(purchaseRewards.toLocaleString('ko-KR'));
-	$("#reviewPurchaseRewards").text(reviewTotalPrice.toLocaleString('ko-KR'));
-	$("#maxPurchaseRewards").text(maxPurchaseRewards.toLocaleString('ko-KR'));
+	//let reviewTotalPrice = productAmount * 500;
+	//let maxPurchaseRewards = purchaseRewards + reviewTotalPrice;
+	//$("#EarnPurchaseRewards").text(purchaseRewards.toLocaleString('ko-KR'));
+	//$("#reviewPurchaseRewards").text(reviewTotalPrice.toLocaleString('ko-KR'));
+	$("#maxPurchaseRewards").text(purchaseRewards.toLocaleString('ko-KR'));
 })
 
 $("#allPoints").on("change", function() {
     let myPoint = $("#netPoint").text().trim().replace(/,/g, '');
-    
-      $("#deduct-amount").val(myPoint);
-      $(this).prop("checked", true);
+    	
+    	if($(this).prop("checked") == true){
+	      $("#deduct-amount").val(myPoint);    		
+    	}else{
+    		$("#deduct-amount").val("0");  
+    	}
     
 });
 
@@ -498,14 +498,31 @@ $(document).ready(function() {
 
 $(".pay-button").on("click", function (event) {
 	
+	event.preventDefault();
+	
+	let userName = $("#userName").val().trim();
+	let phone = $("#phone").val().trim();
+	let mail = $("#mail").val().trim();
+	let email = $("#email").val().trim();
+	let postCode = $("#sample6_postcode").val().trim();
+	let address = $("#sample6_address").val().trim();
+	let detailAdress = $("#sample6_detailAddress").val().trim();
+	let extraAddress = $("#sample6_extraAddress").val().trim();
+	
+	if(userName != "" && phone != "" && mail != "" && email != "" && postCode != "" && address != "" && detailAdress != "" && extraAddress != ""){
     if ($("input[type='radio']:checked").length > 0 && $("#kakaoRadio").is(":checked")) {
         kakaoPay();
     } else {
         alert("결제수단을 설정해주세요.");
-        event.preventDefault();
-    }
+    }		
+	}else{
+		alert("주문자 정보를 빠짐없이 기입해주세요.");
+		window.scrollTo({
+		    top: 100,
+		    behavior: 'smooth'
+		});
+	}
 });
-
 //구매자 정보
 
 function kakaoPay() {
@@ -526,12 +543,12 @@ if (confirm("구매 하시겠습니까?")) { // 구매 클릭시 한번 더 확�
 	 let userPhone = '${memberList.phone}';
 	 var totalPrice = $("#totalPrices").text().trim();
 	 
-	 		IMP.init('imp37456887'); //가맹점 식별코드
+	 		IMP.init('${portCode}'); //가맹점 식별코드
    		IMP.request_pay({
        pg: 'kakaopay.TC0ONETIME', // PG사 코드표에서 선택
        pay_method: 'card', // 결제 방식
        merchant_uid: "IMP" + makeMerchantUid, // 결제 고유 번호
-       name: "도란", // 제품명
+       name: "Pet Connect", // 제품명
        amount: totalPrice, // 가격
        //구매자 정보 ↓
        buyer_email: userEmail,
@@ -617,30 +634,21 @@ function insertPoint(orderKey){
 //주문자 정보와 동일 체크 이벤트 스크립트
 $(document).ready(function(){
 	
-	var userName = "${memberList.userName}";
-	var phones = "${memberList.phone}";
-	var address = "${memberList.address}";
-	var addressDatail = "${memberList.addressDatail}";
-	var streetAddress = "${memberList.streetAddress}";
-	var otherAddress = "${memberList.otherAddress}";
 	var email = "${memberList.email}";
 	var parts = email.split("@");
   var userPart = parts[0];
   var domainPart = parts[1];
   
-		
-  
-
   $("#check").change(function() {
       if($(this).is(":checked")) {
-          $("input[type='text'][name='orderName']").val(userName);
-          $("input[type='text'][name='orderPhone']").val(phones);
+          $("input[type='text'][name='orderName']").val("${memberList.userName}");
+          $("input[type='text'][name='orderPhone']").val("${memberList.phone}");
           $("input[type='text'][name='mail']").val(userPart);
           $("input[type='text'][name='email']").val(domainPart);
-          $("input[type='text'][name='address']").val(address);
-          $("input[type='text'][name='addressDatail']").val(addressDatail);
-          $("input[type='text'][name='streetAddress']").val(streetAddress);
-          $("input[type='text'][name='otherAddress']").val(otherAddress);
+          $("input[type='text'][name='address']").val("${memberList.address}");
+          $("input[type='text'][name='addressDatail']").val("${memberList.addressDatail}");
+          $("input[type='text'][name='streetAddress']").val("${memberList.streetAddress}");
+          $("input[type='text'][name='otherAddress']").val("${memberList.otherAddress}");
       } else {
           $("input[type='text']").val("");
       }

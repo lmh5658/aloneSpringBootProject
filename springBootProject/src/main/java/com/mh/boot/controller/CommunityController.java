@@ -341,14 +341,8 @@ public class CommunityController {
 			
 			int result = communityService.insertBoards(com, attachList);
 			
-			if(result > 0) {
-				if ("J".equals(com.getPostType())) {
-					redirectAttributes.addFlashAttribute("alertMsg", "자유 게시글 등록 성공!");
-				}else if("G".equals(com.getPostType())){
-					redirectAttributes.addFlashAttribute("alertMsg", "공지사항 게시글 등록 성공!");
-				}else {
-					redirectAttributes.addFlashAttribute("alertMsg", "정보 게시판글 등록 성공!");
-				}
+			if(result == 1) {
+				redirectAttributes.addFlashAttribute("alertMessage", "게시글 등록 성공!");
 			}
 			
 			
@@ -412,10 +406,9 @@ public class CommunityController {
 			for(AttachDto at : list) {
 				new File(at.getFilePath() + "/" +  at.getFilesystemName()).delete();
 			}
-			redirectAttribute.addFlashAttribute("alertMsg", community.getPostType().equals("J") ? "자유 게시판의 게시글 수정이 완료되었습니다." 
-														  : community.getPostType().equals("G") ? "공지사항 게시판의 게시글 수정이 완료되었습니다." : "정보 게시판의 게시글 수정이 완료되었습니다.");
+			redirectAttribute.addFlashAttribute("alertMessage", "게시글 수정이 완료되었습니다.");
 		}else {
-			redirectAttribute.addFlashAttribute("alertMsg", "게시글 수정실패");
+			redirectAttribute.addFlashAttribute("alertMessage", "게시글 수정실패");
 		}
 		
 		return "redirect:/community/detail.page?postNo=" + community.getPostNo() + "&postType=" + community.getPostType();
@@ -437,7 +430,7 @@ public class CommunityController {
 			Map<String, Object> params = new HashMap<>();
 			params.put("postNo", postNo);
 			communityService.deleteAlarmMessage(params);
-			redirectAttribute.addFlashAttribute("alertMsg", "게시글 삭제가 완료되었습니다.");
+			redirectAttribute.addFlashAttribute("alertMessage", "게시글 삭제가 완료되었습니다.");
 		}
 		return postType.equals("I") ? "redirect:/community/infoBoard.do" : postType.equals("G") ? "redirect:/community/noticeBoard.do" : "redirect:/community/board.do";
 	}
@@ -483,7 +476,7 @@ public class CommunityController {
 	 */
 	@GetMapping("/detail.page")
 	public void detail(CommunityDto com, @RequestParam(value = "page", defaultValue = "1") int currentPage
-					 , Model model, HttpSession session) {
+					 , Model model, HttpSession session, @RequestParam(required=false) String scrollTo, @RequestParam(required=false) String pageNumber) {
 		//comment list 갯수
 		
 		CommentDto comment = new CommentDto();
@@ -500,6 +493,8 @@ public class CommunityController {
 			model.addAttribute("checkLike",communityService.selectCheckLike(param));
 		}
 		
+		model.addAttribute("pageNumber",pageNumber); // 페이지위치
+		model.addAttribute("scrollTo",scrollTo); // 댓글 위치
 		model.addAttribute("kakaoKey",kakaoKey);
 	    model.addAttribute("board",communityService.detail(com));
 		model.addAttribute("commentList", communityService.ajaxCommentSelect(comment, pi));
@@ -516,7 +511,8 @@ public class CommunityController {
 										, @RequestParam(value="reply", required=false) String reply
 										, CommentDto comment
 										, @RequestParam(value = "arr[]", required = false) List<String> arr
-										, @SessionAttribute("loginUser") MemberDto member) {
+										, @SessionAttribute("loginUser") MemberDto member
+										, @RequestParam(required=false) String pageNumber) {
 		
 		
 		//comment list 갯수
@@ -603,10 +599,7 @@ public class CommunityController {
 			
 			//최종 INSERT
 			result = communityService.insertComment(comment);
-			key = comment.getId(); //<=등록한 PK값을 알아내서 대댓글, 대대댓글 요소에 대댓글을 등록하면 MARGIN-LEFT STYLE를 주려고했음.
-								   //댓글을 달면 스타일은 잘 적용됫지만, 새로고침하면 스타일이 저장되지 않아 풀려버림.
-								   //그래서 script바로 뒤쪽에 배열을 두고 배열 안에 아이디값를 저장하고 스타일을 적용하려 했는데 풀려버림.
-								   //포기함
+			key = comment.getId(); 
         }
 		//저장에 성공하면 리스트 조회 후 MAP안에 LIST, PI데이터값 담기
 		List<CommentDto> list =  (result > 0) ? communityService.ajaxCommentSelect(comment, pi) : null; 
@@ -614,6 +607,7 @@ public class CommunityController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("list", list);
 		map.put("pi", pi);
+		map.put("pageNumber", pageNumber);
 		
 		return ResponseEntity.ok(map);
 		
@@ -625,7 +619,8 @@ public class CommunityController {
 	
 	@ResponseBody
 	@PostMapping("/updateComment.do")
-	public Map<String, Object> updateComment(CommentDto comment, @RequestParam(value = "page", defaultValue = "1") int currentPage) {
+	public Map<String, Object> updateComment(CommentDto comment, @RequestParam(value = "page", defaultValue = "1") int currentPage
+											, @RequestParam(required=false) String pageNumber) {
 		int listCount = communityService.selectCommentCount(comment.getBoardNo());
 		PageInfoDto pi = (PageInfoDto)pagingUtil.getPageInfoDto(listCount, currentPage, 5, 20);
 		
@@ -634,6 +629,7 @@ public class CommunityController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("list", list);
 		map.put("pi", pi);
+		map.put("pageNumber", pageNumber);
 		
 		return map;
 	}
@@ -641,7 +637,8 @@ public class CommunityController {
 	
 	@ResponseBody
 	@GetMapping("/updateDeleteComment.do")
-	public Map<String, Object> updateDeleteComment(CommentDto comment, @RequestParam(value = "page", defaultValue = "1") int currentPage) {
+	public Map<String, Object> updateDeleteComment(CommentDto comment, @RequestParam(value = "page", defaultValue = "1") int currentPage
+												 , @RequestParam(required=false) String pageNumber) {
 		
 		int listCount = communityService.selectCommentCount(comment.getBoardNo());
 		PageInfoDto pi = (PageInfoDto)pagingUtil.getPageInfoDto(listCount, currentPage, 5, 20);
@@ -651,6 +648,7 @@ public class CommunityController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("list", list);
 		map.put("pi", pi);
+		map.put("pageNumber", pageNumber);
 		
 		return map;
 	}

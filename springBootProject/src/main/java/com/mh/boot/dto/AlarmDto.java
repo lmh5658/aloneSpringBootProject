@@ -22,4 +22,7 @@ public class AlarmDto {
 	private String userId;
 	private int postNo;
 	private String postType;
+	private int pagingNum;
+	private Double scrollNum;
+	private String alarmDt;
 }

@@ -25,10 +25,7 @@ header {
     font-weight: bold;
 }
 
-nav {
-    display: flex;
-    align-items: center;
-}
+
 
 nav input[type="text"] {
     padding: 5px;
@@ -114,14 +111,13 @@ svg{
 }
 #writer_btn{
 border: none;
-    background: #d5e9fd;
+    background: #365779;
     padding: 10px;
     width: 100px;
     border-radius: 10px;
+    color: #ffffff;
 }
-#writer_btn:hover{
-	background: #c1dbf5;
-}
+
 .noimage{
     text-align: center;
     height: 200px;
@@ -131,6 +127,9 @@ border: none;
     flex-wrap: nowrap;
     flex-direction: column;
     cursor: pointer;
+}
+.noimage img{
+	border-radius: 19px;
 }
 
 
@@ -194,8 +193,7 @@ display: flex;
           <input type="text" placeholder="검색" id="infoSearch" style="width: 300px;">
       </nav>
       
-<main>
-		 
+<main style="padding: 36px;">
 		<div style="display: flex;width: 100%;justify-content: flex-end;margin-bottom: 30px;">
 			<button id="writer_btn" type="button" onclick="writer();">작성하기</button>			
 		</div>
@@ -234,10 +232,11 @@ function infoSearch(page){
 			  // 첫 번째 <img> 태그의 시작과 끝 인덱스를 찾기
 		    let firstImgStart = item.postContent.indexOf("<img");
 		    let firstImgEnd = item.postContent.indexOf(">", firstImgStart);
+		    let profileImg = (item.userPath == null ? '/upload/image/defaultProfile.png' : item.userPath);
 		    
         htmlContent += '<article class="post">';
         htmlContent += '    <div class="post-header">';
-        htmlContent += '        <img src="' + item.userPath + '" alt="Profile Image" class="profile-image" style="height:40px; width:40px;">';
+        htmlContent += '        <img src="' + profileImg + '" alt="Profile Image" class="profile-image" style="height:40px; width:40px;">';
         htmlContent += '        <span class="nickname">' + item.writerNickName + '</span>';
         htmlContent += '    </div>';
         htmlContent += '    <div class="noimage" data-no="' + item.postNo + '" data-type="' + item.postType + '" data-writer="' + item.writerNo +'">';
@@ -306,10 +305,11 @@ function selectChange(page){
 			  // 첫 번째 <img> 태그의 시작과 끝 인덱스를 찾기
 		    let firstImgStart = item.postContent.indexOf("<img");
 		    let firstImgEnd = item.postContent.indexOf(">", firstImgStart);
+		    let profileImg = (item.userPath == null ? '/upload/image/defaultProfile.png' : item.userPath);
 		    
         htmlContent += '<article class="post">';
         htmlContent += '    <div class="post-header">';
-        htmlContent += '        <img src="' + item.userPath + '" alt="Profile Image" class="profile-image" style="height:40px; width:40px;">';
+        htmlContent += '        <img src="' + profileImg + '" alt="Profile Image" class="profile-image" style="height:40px; width:40px;">';
         htmlContent += '        <span class="nickname">' + item.writerNickName + '</span>';
         htmlContent += '    </div>';
         htmlContent += '    <div class="noimage" data-no="' + item.postNo + '" data-type="' + item.postType + '" data-writer="' + item.writerNo +'">';
@@ -440,10 +440,11 @@ function infoBoardLoad(page){
 				  // 첫 번째 <img> 태그의 시작과 끝 인덱스를 찾기
 			    let firstImgStart = item.postContent.indexOf("<img");
 			    let firstImgEnd = item.postContent.indexOf(">", firstImgStart);
+			    let profileImg = (item.userPath == null ? '/upload/image/defaultProfile.png' : item.userPath);
 			    
 	        htmlContent += '<article class="post">';
 	        htmlContent += '    <div class="post-header">';
-	        htmlContent += '        <img src="' + item.userPath + '" alt="Profile Image" class="profile-image" style="height:40px; width:40px;">';
+	        htmlContent += '        <img src="' + profileImg + '" alt="Profile Image" class="profile-image" style="height:40px; width:40px;">';
 	        htmlContent += '        <span class="nickname">' + item.writerNickName + '</span>';
 	        htmlContent += '    </div>';
 	        htmlContent += '    <div class="noimage" data-no="' + item.postNo + '" data-type="' + item.postType + '" data-writer="' + item.writerNo +'">';

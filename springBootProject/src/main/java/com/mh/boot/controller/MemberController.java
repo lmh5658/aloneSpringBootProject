@@ -3,6 +3,8 @@ package com.mh.boot.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,18 +92,28 @@ public class MemberController {
 	 */
 	@ResponseBody
 	@PostMapping("/loginSignin.do")
-	public Map<String, Object> loginSignin(MemberDto m
+	public Map<String, Object> loginSignin(MemberDto m, String remember
 					 , HttpServletRequest request
 					 , HttpServletResponse response) throws IOException {
 		
 		MemberDto loginUser = memberService.selectMember(m);
-
 		
 		Map<String, Object> responses = new HashMap<>();
 		if (loginUser != null && bcryptPwdEncoder.matches(m.getUserPwd(), loginUser.getUserPwd())) {
 		    request.getSession().setAttribute("loginUser", loginUser);
 		    responses.put("success", true);
 		    responses.put("nickName", loginUser.getNickName());
+		    /*
+		    if(remember != null && remember.equals("on")){
+		    	Cookie cookie = new Cookie("remember", m.getUserId());
+		    	cookie.setPath("/member/loginPage.page");
+		    	response.addCookie(cookie);
+		    }else {
+		    	Cookie cookie = new Cookie("remember", "");
+		    	cookie.setPath("/member/loginPage.page");
+		    	response.addCookie(cookie);
+		    }
+		    */
 		}else {
 			responses.put("success", false);
 		}
@@ -552,7 +564,7 @@ public class MemberController {
 	
 	@ResponseBody
 	@GetMapping("/userSearch.do")
-	public String userSearch(String userNo, String postType, int postNo, HttpSession session) {
+	public String userSearch(String userNo, String postType, int postNo, HttpSession session, String elementTop, String pageNumber) {
 		Map<String, Object> param = new HashMap<>();
 		param.put("userNo", userNo);
 		MemberDto memberSearch = memberService.userSearch(param);
@@ -562,22 +574,24 @@ public class MemberController {
 		alarm.setUserId(memberSearch.getUserId());
 		alarm.setPostNo(postNo);
 		alarm.setPostType(postType);
+		alarm.setScrollNum(Double.parseDouble(elementTop));
+		alarm.setPagingNum(Integer.parseInt(pageNumber));
 		int result = comunityService.insertAlarmMessage(alarm);
 		int alarmNo = alarm.getAlarmNo();
-		MemberDto member = (MemberDto)session.getAttribute("loginUser");
-		int count = 0;
-		if(member != null) {
-			count = comunityService.selectAlarmCount(member.getUserId());	
-		}
+		//MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		int count = comunityService.selectAlarmCount(memberSearch.getUserId());	
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		String today = sdf.format(date);
 		
-		return memberSearch.getUserId() + "," + alarmNo + "," + count;
+		return memberSearch.getUserId() + "," + alarmNo + "," + count + "," + today;
 	}
 		
 		
 	
 	@ResponseBody
 	@GetMapping("/userIdSearch.do")
-	public String userIdSearch(String nickName, String postType, int postNo, HttpSession session) {
+	public String userIdSearch(String nickName, String postType, int postNo, HttpSession session, String elementTop, String pageNumber) {
 		Map<String, Object> param = new HashMap<>();
 		param.put("nickName", nickName);
 		MemberDto memberSearch = memberService.userSearch(param);
@@ -587,15 +601,18 @@ public class MemberController {
 		alarm.setUserId(memberSearch.getUserId());
 		alarm.setPostNo(postNo);
 		alarm.setPostType(postType);
+		alarm.setScrollNum(Double.parseDouble(elementTop));
+		alarm.setPagingNum(Integer.parseInt(pageNumber));
 		int result = comunityService.insertAlarmMessage(alarm);
 		int alarmNo = alarm.getAlarmNo();
-		MemberDto member = (MemberDto)session.getAttribute("loginUser");
-		int count = 0;
-		if(member != null) {
-			count = comunityService.selectAlarmCount(member.getUserId());	
-		}
 		
-		return memberSearch.getUserId() + "," + alarmNo + "," + count;
+		//MemberDto member = (MemberDto)session.getAttribute("loginUser");
+		int count = comunityService.selectAlarmCount(memberSearch.getUserId());	
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		String today = sdf.format(date);
+		
+		return memberSearch.getUserId() + "," + alarmNo + "," + count + "," + today;
 	}
 	
 	/**

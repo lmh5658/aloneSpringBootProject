@@ -41,7 +41,7 @@ body {
 }
 
 header {
-    background-color: #d5e9fd;
+    background-color: #365779;
     color: #fff;
     padding: 20px 0;
     text-align: center;
@@ -64,7 +64,7 @@ header h1 {
 }
 
 nav {
-    background-color: #84b5e9; /* 다크 그레이 색상으로 변경 */
+    background-color: #7a90a7; 
     color: #fff;
     padding: 15px 0;
     text-align: center;
@@ -72,7 +72,6 @@ nav {
     top: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    height: 79px;
 }
 
 nav a {
@@ -123,12 +122,11 @@ nav a:hover {
 }
 
 .section h2 {
-    font-size: 2.2em;
-    border-bottom: 4px solid #84b5e9;
+font-size: 22px;
+    border-bottom: 1px solid #212529;
     padding-bottom: 12px;
     margin-bottom: 20px;
-    color: #84b5e9;
-    font-weight: 700;
+    color: #212529;
     text-transform: uppercase;
 }
 
@@ -386,23 +384,21 @@ h2 {
 }
 
 .pet-close {
-    color: #ff6f61;
+    color: #495057;
     float: right;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
     cursor: pointer;
 }
 .del-close {
-    color: #ff6f61;
+    color: #ff8d82;
     float: right;
     font-size: 24px;
-    font-weight: bold;
+    /* font-weight: bold; */
     cursor: pointer;
 }
 
-.pet-close:hover {
-    color: #e55b4f;
-}
+
 
 .alert-list {
     overflow-y: auto;
@@ -441,7 +437,6 @@ nav {
 
 .alarm_div{
 height: 39px;
-border: 1px solid #adb5bd;
 border-radius: 10px;
 display: flex;
     align-items: center;
@@ -472,7 +467,7 @@ position: absolute;
   	<header id="home">
   			<div style="display: flex;flex-direction: column;align-items: center;">
 	        <img src="${contextPath}/resources/images/free-sticker-corgi-7603210.png" alt="https://www.flaticon.com/kr/free-stickers/">
-	        <a href="https://www.flaticon.com/kr/free-stickers/" title="코기 스티커">코기 스티커 제작자: Surfsup.Vector - Flaticon</a>
+	        <a href="https://www.flaticon.com/kr/free-stickers/" title="코기 스티커" style="color: wheat;">코기 스티커 제작자: Surfsup.Vector - Flaticon</a>
   			</div>
   			<div>  			
         <h1>Pet Connect</h1>
@@ -495,7 +490,7 @@ position: absolute;
     </header>
    <nav style="display: flex; justify-content: space-between;">
     <div style="display: flex; width: 100%; justify-content: space-evenly; margin-left: 104px; align-items: center;">
-        <a href="${contextPath}/">pet Connect Shop</a>
+        <a href="${contextPath}/">pet Connect #</a>
         <a href="${contextPath}/community/doranMain.page">홈</a>
         <a href="${contextPath}/community/noticeBoard.do">공지사항</a>
         <a href="${contextPath}/community/board.do">자유게시판</a>
@@ -516,7 +511,7 @@ position: absolute;
                             </svg>
                             <span class="badge" id="badge"></span>
                         </div>
-                        <button id="showPetModal" style="border: none; background: #84b5e9; color: white;">
+                        <button id="showPetModal" style="border: none; background: #7a90a7; color: white;">
                             <svg id="bell" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="" viewBox="0 0 16 16">
                                 <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
                             </svg>
@@ -575,19 +570,6 @@ position: absolute;
      </div>
  </div>
  
- 
- 
-<script>
-//alert 창 띄우기
-$(document).ready(function(){
-    var alertMessage = "${alertMsg}";
-    if (alertMessage != "") {
-        alert(alertMessage);
-    }
-});
-</script>
-
-
 <!--============================ ajax 페이징 스크립트 S ============================-->
 <script>
 $(document).ready(function(){
@@ -751,25 +733,25 @@ function collectBoxPaging(pi){
     if (pi && pi.listCount != 0) {
         // 이전 버튼
         if (pi.currentPage === 1) {
-            htmlPI += "<button class='page bt' disabled>이전</button>";
+            htmlPI += "<button class='page bt' style='padding: 8px;border-radius: 16px 0px 0px 16px;' disabled>이전</button>";
         } else {
-            htmlPI += "<button class='page' data-page='" + (pi.currentPage - 1) + "' data-type='collect'>이전</button>";
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage - 1) + "' data-type='collect' style='padding: 8px;border-radius: 16px 0px 0px 16px;'>이전</button>";
         }
 
         // 페이지 번호 버튼 렌더링
         for (let i = pi.startPage; i <= pi.endPage; i++) {
             if (i === pi.currentPage) {
-                htmlPI += '<button class="page" disabled>' + i + '</button>';
+                htmlPI += '<button class="page" disabled style="padding: 8px;">' + i + '</button>';
             } else {
-                htmlPI += "<button class='page' data-page='" + i + "' data-type='collect'>" + i + "</button>";
+                htmlPI += "<button class='page' data-page='" + i + "' data-type='collect' style='padding: 8px;'>" + i + "</button>";
             }
         }
 
         // 다음 버튼
         if (pi.currentPage === pi.maxPage) {
-            htmlPI += "<button class='page bt' disabled>다음</button>";
+            htmlPI += "<button class='page bt' style='padding: 8px;border-radius: 0px 16px 16px 0px;' disabled>다음</button>";
         } else {
-            htmlPI += "<button class='page' data-page='" + (pi.currentPage + 1) + "' data-type='collect'>다음</button>";
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage + 1) + "' data-type='collect' style='padding: 8px;border-radius: 0px 16px 16px 0px;'>다음</button>";
         }
 
         $('#collectPaging').html(htmlPI);
@@ -784,25 +766,25 @@ function receiveBoxPaging(pi){
     if (pi && pi.listCount != 0) {
         // 이전 버튼
         if (pi.currentPage === 1) {
-            htmlPI += "<button class='page bt' disabled>이전</button>";
+            htmlPI += "<button class='page bt' style='padding: 8px;border-radius: 16px 0px 0px 16px;' disabled>이전</button>";
         } else {
-            htmlPI += "<button class='page' data-page='" + (pi.currentPage - 1) + "' data-type='receive'>이전</button>";
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage - 1) + "' data-type='receive'  style='padding: 8px;border-radius: 16px 0px 0px 16px;' >이전</button>";
         }
 
         // 페이지 번호 버튼 렌더링
         for (let i = pi.startPage; i <= pi.endPage; i++) {
             if (i === pi.currentPage) {
-                htmlPI += '<button class="page" disabled>' + i + '</button>';
+                htmlPI += '<button class="page" disabled style="padding: 8px;">' + i + '</button>';
             } else {
-                htmlPI += "<button class='page' data-page='" + i + "' data-type='receive'>" + i + "</button>";
+                htmlPI += "<button class='page' data-page='" + i + "' data-type='receive' style='padding: 8px;'>" + i + "</button>";
             }
         }
 
         // 다음 버튼
         if (pi.currentPage === pi.maxPage) {
-            htmlPI += "<button class='page bt' disabled>다음</button>";
+            htmlPI += "<button class='page bt' style='padding: 8px;border-radius: 0px 16px 16px 0px;' disabled>다음</button>";
         } else {
-            htmlPI += "<button class='page' data-page='" + (pi.currentPage + 1) + "' data-type='receive'>다음</button>";
+            htmlPI += "<button class='page' style='padding: 8px;border-radius: 0px 16px 16px 0px;' data-page='" + (pi.currentPage + 1) + "' data-type='receive'>다음</button>";
         }
 
         $('#receivePaging').html(htmlPI);
@@ -817,25 +799,25 @@ function sendBoxPaging(pi){
     if (pi && pi.listCount != 0) {
         // 이전 버튼
         if (pi.currentPage === 1) {
-            htmlPI += "<button class='page bt' disabled>이전</button>";
+            htmlPI += "<button class='page bt' style='padding: 8px;border-radius: 16px 0px 0px 16px;' disabled>이전</button>";
         } else {
-            htmlPI += "<button class='page' data-page='" + (pi.currentPage - 1) + "' data-type='send'>이전</button>";
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage - 1) + "' data-type='send' style='padding: 8px;border-radius: 16px 0px 0px 16px;'>이전</button>";
         }
 
         // 페이지 번호 버튼 렌더링
         for (let i = pi.startPage; i <= pi.endPage; i++) {
             if (i === pi.currentPage) {
-                htmlPI += '<button class="page" disabled>' + i + '</button>';
+                htmlPI += '<button class="page" disabled style="padding: 8px;">' + i + '</button>';
             } else {
-                htmlPI += "<button class='page' data-page='" + i + "' data-type='send'>" + i + "</button>";
+                htmlPI += "<button class='page' data-page='" + i + "' data-type='send' style='padding: 8px;'>" + i + "</button>";
             }
         }
 
         // 다음 버튼
         if (pi.currentPage === pi.maxPage) {
-            htmlPI += "<button class='page bt' disabled>다음</button>";
+            htmlPI += "<button class='page bt' style='padding: 8px;border-radius: 0px 16px 16px 0px;' disabled>다음</button>";
         } else {
-            htmlPI += "<button class='page' data-page='" + (pi.currentPage + 1) + "' data-type='send'>다음</button>";
+            htmlPI += "<button class='page' data-page='" + (pi.currentPage + 1) + "' data-type='send' style='padding: 8px;border-radius: 0px 16px 16px 0px;'>다음</button>";
         }
 
         $('#sendPaging').html(htmlPI);
@@ -991,13 +973,17 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
     	
     }
     //대댓글 알림
-    if(data != null && data.length == 8){
+    if(data != null && data.length == 11){
     	
+		let scrollTo = data[0];
 		let nickName = data[1];
 		let alarmNo = data[3];
 		let count = data[4];
-		let postType = data[5];
-		let postNo = data[6];
+		let date = data[5];
+		let postType = data[6];
+		let postNo = data[7];
+		let pageNumber = data[8];
+		
 		$("#alarm_count").html(count == 0 ? "" : count);
 		let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true'  style='cursor:pointer; position: fixed; z-index:100;'>";
        toast += 	"<div class='toast-header'><i class='fas fa-bell mr-2'></i><strong class='mr-auto'>알림</strong>";
@@ -1016,21 +1002,24 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
        
        html = '';
        html += '<div class="alarm_div" data-no="' + alarmNo + '">';
-       html += '    <b class="alarm_content"><a style="text-decoration: none;" href="${contextPath}/community/detail.page?postNo=' + postNo + '&postType=' + postType + '">' + nickName  +  "님 댓글에 댓글이 달렸습니다." + '</a></b>';
-       html += '    <span class="del-close">&times;</span>';
+       html += '    <b class="alarm_content" style="display: flex;justify-content: space-between;"><a style="text-decoration: none;" href="${contextPath}/community/detail.page?postNo=' + postNo + '&postType=' + postType + '&scrollTo=' + scrollTo + '&pageNumber=' + pageNumber + '">' + nickName  +  "님 댓글에 새 댓글이 달렸습니다." + '</a>' + timeForToday(date) + '</b>';
+       html += '    <span class="del-close" style="margin-left: 24px;">&times;</span>';
        html += '</div>';
        
        $("#alertList").prepend(html);
        
 		}	
     //게시글 댓글 알림
-    if(data != null && data.length == 7){
-    	
+    if(data != null && data.length == 10){
+    		console.log(data);
+    		let scrollTo = data[0];
     		let nickName = data[1];
     		let alarmNo = data[3];
     		let count = data[4];
-    		let postType = data[5];
-    		let postNo = data[6];
+    		let date = data[5];
+    		let postType = data[6];
+    		let postNo = data[7];
+    		let pageNumber = data[8];
     		$("#alarm_count").html(count == 0 ? "" : count);
     		let toast = "<div class='toast' role='alert' aria-live='assertive' aria-atomic='true' style='cursor:pointer; position: fixed; z-index:100;'>";
 	       toast += 	"<div class='toast-header'><i class='fas fa-bell mr-2'></i><strong class='mr-auto'>알림</strong>";
@@ -1049,8 +1038,8 @@ function onMessage(evt){ // evt : 웹소켓에서 클라이언트에게 보내�
 	       
 	       html = '';
 	       html += '<div class="alarm_div" data-no="' + alarmNo + '">';
-	       html += '    <b class="alarm_content"><a style="text-decoration: none;" href="${contextPath}/community/detail.page?postNo=' + postNo + '&postType=' + postType + '">' + nickName  +  "님 게시글에 댓글이 달렸습니다." + '</a></b>';
-	       html += '    <span class="del-close">&times;</span>';
+	       html += '    <b class="alarm_content" style="display: flex;justify-content: space-between;"><a style="text-decoration: none;" href="${contextPath}/community/detail.page?postNo=' + postNo + '&postType=' + postType + '&scrollTo=' + scrollTo + '&pageNumber=' + pageNumber + '">' + nickName  +  "님 게시글에 댓글이 달렸습니다." + '</a>' + timeForToday(date) + '</b>';
+	       html += '    <span class="del-close" style="margin-left: 24px;">&times;</span>';
 	       html += '</div>';
 	       
 	       $("#alertList").prepend(html);
@@ -1514,7 +1503,7 @@ function collectMessage(messageNo){
 						<div class="modal-footer">
 						    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 						    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="replyBack">뒤로가기</button>
-						    <button type="button" class="btn btn-primary" id="replys">보내기</button>
+						    <button type="button" id="replys">보내기</button>
 						</div>
         </div>
     </div>
@@ -1595,7 +1584,9 @@ function collectMessage(messageNo){
 			                                <label for="messageContent" class="form-label">쪽지 내용</label>
 			                                <textarea class="form-control" id="messageContent" rows="5" placeholder="쪽지 내용을 입력하세요"></textarea>
 			                            </div>
-			                            <button type="button" class="btn btn-primary w-100" id="sendBtn">보내기</button>
+			                            <div style="display: flex;justify-content: flex-end;">
+			                            	<button type="button" id="sendBtn" style="border-radius: 10px;background: #d5e9fd;border: none;padding: 8px;width: 100px;">보내기</button>
+			                            </div>
 			                        </form>
 			                    </div>
 			
@@ -1628,8 +1619,11 @@ function collectMessage(messageNo){
  <!-- 모달 -->
   <div id="petAlertModal" class="pet-modal">
         <div class="pet-modal-content">
-            <span class="pet-close">&times;</span>
-            <h2>알림메세지함</h2>
+	        <div class="modal-header" style="background: none;margin-bottom: 15px;">
+	         	<p class="modal-title" id="messageModalLabel"><b style="font-size: 22px;">알림메세지함</b><b style="color: #6c757d;">(클릭시 해당 게시글로 이동합니다)</b></p>
+	         	
+	         	<span class="pet-close">&times;</span>
+	        </div>
             <div id="alertList" class="alert-list">
                 
             </div>
@@ -1679,8 +1673,8 @@ function loadAlarm(){
 			if(list){
 				list.forEach(function(item){
 		      html += '<div class="alarm_div" data-no="' + item.alarmNo + '">';
-		      html += '    <b class="alarm_content"><a style="text-decoration: none;" href="${contextPath}/community/detail.page?postNo=' + item.postNo + '&postType=' + item.postType + '">' + item.alarmContent + '</a></b>';
-		      html += '    <span class="del-close">&times;</span>';
+		      html += '    <b class="alarm_content" style="display: flex;justify-content: space-between;"><a style="text-decoration: none;" href="${contextPath}/community/detail.page?postNo=' + item.postNo + '&postType=' + item.postType + '&scrollTo=' + item.scrollNum + '&pageNumber=' + item.pagingNum + '">' + item.alarmContent +'</a>' + timeForToday(item.alarmDt) + '</b>';
+		      html += '    <span class="del-close" style="margin-left: 24px;">&times;</span>';
 		      html += '</div>';
 				})				
 			}
@@ -1719,7 +1713,40 @@ $(document).on("click", ".del-close", function(){
 </script>
 
 
+<script>
+//alert 창 띄우기
+$(document).ready(function(){
+    if ("${alertMessage}" != "") {
+        alert("${alertMessage}");
+    }
+});
 
+
+//시간조회 스크립트
+function timeForToday(value) {
+	
+    const today = new Date();
+    const timeValue = new Date(value);
+
+    const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+    if (betweenTime < 1) return '방금전';
+    if (betweenTime < 60) {
+        return betweenTime + '분전';
+    }
+
+    const betweenTimeHour = Math.floor(betweenTime / 60);
+    if (betweenTimeHour < 24) {
+        return betweenTimeHour + '시간전';
+    }
+
+    const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+    if (betweenTimeDay < 365) {
+        return betweenTimeDay + '일전';
+    }
+
+    return Math.floor(betweenTimeDay / 365) + '년전';
+ }
+</script>
 
 
 

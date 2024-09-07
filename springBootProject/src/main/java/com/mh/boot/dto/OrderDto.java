@@ -21,7 +21,7 @@ public class OrderDto {
 	private int orderNo;
 	private int memberNo;
 	private String orderName;
-	private String orerPhone;
+	private String orderPhone;
 	private String orderEmail;
 	private String orderDetail;
 	private String orderRequest; //요청사항

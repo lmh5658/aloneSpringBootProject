@@ -208,6 +208,7 @@ input[type="password"]::placeholder {
 }
 
 /* 버튼 스타일 */
+
 input[type="button"],
 button {
     padding: 12px 25px;
