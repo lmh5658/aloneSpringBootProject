@@ -937,7 +937,7 @@ position: absolute;
 		            
 		            <div class="related-product-detail" style=" height: 550px; ">
 							    <h2>상품 상세</h2>
-							    <img id="productImage" alt="" src="${list.productDatailPath}">
+							    <img id="productImage" alt="" src="${contextPath}${list.productDatailPath}">
 							    <button class="show-more-btn">자세히보기</button>
 							</div>
 							  <div class="related-products">

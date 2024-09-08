@@ -340,6 +340,8 @@
 			FROM TB_REVIEW
 			WHERE REVIEW_STATUS = 'Y'
 			  AND MEMBER_NO = ${userNo}
+			 ORDER
+			    BY REVIEW_NO DESC
   </select>
   
   <select id="insertReviewPoint">
@@ -357,7 +359,7 @@
   		 (
   		  SEQ_POINO.NEXTVAL
   		, #{userNo}
-  		, SYSDATE + 12
+  		, SYSDATE + 365
   		, #{productNo}
   		, 500
   		 )

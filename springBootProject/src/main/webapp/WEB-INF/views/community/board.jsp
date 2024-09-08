@@ -243,7 +243,7 @@ $(document).ready(function(){
 	                				$("#postsTableBody").html(html);
 	                				communitySearch(pi);													
 												}else{
-													$("#postsTableBody").html('<td colspan="6">검색한 목록이 없습니다.</td>');
+													$("#postsTableBody").html('<td colspan="7">검색한 목록이 없습니다.</td>');
 												}
                 				
                 			},
@@ -344,7 +344,7 @@ $(document).ready(function(){
                             </c:when>
                             <c:otherwise>
                                 <tr>
-                                    <td colspan="6">게시판 목록이 존재하지 않습니다.</td>
+                                    <td colspan="7">게시판 목록이 존재하지 않습니다.</td>
                                 </tr>
                             </c:otherwise>
                         </c:choose>

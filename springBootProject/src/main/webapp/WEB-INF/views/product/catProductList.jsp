@@ -337,7 +337,7 @@ background: white;
 	                if (item.proAmount === 0) {
 	                    html += '<div class="sold-out-banner">Sold Out</div>';
 	                }
-	                html += '<img src="' + item.productThumbnailPath + '" class="product-image">';
+	                html += '<img src="${contextPath}' + item.productThumbnailPath + '" class="product-image">';
 	                html += '<div id="productName">' + item.proName + '</div>';
 	                html += '<div id="totalPrice">';
 	                if (item.productSaleStatus === 'Y') {
@@ -426,7 +426,7 @@ background: white;
 	                if (item.proAmount == 0) {
 	                    html += '    <div class="sold-out-banner">Sold Out</div>';
 	                }
-	                html += '    <img src="' + item.productThumbnailPath + '" class="product-image">';
+	                html += '    <img src="${contextPath}' + item.productThumbnailPath + '" class="product-image">';
 	                html += '    <div id="productName">' + item.proName + '</div>';
 	                html += '    <div id="totalPrice">';
 	                if (item.productSaleStatus === 'Y') {
@@ -573,7 +573,7 @@ background: white;
 	                if (item.proAmount === 0) {
 	                    html += '    <div class="sold-out-banner">Sold Out</div>';
 	                }
-	                html += '    <img src="' + item.productThumbnailPath + '" class="product-image">';
+	                html += '    <img src="${contextPath}' + item.productThumbnailPath + '" class="product-image">';
 	                html += '    <div id="productName">' + item.proName + '</div>';
 	                html += '    <div id="totalPrice">';
 	                if (item.productSaleStatus === 'Y') {

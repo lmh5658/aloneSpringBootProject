@@ -133,7 +133,7 @@ body {
     <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img src="/upload/image/benner.png" class="d-block w-100" alt="..." style="cursor:pointer" height="400px" onclick="location.href='${contextPath}/community/doranMain.page'">
+      <img src="${contextPath}/resources/images/benner.png" class="d-block w-100" alt="..." style="cursor:pointer" height="400px" onclick="location.href='${contextPath}/community/doranMain.page'">
     </div>
     <!-- 
     <div class="carousel-item">

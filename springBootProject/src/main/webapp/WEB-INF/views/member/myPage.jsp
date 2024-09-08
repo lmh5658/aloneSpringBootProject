@@ -1114,7 +1114,7 @@ $(document).on("click", "#account_deletion", function(){
         <section class="profile-info">
             <h2>나의 회원정보</h2>
             <div class="profile-card" style="display: flex; flex-direction: column; width: 100%">
-                <img src="<c:out value='${ loginUser.userPath }' default='/upload/image/defaultProfile.png' />" alt="프로필 사진" class="profile-img">
+                <img src="<c:out value='${contextPath}${ loginUser.userPath }' default='${contextPath}/resources/images/defaultProfile.png' />" alt="프로필 사진" class="profile-img">
                 <div class="profile-details" style="width: 80%; font-size: 19px;margin-bottom: 45px;">
                     <p><strong>이름 :&nbsp;&nbsp;</strong><strong id="usrNameInfo">${loginUser.userName}</strong></p>
                     <p><strong>닉네임 :&nbsp;&nbsp;</strong><strong id="nickNameInfo">${loginUser.nickName}</strong></p>
@@ -1132,7 +1132,7 @@ $(document).on("click", "#account_deletion", function(){
             <h2>회원정보 수정</h2>
             <form id="profileForm" style="display: flex;flex-direction: column;">
             		<label for="name">프로필:</label>(이미지를 클릭하세요)
-            		<img src="<c:out value='${loginUser.userPath}' default='${contextPath}/resources/images/defaultProfile.png'/>" alt="프로필 사진" id="profileChange" style="cursor: pointer;" class="profile-img" onclick="$('#profileImgFile').click();">
+            		<img src="<c:out value='${contextPath}${loginUser.userPath}' default='${contextPath}/resources/images/defaultProfile.png'/>" alt="프로필 사진" id="profileChange" style="cursor: pointer;" class="profile-img" onclick="$('#profileImgFile').click();">
             		<input type="file" name="proFile" id="profileImgFile" value="" style="display: none;" accept="image/*">
             		
                 <label for="name">이름:</label>
@@ -1409,8 +1409,11 @@ function handlePrompt(){
 
 //정보 수정 버튼 클릭시 
 $(document).on("click", "#myInfoModify", function(){
-	
-	$(".profile-edit").css("display", "block");
+	if($(".profile-edit").css("display") == "none"){
+		$(".profile-edit").css("display", "block");		
+	}else{
+		$(".profile-edit").css("display", "none");	
+	}
 	
 	let emails = "${loginUser.email}";
 	let arr = emails.split("@");

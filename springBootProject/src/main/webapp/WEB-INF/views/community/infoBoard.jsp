@@ -239,7 +239,7 @@ function infoSearch(page){
 			  // 첫 번째 <img> 태그의 시작과 끝 인덱스를 찾기
 		    let firstImgStart = item.postContent.indexOf("<img");
 		    let firstImgEnd = item.postContent.indexOf(">", firstImgStart);
-		    let profileImg = (item.userPath == null ? '/upload/image/defaultProfile.png' : item.userPath);
+		    let profileImg = (item.userPath == null ? '${contextPath}/resources/images/defaultProfile.png' : item.userPath);
 		    
         htmlContent += '<article class="post">';
         htmlContent += '    <div class="post-header">';
@@ -312,7 +312,7 @@ function selectChange(page){
 			  // 첫 번째 <img> 태그의 시작과 끝 인덱스를 찾기
 		    let firstImgStart = item.postContent.indexOf("<img");
 		    let firstImgEnd = item.postContent.indexOf(">", firstImgStart);
-		    let profileImg = (item.userPath == null ? '/upload/image/defaultProfile.png' : item.userPath);
+		    let profileImg = (item.userPath == null ? '${contextPath}/resources/images/defaultProfile.png' : item.userPath);
 		    
         htmlContent += '<article class="post">';
         htmlContent += '    <div class="post-header">';
@@ -447,7 +447,7 @@ function infoBoardLoad(page){
 				  // 첫 번째 <img> 태그의 시작과 끝 인덱스를 찾기
 			    let firstImgStart = item.postContent.indexOf("<img");
 			    let firstImgEnd = item.postContent.indexOf(">", firstImgStart);
-			    let profileImg = (item.userPath == null ? '/upload/image/defaultProfile.png' : item.userPath);
+			    let profileImg = (item.userPath == null ? '${contextPath}/resources/images/defaultProfile.png' : item.userPath);
 			    
 	        htmlContent += '<article class="post">';
 	        htmlContent += '    <div class="post-header">';

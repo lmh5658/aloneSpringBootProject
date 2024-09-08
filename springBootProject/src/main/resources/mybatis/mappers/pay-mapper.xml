@@ -242,7 +242,7 @@
       FROM(
     <foreach item="item" collection="productOrderList" separator="UNION ALL " >
         select 
-  						SYSDATE + 12 AS POINT_EXPIRY_DATE
+  						SYSDATE + 365 AS POINT_EXPIRY_DATE
            , #{item.orderProductNo} AS PRODUCT_NO
            , #{item.productPrice} * #{item.orderProductAmount} * 0.015 AS EARN_POINT
         FROM DUAL

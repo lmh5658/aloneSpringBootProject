@@ -241,7 +241,7 @@ $(document).ready(function(){
 	                				$("#postsTableBody").html(html);
 	                				communitySearch(pi);													
 												}else{
-													$("#postsTableBody").html("<tr><td colspan='6'>검색한 목록이 없습니다.</td></tr>");
+													$("#postsTableBody").html("<tr><td colspan='7'>검색한 목록이 없습니다.</td></tr>");
 												}
                 				
                 			},
