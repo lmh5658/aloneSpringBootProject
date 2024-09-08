@@ -181,8 +181,15 @@ display: flex;
 }
 </style>
 </head>
-<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
 <body>
+<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
+<script>
+$(document).ready(function(){
+	if("${alertMessage}" != ""){
+		alert("게시글 등록에 성공하였습니다.");
+	}
+})
+</script>
       <nav style="background: #ffffff;display: flex;justify-content: space-between;">
       <div>
 				<select name="select" id="select" style="width: 99px;height: 33px;border: 1px solid #dddddd; margin-left: 28px;">

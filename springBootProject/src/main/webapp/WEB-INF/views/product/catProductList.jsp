@@ -358,7 +358,7 @@ background: white;
 
 	            $(".products").html(html);
 	            SearchEnterPagination(search, pi);
-	            
+	            window.scrollTo(0,0);
 	           
 	        },
 	        error: function() {

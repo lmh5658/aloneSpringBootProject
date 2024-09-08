@@ -369,7 +369,7 @@ display: flex;
 .pet-modal-content {
     background-color: #fff;
     margin: 10% auto;
-    padding: 20px;
+    padding: 12px;
     border-radius: 8px;
     width: 80%;
     max-width: 500px;
@@ -458,6 +458,14 @@ position: absolute;
 .pagination button{
     padding: 9px;
     height: 40px;
+}
+
+#replys{
+		background: #ff5959b0;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    color: #fff;
 }
 </style>
 </head>
@@ -1585,7 +1593,7 @@ function collectMessage(messageNo){
 			                                <textarea class="form-control" id="messageContent" rows="5" placeholder="쪽지 내용을 입력하세요"></textarea>
 			                            </div>
 			                            <div style="display: flex;justify-content: flex-end;">
-			                            	<button type="button" id="sendBtn" style="border-radius: 10px;background: #d5e9fd;border: none;padding: 8px;width: 100px;">보내기</button>
+			                            	<button type="button" id="sendBtn" style="border-radius: 10px;border: none;padding: 8px;width: 100px;">보내기</button>
 			                            </div>
 			                        </form>
 			                    </div>

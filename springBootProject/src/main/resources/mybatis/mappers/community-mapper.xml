@@ -136,8 +136,8 @@
 		SELECT COUNT(*)
 	    FROM 
 	        TB_COMMUNITY
-		 WHERE 
-		     POST_TYPE = #{type}	
+		 WHERE POST_STATUS = 'Y'
+		   AND POST_TYPE = #{type}	
 	</select>
 	<!-- 게시판 리스트 조회 -->
 	<select id="boardList" resultMap="communityResult">
@@ -528,8 +528,8 @@
 	 		SELECT COUNT(*)
 		    FROM 
 		        TB_COMMUNITY
-			 WHERE 
-			     POST_TYPE = #{type}
+			 WHERE POST_STATUS = 'Y'
+			   AND POST_TYPE = #{type}
 			 <choose>
 			 	<when test="category != null and category.equals('TOTAL')">
 			 		AND (POST_TITLE LIKE '%' || #{search} || '%' OR
@@ -551,10 +551,13 @@
 						    FROM TB_ATTACHMENT
 						  WHERE REF_NO = POST_NO) FILE_STATUS
 						,POST_COUNT
+						,(SELECT COUNT(*)
+     			  	  FROM TB_COMMENT
+    			 		 WHERE BOARD_NO = POST_NO) AS POST_COMMENT
 		    FROM 
 		        TB_COMMUNITY
-			 WHERE 
-			     POST_TYPE = #{type}
+				WHERE POST_STATUS = 'Y'
+				  AND POST_TYPE = #{type}
 			 <choose>
 			 	<when test="category != null and category.equals('TOTAL')">
 			 		AND (POST_TITLE LIKE '%' || #{search} || '%' OR

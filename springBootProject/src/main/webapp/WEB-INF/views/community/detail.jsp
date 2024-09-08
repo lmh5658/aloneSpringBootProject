@@ -418,6 +418,17 @@ resize: none;
     color: white;
     border: 1px solid #adb5bd;
     }
+
+#comment_button_top{
+	 font-size: 17px;
+   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+   border: none;
+   padding: 10px;
+   height: 26px;
+   display: flex;
+   align-items: center;
+   margin-top: 8px;
+}
 </style>
 </head>
 
@@ -509,7 +520,10 @@ resize: none;
 				
         <!-- 댓글 목록 S -->
       
-        <h2>댓글</h2>
+        <div style="display: flex;gap: 40px;">
+		        <h2>댓글</h2>
+        		<button type="button" id="comment_button_top" onclick="window.scrollTo(0, document.body.scrollHeight);">댓글작성</button>
+        </div>
         <div class="comments-section">
         
 						 
@@ -523,6 +537,9 @@ resize: none;
 						 
         		 </ul>
 	        </div>
+	        <div style="display: flex;justify-content: flex-end;">
+        		<button type="button" style="font-size: 18px;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);border: none;" onclick="window.scrollTo(0,0);">맨위로</button>
+        	</div>
 				<!-- 페이징영역 E -->
 				
 				
@@ -534,6 +551,7 @@ resize: none;
                 <button type="button" class="submit-comment" style="background: #84b5e9;">등록</button>
             </form>
         </div>
+        
         <!-- 댓글 작성 폼 E -->
 </div>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services"></script> 

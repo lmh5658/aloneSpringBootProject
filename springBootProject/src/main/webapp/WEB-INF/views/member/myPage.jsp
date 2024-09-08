@@ -923,7 +923,7 @@ $(document).on("click", "#account_deletion", function(){
         <thead>
             <tr>
                 <th>포인트 번호</th>
-                <th style="width: 400px;">>구매 상품</th>
+                <th style="width: 400px;">구매 상품</th>
                 <th>포인트</th>
                 <th>발급일</th>
                 <th>차감일</th>
@@ -1639,7 +1639,7 @@ function openModal(items) {
 
 			    // 주문자 정보 추가
 			    detailHtml += '<p><strong>주문자 이름:</strong> ' + order[0].orderName + '</p>';
-			    detailHtml += '<p><strong>주문자 연락처:</strong> ' + (order[0].orerPhone == null ? "없음" : order[0].orerPhone) + '</p>';
+			    detailHtml += '<p><strong>주문자 연락처:</strong> ' + (order[0].orderPhone == null ? "없음" : order[0].orderPhone) + '</p>';
 			    detailHtml += '<p><strong>주문자 이메일:</strong> ' + (order[0].orderEmail == null ? "없음" : order[0].orderEmail) + '</p>';
 			    detailHtml += '<p><strong>배송 주소:</strong> ' + order[0].orderDetail  + '</p>';
 			    detailHtml += '<p><strong>배송시 요청사항:</strong> ' + (order[0].orderRequest == null ? "없음" : order[0].orderRequest)  + '</p>';

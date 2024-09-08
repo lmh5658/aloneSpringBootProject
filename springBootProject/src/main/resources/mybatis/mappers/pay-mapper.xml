@@ -6,7 +6,7 @@
 		<id column="ORDER_NO" property="orderNo" />
 		<result column="ORDER_MEMBER_NO" property="memberNo"/>	
 		<result column="ORDER_NAME" property="orderName"/>	
-		<result column="ORDER_PHONE" property="orerPhone"/>	
+		<result column="ORDER_PHONE" property="orderPhone"/>	
 		<result column="ORDER_EMAIL" property="orderEmail"/>	
 		<result column="ORDER_DETAIL" property="orderDetail"/>	
 		<result column="ORDER_REQUEST" property="orderRequest"/>	
@@ -342,7 +342,6 @@
 		    NULL AS POINT_ISSUE_DATE,
 		    PRODUCT_NAME,
 		    POINT_MINUS_AMOUNT AS EARN_POINT,
-		    NULL AS REVIEW_WRITER_POINT,
 		    TO_CHAR(POINT_USAGE_DATE, 'YY/MM/DD(DY)') AS POINT_USAGE_DATE,
 		    POINT_USAGE_DATE AS DATE_ORDER
 		FROM TB_POINT_RECORD pr
@@ -355,22 +354,23 @@
 		    TO_CHAR(POINT_ISSUE_DATE, 'YY/MM/DD(DY)') AS POINT_ISSUE_DATE,
 		    PRODUCT_NAME,
 		    EARN_POINT,
-		    REVIEW_WRITER_POINT,
 		    NULL AS POINT_USAGE_DATE,
 		    POINT_ISSUE_DATE AS DATE_ORDER
 		FROM TB_POINT p
 		JOIN TB_PRODUCT pr USING(PRODUCT_NO)
 		WHERE p.USER_NO = #{userNo}
-		ORDER BY 7 DESC
+		 AND EARN_POINT IS NOT NULL
+		ORDER BY 6 DESC
 	</select>
 	
 		<!-- 포인트 내역 갯수 -->
 	<select id="selectPointUsageCount" resultType="_int">
 		 SELECT (SELECT COUNT(*) 
 		           FROM TB_POINT 
-		           WHERE USER_NO = #{userNo}) + (SELECT COUNT(*) 
-		                                     FROM TB_POINT_RECORD 
-		                                    WHERE USER_NO = #{userNo}) 
+		           WHERE USER_NO = #{userNo}
+		             AND EARN_POINT IS NOT NULL) + (SELECT COUNT(*) 
+		                          				            FROM TB_POINT_RECORD 
+		                                  					 WHERE USER_NO = #{userNo}) 
 	       FROM DUAL
 	</select>
 	

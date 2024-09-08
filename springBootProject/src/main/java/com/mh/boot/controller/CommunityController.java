@@ -332,9 +332,8 @@ public class CommunityController {
 		}
 		
 		try {
-			
-			if((MemberDto)session.getAttribute("loginUser") != null) {
-				MemberDto m = ((MemberDto)session.getAttribute("loginUser"));
+			MemberDto m = ((MemberDto)session.getAttribute("loginUser"));
+			if(m != null) {
 				com.setWriterNickName(String.valueOf(m.getNickName()));
 				com.setWriterNo(m.getUserNo());				
 			}
