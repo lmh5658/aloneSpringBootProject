@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -575,13 +576,15 @@ public class MemberController {
 		alarm.setPostNo(postNo);
 		alarm.setPostType(postType);
 		alarm.setScrollNum(Double.parseDouble(elementTop));
-		alarm.setPagingNum(Integer.parseInt(pageNumber));
+		alarm.setPagingNum(Integer.parseInt(pageNumber));			
+	
 		int result = comunityService.insertAlarmMessage(alarm);
 		int alarmNo = alarm.getAlarmNo();
 		//MemberDto member = (MemberDto)session.getAttribute("loginUser");
 		int count = comunityService.selectAlarmCount(memberSearch.getUserId());	
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 		String today = sdf.format(date);
 		
 		return memberSearch.getUserId() + "," + alarmNo + "," + count + "," + today;
@@ -602,7 +605,7 @@ public class MemberController {
 		alarm.setPostNo(postNo);
 		alarm.setPostType(postType);
 		alarm.setScrollNum(Double.parseDouble(elementTop));
-		alarm.setPagingNum(Integer.parseInt(pageNumber));
+		alarm.setPagingNum(Integer.parseInt(pageNumber));		
 		int result = comunityService.insertAlarmMessage(alarm);
 		int alarmNo = alarm.getAlarmNo();
 		
@@ -610,6 +613,7 @@ public class MemberController {
 		int count = comunityService.selectAlarmCount(memberSearch.getUserId());	
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 		String today = sdf.format(date);
 		
 		return memberSearch.getUserId() + "," + alarmNo + "," + count + "," + today;

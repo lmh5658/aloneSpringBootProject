@@ -161,13 +161,7 @@ background-color: #7a90a7;
 </head>
 <body>	
 	<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
-<script>
-$(document).ready(function(){
-	if("${alertMessage}" != ""){
-		alert("게시글 등록에 성공하였습니다.");
-	}
-})
-</script>
+
 	 <div style=" display: flex; justify-content: center;align-items: center; margin: 30px;">
         <h2>공지사항</h2>
     </div>
@@ -340,7 +334,7 @@ $(document).ready(function(){
                             </c:when>
                             <c:otherwise>
                                 <tr>
-                                    <td colspan="6">게시판 목록이 존재하지 않습니다.</td>
+                                    <td colspan="7">게시판 목록이 존재하지 않습니다.</td>
                                 </tr>
                             </c:otherwise>
                         </c:choose>

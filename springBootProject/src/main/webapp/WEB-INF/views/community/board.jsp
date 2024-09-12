@@ -163,13 +163,7 @@ background-color: #7a90a7;
 </head>
 <body>	
 	<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
-	<script>
-$(document).ready(function(){
-	if("${alertMessage}" != ""){
-		alert("게시글 등록에 성공하였습니다.");
-	}
-})
-</script>
+
 	 <div style=" display: flex; justify-content: center;align-items: center; margin: 30px;">
         <h2>자유게시판</h2>
     </div>

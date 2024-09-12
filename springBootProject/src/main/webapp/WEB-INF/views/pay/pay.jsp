@@ -11,6 +11,7 @@
 <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 <!-- iamport.payment.js -->
 <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+<script type="text/javascript" defer src="${contextPath}/resources/js/key.js"></script>
 <!-- 포트원 결제 -->
 </head>
 <style>
@@ -472,9 +473,11 @@ $(document).ready(function() {
         type: "get",
         success: function(response) {
             console.log(response);
-            let earnPoint = response.earnPoint
-            let PointMinusAmount = response.PointMinusAmount
-            let sumPoint = earnPoint - PointMinusAmount;
+            let earnPoint = response.earnPoint;
+            let PointMinusAmount = response.PointMinusAmount;
+            let reviewWriterPoint = response.reviewWriterPoint;
+            
+            let sumPoint = earnPoint - PointMinusAmount + reviewWriterPoint;
             let point = sumPoint.toString().replace(/[,-]/g, ''); 
 
             let netPoint = point.toLocaleString('ko-KR');
@@ -546,7 +549,7 @@ if (confirm("구매 하시겠습니까?")) { // 구매 클릭시 한번 더 확�
 	 let userPhone = '${memberList.phone}';
 	 var totalPrice = $("#totalPrices").text().trim();
 	 
-	 		IMP.init('${portCode}'); //가맹점 식별코드
+	 		IMP.init(firebaseConfig.portcode); //가맹점 식별코드
    		IMP.request_pay({
        pg: 'kakaopay.TC0ONETIME', // PG사 코드표에서 선택
        pay_method: 'card', // 결제 방식

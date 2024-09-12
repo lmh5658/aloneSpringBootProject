@@ -204,7 +204,7 @@ h1 {
        data: {
     	   userName:$("#name-username").val().trim(),
     	   email:$("#email-username").val().trim(),
-    	   type:"${type}"
+    	   type:"id"
        },
        success: function(response) {
     	   
@@ -220,7 +220,7 @@ h1 {
                    type: "post",
                    data: { 
                 	   mail: $("input[type='email'][name='email']").val(),
-                	   type: "${type}",
+                	   type: "id",
                 	   distinction:"id"
                 	 },
                    success: function(response) {
@@ -265,7 +265,7 @@ $(document).on("click", ".verifyCode", function() {
                     data: {
                  	   userName:$("#name-username").val().trim(),
                  	   email:$("#email-username").val().trim(),
-                 	   type:"${type}"
+                 	   type:"id"
                     },
                     success: function(response) {
                     	console.log("회원아이디 :>>>" + response.userId);
@@ -287,15 +287,13 @@ $(document).on("click", ".verifyCode", function() {
 });
 //=====================비밀번호찾기==========================
 	
-var type = "${type}"
-
 $(document).on("click", ".findLoginPwd", function(event) {
 	event.preventDefault();
    // 첫 번째 AJAX 요청: 비밀번호 찾기
   $.ajax({
       url: "${contextPath}/member/findUser.do",
       type: "post",
-      data: $("#findPwdForm").serialize() + "&type=" + type,
+      data: $("#findPwdForm").serialize() + "&type=pwd",
       success: function(response) {
    	   
 	          if (response.idCheck == 1) {
@@ -319,11 +317,11 @@ function ajaxSendMail(){
          type: "post",
          data: { 
       	   mail: $("#email-password").val(),
-      	   type: type,
+      	   type: "pwd",
    	     	 distinction:"pwd"
       	 	},
          success: function(response) {
-      	 		distinction(response.number, type);
+      	 		distinction(response.number);
          },
          error: function() {
          }
@@ -331,13 +329,13 @@ function ajaxSendMail(){
    });
 }
 
-function distinction(pwd, type){
+function distinction(pwd){
 	
 	//세번째 AJAX 요청 : 임시비밀번호로 비밀번호 변경
    	$.ajax({
    			url: "${contextPath}/member/findPwdChange.do",
   			type:"post",
-  			data:$("#findPwdForm").serialize() + "&type=" + type + "&changePwd=" + pwd,
+  			data:$("#findPwdForm").serialize() + "&type=pwd&changePwd=" + pwd,
   			success:function(response){
   				console.log("change=>" + response);
   			},
@@ -351,7 +349,7 @@ function distinction(pwd, type){
 $(document).ready(function() {
     let type = "${type}";
     
-    if (type === "id") {
+    if (type == "id") {
         showSection('#find-username');
     } else {
         showSection('#find-password');

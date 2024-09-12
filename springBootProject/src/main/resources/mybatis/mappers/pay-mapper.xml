@@ -445,7 +445,7 @@
 			        AND ORDER_DATE BETWEEN TO_DATE(SYSDATE, 'YYYY-MM-DD') - INTERVAL '6' MONTH AND SYSDATE
 			    </when>
 			    <otherwise>
-			        AND ORDER_DATE BETWEEN #{startDate} AND #{endDate}
+			        AND ORDER_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
 			    </otherwise>
 			</choose>    
 	</select>
@@ -483,10 +483,9 @@
 			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '180' DAY AND SYSDATE
 			    </when>
 			    <otherwise>
-			        AND ORDER_DATE BETWEEN #{startDate} AND #{endDate}
+			        AND ORDER_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
 			    </otherwise>
 			</choose>
-
 			GROUP BY ORDER_NO
 			ORDER BY ORDER_NO DESC 
 	</select>

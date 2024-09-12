@@ -289,9 +289,9 @@ public class PayController {
 	
 	@ResponseBody
 	@GetMapping("/selectDays.do")
-	public Map<String, Object> selectDays(@RequestParam(value="type", required=false) String type
-										 , @RequestParam(value="startDate", required=false) String startDate
-										 , @RequestParam(value="endDate", required=false) String endDate
+	public Map<String, Object> selectDays(@RequestParam(required=false) String type
+										 , @RequestParam(required=false) String startDate
+										 , @RequestParam(required=false) String endDate
 										 , @SessionAttribute("loginUser") MemberDto member
 										 , @RequestParam(value="page", defaultValue="1") int currentPage){
 		log.debug("dayData check : >>>>>>>>> {}", type);

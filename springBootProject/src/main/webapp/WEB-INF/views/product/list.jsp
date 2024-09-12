@@ -414,37 +414,12 @@ background: white;
 	
  $(document).ready(function(){
 	 $("#searchProduct").val("");
-	 loadListPage(1);
-	 /*
-	 $(".price").each(function() {
- 	 	var text = $(this).text().trim();
-     var price = parseFloat(text.replace(/,/g, ''));
-     if (!isNaN(price)) {
-         $(this).text(price.toLocaleString('ko-KR') + "원");
-     }
-	 });
-	 
-	 $(".discount").each(function(){
-	 	let discount = $(this).text().trim();
-	 	let disCountprice = parseFloat(discount.replace(/,/g, ''));
-		    	if (!isNaN(disCountprice)) {
-		         $(this).text(disCountprice.toLocaleString('ko-KR') + "원");
-		      }
-	 })
-	 
-	 $(".noPrice").each(function(){
-	 	let price = $(this).text().trim();
-	 	let noPrice = parseFloat(price.replace(/,/g, ''));
-		    	if (!isNaN(noPrice)) {
-		         $(this).text(noPrice.toLocaleString('ko-KR') + "원");
-		      }
-	 })
-	 */
+	 	loadListPage(1);
  })
  
  function loadListPage(page){
 	 $.ajax({
-	        url: "${contextpath}/product/ajaxProductList.do",
+	        url: "${contextPath}/product/ajaxProductList.do",
 	        type: "get",
 	        data: {page:page},
 	        success: function(response) {
@@ -586,7 +561,7 @@ background: white;
  
  function allFilterSearch(weight, salaryTarget, size, functional, price, rating, page) {
 	    $.ajax({
-	        url: "${contextpath}/product/selectFilterSearch.do",
+	        url: "${contextPath}/product/selectFilterSearch.do",
 	        type: "get",
 	        data: {
 	            weight: weight,

@@ -214,7 +214,7 @@ $(document).ready(function() {
      </div>
      <div>
          <ul style="display: flex; justify-content: space-around; list-style: none; font-size: 22px;">
-             <li><a href="/">메인</a></li>           
+             <li><a href="${contextPath}/">메인</a></li>           
              <li><a href="${ contextPath }/product/list.do">전체</a></li>
              <li><a href="${ contextPath }/product/catProductList.do">고양이</a></li>
              <li><a href="${ contextPath }/product/dogProductList.do">강아지</a></li>

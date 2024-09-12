@@ -607,6 +607,7 @@ public class CommunityController {
 		map.put("list", list);
 		map.put("pi", pi);
 		map.put("pageNumber", pageNumber);
+		map.put("key", key);
 		
 		return ResponseEntity.ok(map);
 		

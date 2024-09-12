@@ -7,6 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -78,7 +79,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 15px;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
@@ -434,7 +435,7 @@ resize: none;
 
 <body>
     
-		<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
+<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
 		
 <div class="container">
 
@@ -461,19 +462,9 @@ resize: none;
 		        			<span>조회수&nbsp;&nbsp;${ board.postCount } </span>
 		        		</div>
 		        </div>
-		        <div class="post-image">
-		        	<c:if test="${ not empty attachList }">
-		        		<c:forEach var="item" items="${ attachList }">
-		            	<img src="${item.filePath}/${item.filesystemName}">
-			            </c:forEach>
-		        	</c:if>
-		        </div>
 		        <div class="post-content">
 		        	 <c:out value="${board.postContent}" escapeXml="false" />
 		        </div>
-		        <c:if test="${not empty board.locationName and board.postType eq 'G' }">
-			        <div id="map" style="width: 400px; height: 300px;"></div>
-		        </c:if>
 		        <div id="grate">
 		        		<div id="greate">
 		        			<div>
@@ -554,67 +545,6 @@ resize: none;
         
         <!-- 댓글 작성 폼 E -->
 </div>
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services"></script> 
-<script>
-// 장소 검색 객체를 생성합니다
-if("${board.locationName}" != "" && "${board.postType}" == 'G'){
-	var ps = new kakao.maps.services.Places(); 
-
-	// 키워드로 장소를 검색합니다
-	$(document).ready(function(){
-		let search = "${board.locationName}";
-	ps.keywordSearch(search, placesSearchCB); 	
-	})
-
-	// 키워드 검색 완료 시 호출되는 콜백함수 입니다
-	function placesSearchCB (data, status, pagination) {
-	    if (status === kakao.maps.services.Status.OK) {
-
-	        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-	        // LatLngBounds 객체에 좌표를 추가합니다
-	        var bounds = new kakao.maps.LatLngBounds();
-
-	        for (var i=0; i<data.length; i++) {
-	            displayMarker(data[i]);    
-	            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-	        }       
-
-	        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-	        map.setBounds(bounds);
-	    } 
-	}
-	//마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
-	var infowindow = new kakao.maps.InfoWindow({zIndex:1});
-
-	var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-	    mapOption = {
-	        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
-	        level: 3 // 지도의 확대 레벨
-	    };  
-
-	// 지도를 생성합니다    
-	var map = new kakao.maps.Map(mapContainer, mapOption); 
-
-	// 지도에 마커를 표시하는 함수입니다
-	function displayMarker(place) {
-	    
-	// 마커를 생성하고 지도에 표시합니다
-	var marker = new kakao.maps.Marker({
-	    map: map,
-	    position: new kakao.maps.LatLng(place.y, place.x) 
-	});
-
-	// 마커에 클릭이벤트를 등록합니다
-	kakao.maps.event.addListener(marker, 'click', function() {
-	    // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-	    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-	    infowindow.open(map, marker);
-	});
-
-	}
-}
-
-</script>
 <script>
 $("#history_button").on("click", function() {
     history.back();
@@ -722,36 +652,20 @@ function loadPage(page){
 
 $(document).on('click', '.submit-comment', function(e) {
     e.preventDefault(); // 폼 제출 방지
-    var $commentsSection = $(".comments-section").find(".comments");
-
-    var $comments = $commentsSection.children(".comment").length > 0 
-                     ? $commentsSection.children(".comment") 
-                     : $commentsSection.children(".replies");
-
-    var $lastElement = $comments.last();
-
-    var element = $lastElement[0];
-
-	  var rect = element.getBoundingClientRect();
-    var scrollTop = window.pageYOffset;
-    var elementTop = rect.top + scrollTop;
-    
-    console.log(elementTop);
-
-        
-
-    var pageNumber = -Infinity;
+    var pageNumber = 1;
     $(".page").each(function() {
         var $this = $(this);
         var page = $this.data("page");
-
-        if (page != undefined && $this.text() != "이전" && $this.text() != "다음") {
-            if (page > pageNumber) {
-                pageNumber = page;
-            }
-        }
+        if (page != undefined && $this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
+           	if($(".comments").children("div").length == 20){
+               pageNumber = page + 1;            		
+           	}else{
+           		 pageNumber = page;
+           	}
+         }
     });
     
+    console.log("length" + $(".comments").children("div").length);
     console.log("pageNumber" + pageNumber);
     
     let content = $("#commentContent").val().trim();
@@ -780,31 +694,42 @@ $(document).on('click', '.submit-comment', function(e) {
  	                    pageNumber : pageNumber
  	                },
  	                success: function(response) {
- 	                    console.log('댓글 등록:', response);
 
- 	                    if(response != null){
- 	    	                $("#commentContent").val("");
- 	    	               loadPage(response.pageNumber); // 전체 댓글 다시 렌더링                	
- 	                    }
- 	                    
- 	                    $.ajax({
- 	                    	url:"${contextPath}/member/userSearch.do",
- 	                    	type:"get",
- 	                    	data:{
- 	                    		userNo:"${board.writerNo}",
- 	                    		postType:"${board.postType}",
- 	                      	postNo:"${board.postNo}",
- 	                      	elementTop: elementTop,
- 	                      	pageNumber: pageNumber
- 	                    	},
- 	                  		success:function(response){
- 	                  			socket.send(elementTop + "," + "${board.writerNickName}" + "," + response + "," + "${board.postType}" + "," + "${board.postNo}" + "," + pageNumber + "," + "");
- 	                  		},
- 	                  		error:function(){
- 	                  			
- 	                  		}
- 	                    })
- 	                    
+ 	    	              $("#commentContent").val("");
+	 	 	               
+ 	    	              loadPage(response.pageNumber); // 전체 댓글 다시 렌더링    
+ 	    	              let key = response.key;
+ 	    	           		setTimeout(function() {
+	 	                		var $repliesElement;
+	 	                		$(".comments").children("div").each(function() {
+		                		    if ($(this).data("no") == key) {
+		                		        $repliesElement = $(this);
+		                		        console.log($(this));
+		                		        return false;
+		                		    }
+	 	                		});
+		 	                	var rect = $repliesElement[0].getBoundingClientRect();
+		 	                	var scrollTop = window.pageYOffset;
+		 	 	                var elementTop = rect.top + scrollTop -100;	
+			 	                   
+	 	                    $.ajax({
+	 	                    	url:"${contextPath}/member/userSearch.do",
+	 	                    	type:"get",
+	 	                    	data:{
+	 	                    		userNo:"${board.writerNo}",
+	 	                    		postType:"${board.postType}",
+	 	                      	postNo:"${board.postNo}",
+	 	                      	elementTop: elementTop,
+	 	                      	pageNumber: pageNumber
+	 	                    	},
+	 	                  		success:function(response){
+	 	                  			socket.send(elementTop + "," + "${board.writerNickName}" + "," + response + "," + "${board.postType}" + "," + "${board.postNo}" + "," + pageNumber + "," + "");
+	 	                  		},
+	 	                  		error:function(){
+	 	                  			
+	 	                  		}
+	 	                    })
+ 	    	           	  }, 100);
  	                },
  	                error: function(response) {
  	                    console.log("AJAX 통신 실패 =>" + response);
@@ -824,21 +749,21 @@ $(document).on('click', '.submit-comment', function(e) {
 // 대댓글 폼 제출 처리
 $(document).on('click', '.submit-reply', function(e) {
     e.preventDefault(); // 폼 제출 방지
-    var $reply = $(this).closest(".comment");
-
-    var element = $reply[0];
-
-	  var rect = element.getBoundingClientRect();
-    var scrollTop = window.pageYOffset;
-    var elementTop = rect.top + scrollTop;
-    
-    var pageNumber = ''; //페이지번호
-    $(".page").each(function() {
-        var $this = $(this);
-        if ($this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
-            pageNumber = $this.data("page"); 
-        }
-    });
+    var $notCommentsSection = $(".comments-section"); //보고있는 댓글 갯수가 20개 일경우   
+    let check = $(this).closest(".comment").is($(".comments").children().last()); // 답글쓰기가 제일 마지막인 요소인 경우
+ 
+	  var pageNumber = 1;
+	    $(".page").each(function() {
+	        var $this = $(this);
+	        var page = $this.data("page");
+	        if (page != undefined && $this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
+	           	if($(".comments").children("div").length == 20 && check){
+	               pageNumber = page + 1;            		
+	           	}else{
+	           		 pageNumber = page;
+	           	}
+	         }
+	    });
     
     
     let refGroup = $(this).closest(".reply-form").data("ref");
@@ -860,35 +785,45 @@ $(document).on('click', '.submit-reply', function(e) {
 	                refGroup: refGroup,
 	                content: content,
 	                reply: "대댓글",
-	                pageNumber: pageNumber
+	                pageNumber : pageNumber
 	            },
 	            success: function(response) {
 	            	
-	            	if(response != null){
-	            		 console.log('대댓글 등록:', response);
-	            		 
-		                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
-		                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
-		                loadPage(response.pageNumber);  // 전체 댓글 다시 렌더링
-	            	}
-	            	
-	            	  $.ajax({
-                   	url:"${contextPath}/member/userIdSearch.do",
-                   	type:"get",
-                   	data:{
-                   		nickName:nickName,
-                   		postType:"${board.postType}",
-                   		postNo:"${board.postNo}",
-                   		elementTop: elementTop,
-	                    pageNumber: pageNumber
-                   	},
-                 		success:function(response){
-                 			socket.send(elementTop + "," + nickName + "," + response + "," + "${board.postType}" + "," + "${board.postNo}" + "," + pageNumber + "," + "" + "," + "");
-                 		},
-                 		error:function(){
-                 			
-                 		}
-                  })
+	                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
+	                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
+	                loadPage(response.pageNumber);  // 전체 댓글 다시 렌더링
+	                
+	                let key = response.key;
+	                setTimeout(function() {
+	               		var $repliesElement = null;
+	               		$(".comments").children("div").each(function() {
+	               		    if ($(this).data("no") == key) {
+	               		        $repliesElement = $(this);
+	               		        return false;
+	               		    }
+	               		});
+	               		var rect = $repliesElement[0].getBoundingClientRect();
+	               		var scrollTop = window.pageYOffset;
+		                var elementTop = rect.top + scrollTop -100;	
+		               		
+		            	  $.ajax({
+	                   	url:"${contextPath}/member/userIdSearch.do",
+	                   	type:"get",
+	                   	data:{
+	                   		nickName:nickName,
+	                   		postType:"${board.postType}",
+	                   		postNo:"${board.postNo}",
+	                   		elementTop: elementTop,
+		                    pageNumber: pageNumber
+	                   	},
+	                 		success:function(response){
+	                 			socket.send(elementTop + "," + nickName + "," + response + "," + "${board.postType}" + "," + "${board.postNo}" + "," + pageNumber + "," + "" + "," + "");
+	                 		},
+	                 		error:function(){
+	                 			
+	                 		}
+	                  })
+	                }, 100);
                   
 	            },
 	            error: function() {
@@ -907,22 +842,22 @@ $(document).on('click', '.submit-reply', function(e) {
 //대대대대대댓글 폼 제출 처리
 $(document).on('click', '.submit-reply-reply', function(e) {
     e.preventDefault(); // 폼 제출 방지
-    var $replies = $(this).closest(".replies");
     
-    var element = $replies[0];
-
-	  var rect = element.getBoundingClientRect();
-    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    var elementTop = rect.top + scrollTop;
+    var check = $(this).closest(".replies").is($(".comments").children().last());
     
-    var pageNumber = ''; // 페이지번호
+	  console.log("확인체크" + check);
+    var pageNumber = 1;
     $(".page").each(function() {
         var $this = $(this);
-        if ($this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
-            pageNumber = $this.data("page"); 
-        }
+        var page = $this.data("page");
+        if (page != undefined && $this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
+           	if($(".comments").children("div").length == 20 && check){
+               pageNumber = page + 1;            		
+           	}else{
+           		 pageNumber = page;
+           	}
+         }
     });
-    
     
     let reply = $(this).closest(".reply-form-form");
     
@@ -948,37 +883,47 @@ $(document).on('click', '.submit-reply-reply', function(e) {
                    reply: "대대대댓글",
                    refOrder: refOrder,
                    step: step,
-                   pageNumber: pageNumber
+                   pageNumber : pageNumber
                    //arr: arr
                    
                },
                success: function(response) {
-               	
-               	if(response != null){
-               		 console.log('대댓글 등록:', response);
-               		 
-   	                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
-   	                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
-   	            	  loadPage(response.pageNumber);  // 전체 댓글 다시 렌더링
-               	}
-               	
-                $.ajax({
-                   	url:"${contextPath}/member/userIdSearch.do",
-                   	type:"get",
-                		data:{
-                   		nickName:nickName,
-                   		postType:"${board.postType}",
-                   		postNo:"${board.postNo}",
-                   		elementTop: elementTop,
-	                    pageNumber: pageNumber
-                   	},
-                 		success:function(response){
-                 			socket.send(elementTop + "," + nickName + "," + response + "," + "${board.postType}" + "," + "${board.postNo}" + "," + pageNumber + "," + "" + "," + "");
-                 		},
-                 		error:function(){
-                 			
-                 		}
-                })
+            	 	
+                $(this).closest(".reply-form").find(".replyContent").val(''); // 대댓글 폼 초기화
+                $(this).closest(".reply-form").hide(); // 대댓글 폼 숨기기
+            	  loadPage(response.pageNumber);  // 전체 댓글 다시 렌더링
+               	let key = response.key;
+            	  
+            	  setTimeout(function() {
+               		var $repliesElement = null;
+               		$(".comments").children("div").each(function() {
+               		    if ($(this).data("no") == key) {
+               		        $repliesElement = $(this);
+               		        return false;
+               		    }
+               		});
+               		var rect = $repliesElement[0].getBoundingClientRect();
+               		var scrollTop = window.pageYOffset;
+	                var elementTop = rect.top + scrollTop -100;	
+	               		
+ 	            	 $.ajax({
+ 	                   	url:"${contextPath}/member/userIdSearch.do",
+ 	                   	type:"get",
+ 	                		data:{
+ 	                   		nickName:nickName,
+ 	                   		postType:"${board.postType}",
+ 	                   		postNo:"${board.postNo}",
+ 	                   		elementTop: elementTop,
+ 		                    pageNumber: pageNumber
+ 	                   	},
+ 	                 		success:function(response){
+ 	                 			socket.send(elementTop + "," + nickName + "," + response + "," + "${board.postType}" + "," + "${board.postNo}" + "," + pageNumber + "," + "" + "," + "");
+ 	                 		},
+ 	                 		error:function(){
+ 	                 			
+ 	                 		}
+ 	                })
+            	  }, 100);
                   
                },
                error: function() {
@@ -1056,7 +1001,7 @@ function renderComments(comment) {
         let buttonStyle = comments[i].delYN == "N";
 
         if (comments[i].parentNum == 0 && comments[i].refOrder == 0) {
-            html += '<div class="comment">';
+            html += '<div class="comment" data-no="' + comments[i].id + '">';
             html += '  <div class="comment-header">';
             html += '   <button class="message_btn">';
             html += '    <strong class="user-nickname">' + comments[i].userNickName + '</strong>';
@@ -1205,13 +1150,14 @@ $(document).on("click", ".message_btn", function(){
 //댓글 수정 버튼 클릭 시 수정 처리
 $(document).on('click', '.submit-edit', function(e) {
 	  e.preventDefault();
-	  var pageNumber = ''; //페이지번호
+	  var pageNumber = 1;
 	    $(".page").each(function() {
 	        var $this = $(this);
-	        if ($this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
-	            pageNumber = $this.data("page"); 
-	        }
-	   });
+	        var page = $this.data("page");
+	        if (page != undefined && $this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
+	           	pageNumber = page;
+	         }
+	    });
     var $comment = $(this).closest('.edit-form');
     
     var $content = $comment.find('.replyContent').val();
@@ -1227,7 +1173,7 @@ $(document).on('click', '.submit-edit', function(e) {
     				id:id,
     				content:$content,
     				boardNo:"${board.postNo}",
-    				pageNumber: pageNumber
+    				pageNumber : pageNumber
     			},
     			success:function(response){
     				
@@ -1255,13 +1201,14 @@ $(document).on('click', '.submit-edit', function(e) {
 // 댓글 삭제 버튼 클릭 시 삭제 처리
 $(document).on('click', '.delete-comment', function(e) {
 	 	e.preventDefault();
-		var pageNumber = ''; //페이지번호
-    $(".page").each(function() {
-        var $this = $(this);
-        if ($this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
-            pageNumber = $this.data("page"); 
-        }
-    });
+	 	 var pageNumber = 1;
+	     $(".page").each(function() {
+	         var $this = $(this);
+	         var page = $this.data("page");
+	         if (page != undefined && $this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
+	             pageNumber = page;
+	          }
+	     });
 		
 		let id = $(this).closest(".comment").find(".edit-form-content").data("id");
     if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
@@ -1292,13 +1239,14 @@ $(document).on('click', '.delete-comment', function(e) {
 $(document).on('click', '.submit-edit-edit', function(e) {
 	
 		e.preventDefault();
-		var pageNumber = ''; //페이지번호
-		$(".page").each(function() {
-		    var $this = $(this);
-		    if ($this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
-		        pageNumber = $this.data("page"); 
-		    }
-		});
+		 var pageNumber = 1;
+		    $(".page").each(function() {
+		        var $this = $(this);
+		        var page = $this.data("page");
+		        if (page != undefined && $this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
+		           pageNumber = page;
+		        }
+		    });
 		
     let reply = $(this).closest('.replies');
     let content = reply.find('.replyContent').val();
@@ -1343,13 +1291,14 @@ $(document).on('click', '.submit-edit-edit', function(e) {
 // 대댓글 삭제 버튼 클릭 시 삭제 처리
 $(document).on('click', '.delete-reply', function(e) {
 		e.preventDefault();
-		var pageNumber = ''; //페이지번호
-		$(".page").each(function() {
-		    var $this = $(this);
-		    if ($this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
-		        pageNumber = $this.data("page"); 
-		    }
-		});
+		 var pageNumber = 1;
+		    $(".page").each(function() {
+		        var $this = $(this);
+		        var page = $this.data("page");
+		        if (page != undefined && $this.prop("disabled") && $this.text() != "이전" && $this.text() != "다음") {
+		           pageNumber = page;
+		         }
+		    });
 		
 		let $reply = $(this).closest('.replies');
 		let id = $reply.find(".edit-form-content").data("id");
@@ -1408,7 +1357,7 @@ function timeForToday(value) {
 
 <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 <script>
-  Kakao.init('${kakaoKey}');
+  Kakao.init(firebaseConfig.kakaoApiKey);
 </script>
 <script>
 /*

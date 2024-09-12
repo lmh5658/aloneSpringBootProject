@@ -11,7 +11,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mh.boot.controller.ApiExplorer;
 
 @Component
 public class FileUtil {
@@ -20,10 +19,10 @@ public class FileUtil {
 		
 		// 전달된 파일 업로드 처리 
 		// 1) 업로드시킬 폴더 (외부경로 : /upload/profile|board/yyyy/MM/dd)
-		//String filePath = "/upload/" + folderName + new SimpleDateFormat("/yyyy/MM/dd").format(new Date()); //개발환경 (윈도우)
-		String filePath = "/home/ubuntu/upload/" + folderName + new SimpleDateFormat("/yyyy/MM/dd").format(new Date()); //배포환경 (리눅스-ubuntu)
-		//File filePathDir = new File("C:" + filePath); //개발환경
-		File filePathDir = new File(filePath); //배포환경
+		String filePath = "/upload/" + folderName + new SimpleDateFormat("/yyyy/MM/dd").format(new Date()); //개발환경 (윈도우)
+		//String filePath = "/home/ubuntu/upload/" + folderName + new SimpleDateFormat("/yyyy/MM/dd").format(new Date()); //배포환경 (리눅스-ubuntu)
+		File filePathDir = new File("C:" + filePath); //개발환경
+		//File filePathDir = new File(filePath); //배포환경
 		if(!filePathDir.exists()) {
 			filePathDir.mkdirs();
 		}

@@ -6,8 +6,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 <title>Insert title here</title>
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+
 <style>
 body {
     font-family: 'Roboto', sans-serif;
@@ -109,9 +110,10 @@ button:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 </style>
-</head>
 
+</head>
 <body>
+
 	<jsp:include page="/WEB-INF/views/common/doranHeader.jsp" />
 	<div class="container">
 	<section class="post-form" style=" height: auto;">
@@ -126,13 +128,7 @@ button:hover {
           </div>
           <input type="hidden" name="postContent">
           <div>
-		        <input type="file" name='uploadFiles' id="fileInput" onchange="readURL(this);" multiple accept="image/gif, image/jpeg, image/png">
-		        <c:if test="${type eq 'G' }">
-		          <div>
-			          <input type="text" id="locationName" name="locationName" placeholder="추천 장소를 검색하세요." style="width: 400px;">
-			 					<div id="map" style="width: 400px; height: 300px;"></div>
-		          </div>
-	          </c:if>
+		        <input type="file" name='uploadFiles' id="fileInput" multiple accept="image/gif, image/jpeg, image/png">
           </div>
 	          
           <div style="display: flex;justify-content: flex-end; margin-top: 27px;">
@@ -143,68 +139,7 @@ button:hover {
   </section>
   
   </div>
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services"></script> 
-<script>
-var place;
-$("#locationName").on("keypress", function(ev){
-    if (ev.which == 13) {  // Enter 키가 눌렸는지 확인
-        ps.keywordSearch($(this).val(), placesSearchCB); 
-    }
-});
-// 장소 검색 객체를 생성합니다
-var ps = new kakao.maps.services.Places(); 
 
-// 키워드로 장소를 검색합니다
-
-
-// 키워드 검색 완료 시 호출되는 콜백함수 입니다
-function placesSearchCB (data, status, pagination) {
-    if (status === kakao.maps.services.Status.OK) {
-
-        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-        // LatLngBounds 객체에 좌표를 추가합니다
-        var bounds = new kakao.maps.LatLngBounds();
-
-        for (var i=0; i<data.length; i++) {
-            displayMarker(data[i]);    
-            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-        }       
-
-        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-        map.setBounds(bounds);
-    } 
-}
-//마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
-var infowindow = new kakao.maps.InfoWindow({zIndex:1});
-
-var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-    mapOption = {
-        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
-        level: 3 // 지도의 확대 레벨
-    };  
-
-// 지도를 생성합니다    
-var map = new kakao.maps.Map(mapContainer, mapOption); 
-
-// 지도에 마커를 표시하는 함수입니다
-function displayMarker(place) {
-    
-// 마커를 생성하고 지도에 표시합니다
-var marker = new kakao.maps.Marker({
-    map: map,
-    position: new kakao.maps.LatLng(place.y, place.x) 
-});
-
-// 마커에 클릭이벤트를 등록합니다
-kakao.maps.event.addListener(marker, 'click', function() {
-    // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-    infowindow.open(map, marker);
-});
-
-}
-</script>
- 
 <!-- TUI 에디터 JS CDN -->
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script>
@@ -232,7 +167,7 @@ const editor = new toastui.Editor({
          	    processData: false,
          	    contentType: false,
            		success: function(data) {
-           		  imageURL = data.filePath + "/" + data.filesystemName;
+           		  imageURL = "${contextPath}" + data.filePath + "/" + data.filesystemName;
            			//console.log('ajax 이미지 업로드 성공');
            			callback(imageURL, "");
            		},
@@ -256,12 +191,7 @@ const editor = new toastui.Editor({
 </script>
 <script>
 $(document).ready(function(){
-	console.log(editor.getHTML());
-	
-	
-	
-	
-	
+	console.log();
 })
 </script>
 
@@ -275,53 +205,74 @@ $(document).on("click", "#writerForm", function(){
 })
 
 
+</script>
+<script>
+/*
+$(document).ready(function(){
+	var place;
+	$("#locationName").on("keypress", function(ev){
+	    if (ev.which == 13) {  // Enter 키가 눌렸는지 확인
+	        ps.keywordSearch($(this).val(), placesSearchCB); 
+	    }
+	});
+	// 장소 검색 객체를 생성합니다
+	var ps = new kakao.maps.services.Places(); 
 
-function readURL(obj) {
+	// 키워드로 장소를 검색합니다
+	
+	//마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
+	var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+	
+	var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+	    mapOption = {
+	        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+	        level: 3 // 지도의 확대 레벨
+	    };  
+	
+	// 지도를 생성합니다    
+	var map = new kakao.maps.Map(mapContainer, mapOption); 
+	
+})
 
-	console.log($("#postContent").find(".toastui-editor-contents").html());
-	console.log($("#postContent").find(".ProseMirror toastui-editor-contents").html());
-	/*
-    // 파일 확장자 추출
-    var file_kind = obj.value.lastIndexOf('.');
-    var file_name = obj.value.substring(file_kind + 1, obj.value.length);
-    var file_type = file_name.toLowerCase();
-		
-    console.log(obj.files.length);
-    // 허용되는 이미지 파일 확장자 목록
-    var check_file_type = ['jpg', 'gif', 'png', 'jpeg', 'bmp'];
 
-    // 파일 확장자가 허용된 목록에 없는 경우
-    if (check_file_type.indexOf(file_type) === -1) {
-        alert('이미지 파일만 선택할 수 있습니다.');
-        // 파일 입력 필드를 초기화하기 위해 새로운 노드를 추가
-        var parent_Obj = obj.parentNode;
-        var node = parent_Obj.replaceChild(obj.cloneNode(true), obj);
-        return false;
-    }
 
-    let html = '';
-    // 파일 입력이 있을 때
-    if (obj.files && obj.files.length > 0) {
-    		for(let i=0; i<obj.files.length; i++){
-    			html += '<img id="previewImage' + (i + 1) + '" src="">';
-    		}	
-    		$("#previewImage").after(html);
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            for(let i=0; i<obj.files.length; i++){
-                document.getElementById("previewImage" + i).src = e.target.result;
-            }
-        }
-        for(let i=0; i<obj.files.length; i++){
-            reader.readAsDataURL(obj.files[i]);
-        }
-        
-    } else {
-        document.getElementById("previewImage").src = "";
-    }
-	*/
+// 키워드 검색 완료 시 호출되는 콜백함수 입니다
+function placesSearchCB (data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+        // LatLngBounds 객체에 좌표를 추가합니다
+        var bounds = new kakao.maps.LatLngBounds();
+
+        for (var i=0; i<data.length; i++) {
+            displayMarker(data[i]);    
+            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+        }       
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+        map.setBounds(bounds);
+    } 
 }
 
+//지도에 마커를 표시하는 함수입니다
+function displayMarker(place) {
+    
+	// 마커를 생성하고 지도에 표시합니다
+	var marker = new kakao.maps.Marker({
+	    map: map,
+	    position: new kakao.maps.LatLng(place.y, place.x) 
+	});
+	
+	// 마커에 클릭이벤트를 등록합니다
+	kakao.maps.event.addListener(marker, 'click', function() {
+	    // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
+	    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+	    infowindow.open(map, marker);
+	});
+
+}
+*/
 </script>
+ 
 </body>
 </html>

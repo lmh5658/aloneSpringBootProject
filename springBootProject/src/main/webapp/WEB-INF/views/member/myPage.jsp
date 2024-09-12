@@ -205,14 +205,13 @@ main.main-content {
     display: flex;
     align-items: center;
     width: 40%;
-    padding-left: 10px;
+    padding-left: 25px;
     height: 100px;
 }
 
 .avatar {
-    width: 60px;
-    height: 60px;
-    background-color: #ddd;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
     margin-right: 10px;
 }
@@ -973,7 +972,7 @@ $(document).on("click", "#account_deletion", function(){
     <!-- 헤더 섹션 -->
     <div class="header">
         <div class="profile">
-            <div class="avatar"></div>
+            <img class="avatar" alt="" src="${contextPath}${loginUser.userPath == 'null' ? '/resources/images/defaultProfile.png' : loginUser.userPath}">
             <span class="username"><strong id="userName"></strong>님 안녕하세요.</span>
         </div>
         <div class="points-coupons">
@@ -1114,7 +1113,7 @@ $(document).on("click", "#account_deletion", function(){
         <section class="profile-info">
             <h2>나의 회원정보</h2>
             <div class="profile-card" style="display: flex; flex-direction: column; width: 100%">
-                <img src="<c:out value='${contextPath}${ loginUser.userPath }' default='${contextPath}/resources/images/defaultProfile.png' />" alt="프로필 사진" class="profile-img">
+                <img src="${contextPath}${loginUser.userPath == 'null' ? '/resources/images/defaultProfile.png' : loginUser.userPath}" alt="프로필 사진" class="profile-img">
                 <div class="profile-details" style="width: 80%; font-size: 19px;margin-bottom: 45px;">
                     <p><strong>이름 :&nbsp;&nbsp;</strong><strong id="usrNameInfo">${loginUser.userName}</strong></p>
                     <p><strong>닉네임 :&nbsp;&nbsp;</strong><strong id="nickNameInfo">${loginUser.nickName}</strong></p>
@@ -1132,7 +1131,7 @@ $(document).on("click", "#account_deletion", function(){
             <h2>회원정보 수정</h2>
             <form id="profileForm" style="display: flex;flex-direction: column;">
             		<label for="name">프로필:</label>(이미지를 클릭하세요)
-            		<img src="<c:out value='${contextPath}${loginUser.userPath}' default='${contextPath}/resources/images/defaultProfile.png'/>" alt="프로필 사진" id="profileChange" style="cursor: pointer;" class="profile-img" onclick="$('#profileImgFile').click();">
+            		<img src="${contextPath}${loginUser.userPath == 'null' ? '/resources/images/defaultProfile.png' : loginUser.userPath}" alt="프로필 사진" id="profileChange" style="cursor: pointer;" class="profile-img" onclick="$('#profileImgFile').click();">
             		<input type="file" name="proFile" id="profileImgFile" value="" style="display: none;" accept="image/*">
             		
                 <label for="name">이름:</label>
@@ -1348,7 +1347,7 @@ $(document).ready(function(){
 					if(result.success == true){
 						let profile = result.memberDto.userPath;
 						
-						$("#profileChange").prop("src", profile);
+						$("#profileChange").prop("src", "${contextPath}" + profile);
 						
 					}
 					
@@ -1385,8 +1384,7 @@ function handlePrompt(){
 					 data:$("#profileForm").serialize(),
 					 success:function(response){
 						 alert("정보 수정이 완료되었습니다.");			
-						 
-						 
+						 location.href="${contextPath}/member/myPage.page";
 					 },
 					 error:function(){
 						 console.log("ajax 회원 정보수정 실패");
@@ -1516,8 +1514,6 @@ function daySearch(page){
 			page:page
 		},
 		success:function(response){
-			console.log(JSON.stringify(response));
-			
 			let orderList = response.orderList;
 			
 			let html = '';

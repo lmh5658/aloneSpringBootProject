@@ -406,7 +406,7 @@ background: white;
  
  function loadListPage(page){
 	 $.ajax({
-	        url: "${contextpath}/product/ajaxCatProductList.do",
+	        url: "${contextPath}/product/ajaxCatProductList.do",
 	        type: "get",
 	        data: {page:page},
 	        success: function(response) {
@@ -545,7 +545,7 @@ background: white;
  
  function filterSearch(weight, salaryTarget, functional, price, rating, page) {
 	    $.ajax({
-	        url: "${contextpath}/product/selectFilterSearch.do",
+	        url: "${contextPath}/product/selectFilterSearch.do",
 	        type: "get",
 	        data: {
 	            weight: weight,

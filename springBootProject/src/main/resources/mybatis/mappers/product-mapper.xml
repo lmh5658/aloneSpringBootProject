@@ -529,7 +529,7 @@
                #{item}
            </foreach>
 				</if>
-		
+		ORDER BY PRODUCT_NO DESC
 		</select>
 			
 		<select id="selectSearchCount" resultType="_int">

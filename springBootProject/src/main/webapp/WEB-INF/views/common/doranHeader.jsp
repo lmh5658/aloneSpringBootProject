@@ -25,8 +25,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hi+Melody&display=swap" rel="stylesheet">
+<!-- api key js -->
+<script type="text/javascript" src="${contextPath}/resources/js/key.js"></script>
 
-
+<!-- 파일크기 -->
+<script type="text/javascript" src="${contextPath}/resources/js/common.js"></script>
 <style>
 
 body *{
@@ -470,7 +473,14 @@ position: absolute;
 </style>
 </head>
 <body>
-
+<script>
+//alert 창 띄우기
+$(document).ready(function(){
+    if ("${alertMessage}" != "") {
+        alert("${alertMessage}");
+    }
+});
+</script>
 
   	<header id="home">
   			<div style="display: flex;flex-direction: column;align-items: center;">
@@ -577,6 +587,17 @@ position: absolute;
          </div>
      </div>
  </div>
+ 
+<script>
+$(document).ready(function(){
+	let appKey = firebaseConfig.kakaoApiKey;
+	let script = document.createElement('script');
+	script.type = 'text/javascript';
+	script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=' + appKey + '&libraries=services';
+	$("nav").after(script);		
+})
+</script>
+ 
  
 <!--============================ ajax 페이징 스크립트 S ============================-->
 <script>
@@ -1722,36 +1743,38 @@ $(document).on("click", ".del-close", function(){
 
 
 <script>
-//alert 창 띄우기
-$(document).ready(function(){
-    if ("${alertMessage}" != "") {
-        alert("${alertMessage}");
-    }
-});
-
-
 //시간조회 스크립트
 function timeForToday(value) {
-	
+	// 현재 날짜와 시간을 Date 객체로 가져옵니다.
     const today = new Date();
+    
+    // 주어진 값을 Date 객체로 변환합니다.
     const timeValue = new Date(value);
 
+    // 현재 시간과 주어진 시간 사이의 차이를 분 단위로 계산합니다.
     const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+    
+    // 시간이 1분 미만일 경우 "방금전" 반환
     if (betweenTime < 1) return '방금전';
+    
+    // 1시간 미만일 경우 분 단위 반환
     if (betweenTime < 60) {
         return betweenTime + '분전';
     }
 
+    // 24시간 미만일 경우 시간 단위 반환
     const betweenTimeHour = Math.floor(betweenTime / 60);
     if (betweenTimeHour < 24) {
         return betweenTimeHour + '시간전';
     }
 
+    // 1년 미만일 경우 일 단위 반환
     const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
     if (betweenTimeDay < 365) {
         return betweenTimeDay + '일전';
     }
 
+    // 1년 이상일 경우 년 단위 반환
     return Math.floor(betweenTimeDay / 365) + '년전';
  }
 </script>

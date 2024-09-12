@@ -3,17 +3,16 @@ package com.mh.boot.scheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.mh.boot.service.BoardService;
+
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
 public class BoardScheduler {
 	
-	private final BoardService boardService;
+	
 	
 	/*
 	 * * Scheduler
@@ -83,13 +82,13 @@ public class BoardScheduler {
 	 */
 	@Scheduled(cron="0 0 0 * * *")
 	public void execute4() {
-		log.debug("현재 게시글의 총 갯수: {}", boardService.selectBoardListCount());
+		//log.debug("현재 게시글의 총 갯수: {}", boardService.selectBoardListCount());
 	}
 	
 	@Scheduled(cron="0 0 1 * * SUN")// 일요일 새벽 1시마다 현재 status가 N인 댓글을 delete
 	public void execute5() {
-		int result = boardService.deleteReplyCompletely();
-		log.debug("현재 완전 제거한 댓글 갯수: {}", result);
+		//int result = boardService.deleteReplyCompletely();
+		//log.debug("현재 완전 제거한 댓글 갯수: {}", result);
 	}
 	
 }

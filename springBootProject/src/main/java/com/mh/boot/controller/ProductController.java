@@ -1,7 +1,6 @@
 package com.mh.boot.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mh.boot.dto.MemberDto;
@@ -46,7 +44,8 @@ public class ProductController {
    * > 전체 상품 리스트 조회
    */
   @GetMapping("/list.do")
-  public void allProductList() {
+  public String allProductList() {
+	  return "product/list";
   }
   /**
    * > 전체 상품 검색 리스트 따로 조회
@@ -94,8 +93,8 @@ public class ProductController {
    * > 고양이 상품 리스트 조회
    */
   @GetMapping("/catProductList.do")
-  public void catProductList() {
-	
+  public String catProductList() {
+	return "product/catProductList";
   }
   
   /**
@@ -125,7 +124,8 @@ public class ProductController {
    * > 강아지 상품 리스트 조회
    */
   @GetMapping("/dogProductList.do")
-  public void dogProductList() {
+  public String dogProductList() {
+	  return "product/dogProductList";
   }
   
   /**
