@@ -1232,7 +1232,14 @@ $(document).on("click", "#account_deletion", function(){
         </div>
     </div>
 </div>
-
+<script>
+$(document).ready(function() {
+    let type = "${type}";
+    if (type == "J") {
+        orderMg();
+    }
+});
+</script>
 <script>
 //모달 닫기 함수
 function closeModal() {
@@ -1552,6 +1559,16 @@ function daySearch(page){
 
 
 
+function orderMg(){
+		$("#mainContent").css("display", "none");
+		$("#orderManagement").css("display", "block");
+		$("#myInfoManagement").css("display", "none");
+		$("#couponContent").css("display", "none");
+		$("#pointConent").css("display", "none");
+		$("#change-password-content").css("display", "none");
+		$("#delete-account-content").css("display", "none");
+		myOrderInfo(1);
+}
 
 $(document).on("click", "#order-management", function(){
 	
@@ -1565,7 +1582,6 @@ $(document).on("click", "#order-management", function(){
 	
 	myOrderInfo(1);
 })
-
 
 function myOrderInfo(page){
 	

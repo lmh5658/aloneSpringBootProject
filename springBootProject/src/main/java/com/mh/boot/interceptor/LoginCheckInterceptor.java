@@ -37,7 +37,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 			
 			FlashMap flashMap = new FlashMap();
 			flashMap.put("alertTitle", "비정상적인 접근");
-			flashMap.put("alertMsg", "로그인 후 접근가능한 페이지입니다.");
+			flashMap.put("alertInterceptorMsg", "로그인 후 접근가능한 페이지입니다.");
 			
 			flashMapManager.saveOutputFlashMap(flashMap, request, response);
 			

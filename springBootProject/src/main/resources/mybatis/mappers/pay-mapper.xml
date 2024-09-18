@@ -432,63 +432,64 @@
 	    FROM TB_ORDER
 	    WHERE ORDER_MEMBER_NO = #{userNo}
 		 <choose>
-			    <when test="type != null and type.equals('today')">
-			        AND ORDER_DATE = TRUNC(SYSDATE)
-			    </when>
-			    <when test="type != null and type.equals('1month')">
-			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '1' MONTH AND SYSDATE
-			    </when>
-			    <when test="type != null and type.equals('3months')">
-			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '3' MONTH AND SYSDATE
-			    </when>
-			    <when test="type != null and type.equals('6months')">
-			        AND ORDER_DATE BETWEEN TO_DATE(SYSDATE, 'YYYY-MM-DD') - INTERVAL '6' MONTH AND SYSDATE
-			    </when>
-			    <otherwise>
-			        AND ORDER_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
-			    </otherwise>
-			</choose>    
+	        <when test="type != null and type.equals('today')">
+	            AND TRUNC(ORDER_DATE) = TRUNC(SYSDATE)
+	        </when>
+	        <when test="type != null and type.equals('1month')">
+	            AND TRUNC(ORDER_DATE) BETWEEN TRUNC(SYSDATE) - INTERVAL '30' DAY AND TRUNC(SYSDATE)
+	        </when>
+	        <when test="type != null and type.equals('3months')">
+	            AND TRUNC(ORDER_DATE) BETWEEN TRUNC(SYSDATE) - INTERVAL '90' DAY AND TRUNC(SYSDATE)
+	        </when>
+	        <when test="type != null and type.equals('6months')">
+	            AND TRUNC(ORDER_DATE) BETWEEN TRUNC(SYSDATE) - INTERVAL '180' DAY AND TRUNC(SYSDATE)
+	        </when>
+	        <otherwise>
+	            AND TRUNC(ORDER_DATE) BETWEEN TRUNC(TO_DATE(#{startDate}, 'YYYY-MM-DD')) AND TRUNC(TO_DATE(#{endDate}, 'YYYY-MM-DD'))
+	        </otherwise>
+	    </choose>   
 	</select>
 
 	<select id="selectDaysList" resultMap="orderProductResult">
-			SELECT
-			    ORDER_NO,
-			    TO_CHAR(MAX(ORDER_DATE), 'YY/MM/DD(DY)') AS ORDER_DATE,
-			    TO_CHAR(MAX(PAYMENT_DATE), 'YY/MM/DD(DY)') AS PAYMENT_DATE,
-			    MAX(ORDER_STATE) AS ORDER_STATE,
-			    MAX(ORDER_TOTAL_PRICE) AS ORDER_TOTAL_PRICE,
-			    MAX(ORDER_PRODUCT_NAME) AS ORDER_PRODUCT_NAME,
-			    MAX(ORDER_PRODUCT_NO) AS ORDER_PRODUCT_NO,
-			    MAX(ORDER_PRODUCT_AMOUNT) AS ORDER_PRODUCT_AMOUNT,
-			    MAX(PRO_THUMBNAIL_PATH) AS PRO_THUMBNAIL_PATH,
-			    CASE 
-			        WHEN COUNT(ORDER_NO) > 1 THEN COUNT(*)
-			        ELSE COUNT(*)
-			    END AS ORDER_TYPE
-			FROM TB_ORDER
-			JOIN TB_PRODUCT_ORDER USING (ORDER_NO)
-			JOIN TB_PRODUCT ON PRODUCT_NO = ORDER_PRODUCT_NO
-			WHERE ORDER_MEMBER_NO = #{userNo}
-		 <choose>
-			    <when test="type != null and type.equals('today')">
-			        AND ORDER_DATE = TRUNC(SYSDATE)
-			    </when>
-			    <when test="type != null and type.equals('1month')">
-			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '30' DAY AND SYSDATE
-			    </when>
-			    <when test="type != null and type.equals('3months')">
-			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '90' DAY AND SYSDATE
-			    </when>
-			    <when test="type != null and type.equals('6months')">
-			        AND ORDER_DATE BETWEEN SYSDATE - INTERVAL '180' DAY AND SYSDATE
-			    </when>
-			    <otherwise>
-			        AND ORDER_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
-			    </otherwise>
-			</choose>
-			GROUP BY ORDER_NO
-			ORDER BY ORDER_NO DESC 
+	    SELECT
+	        ORDER_NO,
+	        TO_CHAR(MAX(ORDER_DATE), 'YY/MM/DD(DY)') AS ORDER_DATE,
+	        TO_CHAR(MAX(PAYMENT_DATE), 'YY/MM/DD(DY)') AS PAYMENT_DATE,
+	        MAX(ORDER_STATE) AS ORDER_STATE,
+	        MAX(ORDER_TOTAL_PRICE) AS ORDER_TOTAL_PRICE,
+	        MAX(ORDER_PRODUCT_NAME) AS ORDER_PRODUCT_NAME,
+	        MAX(ORDER_PRODUCT_NO) AS ORDER_PRODUCT_NO,
+	        MAX(ORDER_PRODUCT_AMOUNT) AS ORDER_PRODUCT_AMOUNT,
+	        MAX(PRO_THUMBNAIL_PATH) AS PRO_THUMBNAIL_PATH,
+	        CASE 
+	            WHEN COUNT(ORDER_NO) > 1 THEN COUNT(*)
+	            ELSE COUNT(*)
+	        END AS ORDER_TYPE
+	    FROM TB_ORDER
+	    JOIN TB_PRODUCT_ORDER USING (ORDER_NO)
+	    JOIN TB_PRODUCT ON PRODUCT_NO = ORDER_PRODUCT_NO
+	    WHERE ORDER_MEMBER_NO = #{userNo}
+	    <choose>
+	        <when test="type != null and type.equals('today')">
+	            AND TRUNC(ORDER_DATE) = TRUNC(SYSDATE)
+	        </when>
+	        <when test="type != null and type.equals('1month')">
+	            AND TRUNC(ORDER_DATE) BETWEEN TRUNC(SYSDATE) - INTERVAL '30' DAY AND TRUNC(SYSDATE)
+	        </when>
+	        <when test="type != null and type.equals('3months')">
+	            AND TRUNC(ORDER_DATE) BETWEEN TRUNC(SYSDATE) - INTERVAL '90' DAY AND TRUNC(SYSDATE)
+	        </when>
+	        <when test="type != null and type.equals('6months')">
+	            AND TRUNC(ORDER_DATE) BETWEEN TRUNC(SYSDATE) - INTERVAL '180' DAY AND TRUNC(SYSDATE)
+	        </when>
+	        <otherwise>
+	            AND TRUNC(ORDER_DATE) BETWEEN TRUNC(TO_DATE(#{startDate}, 'YYYY-MM-DD')) AND TRUNC(TO_DATE(#{endDate}, 'YYYY-MM-DD'))
+	        </otherwise>
+	    </choose>
+	    GROUP BY ORDER_NO
+	    ORDER BY ORDER_NO DESC
 	</select>
+
 	
 	
 	<select id="selectOrderStateCount" resultType="map">

@@ -129,6 +129,8 @@ body {
 $(document).ready(function() {
     var alertMsg = "${alertMsg}";
     var historyBackYN = "${historyBackYN}";
+    
+    let alertInterceptorMsg = "${alertInterceptorMsg}";
 
     if (alertMsg !== "") { // 어떤 메세지 문구가 존재할 경우
         // 페이지 로드 시 모달 열기
@@ -148,8 +150,17 @@ $(document).ready(function() {
         }
     }
     
+    if(alertInterceptorMsg != ""){
+    	alert(alertInterceptorMsg);
+    }
+    
 });
+
+
+
 </script>
+
+
 
 <!-- 회원가입 환영메세지 모달창 -->
 <!-- 모달 배경 -->
@@ -198,7 +209,7 @@ $(document).ready(function() {
 		             <span>${ loginUser.nickName }님</span> &nbsp;|&nbsp;
 		             <a href="${ contextPath }/member/myPage.page">마이페이지</a> |
 		             <a href="${ contextPath }/member/signout.do">로그아웃</a> |
-		             <a href="${ contextPath }/member/myPage.page">주문배송</a>
+		             <a href="${ contextPath }/member/myPage.page?type=J">주문배송</a>
              	</c:otherwise>
             </c:choose>
           </div> 

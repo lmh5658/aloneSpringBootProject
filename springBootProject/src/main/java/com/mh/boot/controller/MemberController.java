@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
@@ -438,8 +439,8 @@ public class MemberController {
 	 * > 마이페이지
 	 */
 	@GetMapping("/myPage.page")
-	public void myPage() {
-		
+	public void myPage(@RequestParam(required=false)String type, Model model) {
+		model.addAttribute("type", type);
 	}
 	
 	

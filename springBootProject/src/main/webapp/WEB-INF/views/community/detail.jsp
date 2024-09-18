@@ -69,7 +69,43 @@ body {
 .comments-section {
     margin-bottom: 20px;
 }
+.comments-section .reply-button{
+		width: 66px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+}
+.comments-section .edit-reply{
+width: 45px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+}
+.comments-section .edit-comment{
+width: 45px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+}
 
+
+.comments-section .delete-reply{
+width: 45px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+}
+.comments-section .delete-comment{
+width: 45px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+}
 .comments {
     border-top: 1px solid #ddd;
     padding-top: 10px;
@@ -78,7 +114,7 @@ body {
 .comment {
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 15px;
+    padding: 8px;
     background-color: #ffffff;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -178,14 +214,15 @@ body {
 /* 대댓글 박스 */
 .replies {
     margin-top: 10px;
-    padding-left: 20px;
     border-left: 3px solid #ddd;
+   margin-left: 31px;
+    padding-left: 13px;
 }
 
 .reply {
     background-color: #f1f1f1;
     border-radius: 5px;
-    padding: 10px;
+    padding: 7px;
     margin-bottom: 10px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -282,11 +319,11 @@ body {
 }
 
 .comment * {
-    font-size: 16px; /* 글자 크기 조정 */
+    font-size: 12px; /* 글자 크기 조정 */
     color: gray;
 }
 .replies *{
-    font-size: 16px; /* 글자 크기 조정 */
+    font-size: 12px; /* 글자 크기 조정 */
     color: gray;
 }
 
@@ -304,7 +341,7 @@ body {
     color: black;
 }
 .replies .reply-content{
-	  font-size: 18px; /* 글자 크기 조정 */
+	  font-size: 15px; /* 글자 크기 조정 */
     color: black;
 }
 .submit-reply-reply{
@@ -389,36 +426,36 @@ border: 1px solid #ced4da;
 resize: none;
     border: 1px solid #dddddd;
 }
- .reply {
-      position: relative; /* 버튼과 메시지 박스를 이 기준으로 배치 */
-    }
-  .comment-header {
-      position: relative; /* 버튼과 메시지 박스를 이 기준으로 배치 */
-    }
+.reply {
+     position: relative; /* 버튼과 메시지 박스를 이 기준으로 배치 */
+}
+.comment-header {
+    position: relative; /* 버튼과 메시지 박스를 이 기준으로 배치 */
+ }
 
-    .message_btn {
-      width: 84px;
-      border: none;
-      background: none;
-      position: relative; /* 메시지 박스를 버튼 기준으로 위치시키기 위해 */
-      text-align: left;
-    }
+.message_btn {
+  width: 84px;
+  border: none;
+  background: none;
+  position: relative; /* 메시지 박스를 버튼 기준으로 위치시키기 위해 */
+  text-align: left;
+}
 
-    .message-box {
-      position: absolute; /* 버튼을 기준으로 절대 위치 설정 */
-      border: 1px solid black;
-      width: 72px; /* 적절한 너비 설정 */
-      height: 25px; /* 적절한 높이 설정 */
-      background: #f9f9f9;
-      display: none; /* 초기 상태에서 숨김 */
-      z-index: 1000; /* 버튼 위에 위치하도록 설정 */
-      right: 0; /* 버튼의 오른쪽으로 위치 조정 */
-      bottom: -30px; /* 버튼 아래쪽으로 위치 조정 (버튼 높이와 간격 조정) */
-      cursor: pointer;
-      background: rgb(132, 181, 233);
-    color: white;
-    border: 1px solid #adb5bd;
-    }
+.message-box {
+	  position: absolute; /* 버튼을 기준으로 절대 위치 설정 */
+	  border: 1px solid black;
+	  width: 72px; /* 적절한 너비 설정 */
+	  height: 23px; /* 적절한 높이 설정 */
+	  background: #7a90a7;
+	  display: none; /* 초기 상태에서 숨김 */
+	  z-index: 1000; /* 버튼 위에 위치하도록 설정 */
+	  right: 0; /* 버튼의 오른쪽으로 위치 조정 */
+	  bottom: -30px; /* 버튼 아래쪽으로 위치 조정 (버튼 높이와 간격 조정) */
+	  cursor: pointer;
+	 	border: 1px solid #7a90a7;
+		text-align: center;
+		color: white;
+}
 
 #comment_button_top{
 	 font-size: 17px;
@@ -696,8 +733,8 @@ $(document).on('click', '.submit-comment', function(e) {
  	                success: function(response) {
 
  	    	              $("#commentContent").val("");
-	 	 	               
- 	    	              loadPage(response.pageNumber); // 전체 댓글 다시 렌더링    
+ 	    	              loadPage(response.pageNumber); // 전체 댓글 다시 렌더링   
+ 	    	             
  	    	              let key = response.key;
  	    	           		setTimeout(function() {
 	 	                		var $repliesElement;
@@ -709,7 +746,8 @@ $(document).on('click', '.submit-comment', function(e) {
 		                		    }
 	 	                		});
 		 	                	var rect = $repliesElement[0].getBoundingClientRect();
-		 	                	var scrollTop = window.pageYOffset;
+	 	    	              var scrollTop = window.pageYOffset;
+		 	                	
 		 	 	                var elementTop = rect.top + scrollTop -100;	
 			 	                   
 	 	                    $.ajax({
@@ -1135,10 +1173,15 @@ function paging(pi) {
 }
 
 $(document).on('click', '.page', function(event) {
+		
     const page = $(this).data('page');
     if (page) {
 		    event.stopPropagation(); // 클릭 이벤트 전파 방지
         loadPage(page);
+        let scrollYO = window.pageYOffset;
+        let scrollTo = $(".comments-section")[0].getBoundingClientRect().top;
+        let targetScrollTop = scrollTo + scrollYO;
+        $('html, body').animate({ scrollTop: targetScrollTop - 200}, 'fast');
     }
 });
 

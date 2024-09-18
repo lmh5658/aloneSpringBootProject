@@ -476,8 +476,9 @@ position: absolute;
 <script>
 //alert 창 띄우기
 $(document).ready(function(){
-    if ("${alertMessage}" != "") {
-        alert("${alertMessage}");
+	let alertMessage = "${alertMessage}"
+    if (alertMessage != "") {
+        alert(alertMessage);
     }
 });
 </script>

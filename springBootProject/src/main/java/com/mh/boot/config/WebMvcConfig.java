@@ -25,15 +25,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		// <resources mapping="/upload/**" location="file:///upload/" />
 		
 		//개발환경
-		
+		/*
 		registry.addResourceHandler("/upload/**")
 				.addResourceLocations("file:///upload/");
-		
+		*/
 		//배포환경
-		/*
+		
 		registry.addResourceHandler("/home/ubuntu/upload/**")
 		.addResourceLocations("file:///home/ubuntu/upload/");
-		*/
+		
 	}
 	
 	@Override
@@ -49,8 +49,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		</interceptors>
 		*/
 		registry.addInterceptor(loginCheckInterceptor)
-				.addPathPatterns("/member/myinfo.page")
-				.addPathPatterns("/board/registForm.page");
+				.addPathPatterns("/member/myPage.page")
+				.addPathPatterns("/community/modifyForm.page");
 		
 	}
 	
